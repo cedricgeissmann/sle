@@ -1,0 +1,8 @@
+#root {
+  height: 100vh;
+}
+
+.container {
+  display: flex;
+  height: calc(100% - var(--header-height));
+}

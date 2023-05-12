@@ -1,10 +1,12 @@
+import ChapterLink from './ChapterLink'
 import './Side.css'
 
-function Side() {
+function Side({onChapterChange}) {
 
   return (
     <ul>
-      <li><a href="#">Kapitel 1</a></li>
+      <li><ChapterLink chapter={1} onChapterChange={onChapterChange} /></li>
+      <li><ChapterLink chapter={2} onChapterChange={onChapterChange} /></li>
     </ul>
   )
 }
