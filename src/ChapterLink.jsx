@@ -1,11 +1,12 @@
-import { useCallback } from 'react'
+import { useCallback, useContext } from 'react'
 import './Side.css'
+import { AppContext } from './App'
 
-function ChapterLink({chapter, onChapterChange}) {
+function ChapterLink({chapter}) {
+  const chapterContext = useContext(AppContext)
 
   const updateChapter = useCallback((event) => {
-    console.log(chapter)
-    onChapterChange(chapter)
+    chapterContext.setChapter(chapter)
   })
 
   return (

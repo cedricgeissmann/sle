@@ -1,22 +1,28 @@
 import './Main.css'
+import {AppContext} from './App.jsx'
+import { useContext } from 'react'
 
-function Main({chapter, onChapterChange, onChapterFinish}) {
+function Main() {
+
+  const chapterContext = useContext(AppContext)
 
   function nextChapter() {
-    if (chapter >= 4) return
-    onChapterChange(chapter + 1)
-    onChapterFinish(chapter + 1)
+    if (chapterContext.chapter >= chapterContext.maxChapter) return
+    chapterContext.setChapter((chapter) => chapter + 1)
+    if (chapterContext.chapter > chapterContext.finishedChapter) {
+      chapterContext.setFinishedChapter(chapterContext.chapter)
+    }
   }
 
   function prevChapter() {
-    if (chapter <= 1) return
-    onChapterChange(chapter - 1)
+    if (chapterContext.chapter <= 1) return
+    chapterContext.setChapter((chapter) => chapter - 1)
   }
 
   return (
     <main>
       <div className="chapter">
-      <h2>Chapter {chapter}</h2>
+      <h2>Chapter {chapterContext.chapter}</h2>
       </div>
 
       <div className='footer'>

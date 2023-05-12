@@ -1,12 +1,14 @@
+import { AppContext } from './App'
 import ChapterLink from './ChapterLink'
 import './Side.css'
 
-function Side({onChapterChange}) {
+function Side() {
+
 
   return (
     <ul>
-      <li><ChapterLink chapter={1} onChapterChange={onChapterChange} /></li>
-      <li><ChapterLink chapter={2} onChapterChange={onChapterChange} /></li>
+      <li><ChapterLink chapter={1} /></li>
+      <li><ChapterLink chapter={2} /></li>
     </ul>
   )
 }
