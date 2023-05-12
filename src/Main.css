@@ -3,7 +3,14 @@ main {
   border: 1px solid grey;
   border-radius: 5px;
   width: clamp(400px, 80vw, 1000px);
+  padding-bottom: 60px;
   position: relative;
+}
+
+.chapter {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  height: 100%;
 }
 
 .footer {
@@ -12,6 +19,7 @@ main {
   align-items: center;
   bottom: 0;
   position: absolute;
+  z-index: 1;
   width: 100%;
   padding: 10px;
 }
