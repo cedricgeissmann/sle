@@ -3,4 +3,28 @@ main {
   border: 1px solid grey;
   border-radius: 5px;
   width: clamp(400px, 80vw, 1000px);
+  position: relative;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  bottom: 0;
+  position: absolute;
+  width: 100%;
+  padding: 10px;
+}
+
+.footer button {
+  background-color: rgb(33, 143, 33);
+  color: white;
+  border: 2px solid rgb(22, 96, 22);
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 1.3rem;
+}
+
+.footer button:hover {
+  background-color: rgb(22, 96, 22);
 }
