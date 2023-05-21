@@ -1,0 +1,14 @@
+.alphabet {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.letter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 2em;
+  border: 0.5px solid gray;
+  height: 2em;
+}
