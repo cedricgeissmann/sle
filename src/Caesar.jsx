@@ -1,6 +1,84 @@
 import { useEffect } from 'react'
 import { useState } from 'react'
+import { Player } from '@remotion/player'
 import './Caesar.css'
+import { useCurrentFrame, interpolate, AbsoluteFill, Sequence } from 'remotion'
+
+const FPS = 30
+
+function CaesarVideo({_input}) {
+
+  const frame = useCurrentFrame()
+  const opacity = interpolate(frame, [0, 0.5*FPS], [0, 1], {
+    extrapolateRight: "clamp",
+  });
+  const gap = interpolate(frame, [0, 0.5*FPS, 1*FPS], [0, 0, 1], {
+    extrapolateRight: "clamp",
+  });
+
+  const [alphabetStyle, setAlphabetStyle] = useState({
+    fontSize: "5rem",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100%",
+    color: "white",
+    gap: `0rem`,
+  })
+
+  const [letterStyle, setLetterStyle] = useState({
+    color: "white",
+  })
+  const [input, setInput] = useState(_input.split(""))
+  const [alphabet, setAlphabet] = useState("abcdefghijklmnopqrstuvwxyz".split(""))
+  
+  useEffect(() => {
+    setLetterStyle((style) => {
+      return {
+        ...style,
+        border: `1px solid rgba(255, 255, 255, ${opacity})`,
+      }
+    })
+  }, [opacity])
+  useEffect(() => {
+    
+    setAlphabetStyle((style) => {
+      return {
+        ...style,
+        gap: `${gap}rem`,
+      }
+    })
+  }, [gap])
+  useEffect(() => {
+    if (frame === 0.5*FPS- 1) {
+      const letter = document.querySelectorAll('.video-letter')[0]
+      letter.style.color = "red"
+      letter.style.border = "2px solid red"
+    }
+    if (frame === 0.5*FPS) {
+      
+    }
+  }, [frame])
+
+  return (
+    <>
+      <Sequence from={0} durationInFrames={1*FPS}>
+        <AbsoluteFill style={{backgroundColor: "#000"}}>
+      <div style={alphabetStyle}>
+        {input.map((letter, index) => <div className='video-letter' style={letterStyle} key={index}>{letter}</div>)}
+      </div>
+        </AbsoluteFill>
+      </Sequence>
+      <Sequence from={1*FPS} durationInFrames={2*FPS}>
+        <AbsoluteFill style={{backgroundColor: "#000"}}>
+          <h1>
+            Caesar
+          </h1>
+        </AbsoluteFill>
+      </Sequence>
+    </>
+  )
+}
 
 function Caesar() {
 
@@ -81,6 +159,20 @@ function Caesar() {
           type="text"
           value={output}
           id="output-text-field" />
+      </div>
+
+      <div className="video-container">
+        <Player
+          style={{width: '90%'}}
+          component={CaesarVideo}
+          durationInFrames={1*30}
+          compositionWidth={1280}
+          compositionHeight={720}
+          fps={30}
+          autoPlay={true}
+          controls
+          inputProps={{_input: "this is a very long word"}}
+        />
       </div>
     </>
   )

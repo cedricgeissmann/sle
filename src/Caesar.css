@@ -12,3 +12,11 @@
   border: 0.5px solid gray;
   height: 2em;
 }
+
+.video-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
