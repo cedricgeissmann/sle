@@ -2,21 +2,32 @@ import { useEffect } from 'react'
 import { useState } from 'react'
 import { Player } from '@remotion/player'
 import './Caesar.css'
-import { useCurrentFrame, interpolate, AbsoluteFill, Sequence } from 'remotion'
+import { useCurrentFrame, interpolate, AbsoluteFill, Sequence, useVideoConfig, getInputProps } from 'remotion'
 
-const FPS = 30
 
-function CaesarVideo({_input}) {
-
+function CaesarVideo({input}) {
+  
   const frame = useCurrentFrame()
+  
+  const {durationInFrames} = useVideoConfig()
+  const FPS = durationInFrames
+
   const opacity = interpolate(frame, [0, 0.5*FPS], [0, 1]);
   const opacityAlphabet = interpolate(frame, [0.5*FPS, 1*FPS], [0, 1]);
+  const translateAlphabet = interpolate(frame, [0.5*FPS, 1*FPS], [0, 10]);
+  const opacityAlphabetShifted = interpolate(frame, [0.5*FPS, 1*FPS], [0, 1]);
+  const translateAlphabetShifted = interpolate(frame, [0.5*FPS, 1*FPS], [0, 10]);
   const gap = interpolate(frame, [0, 0.5*FPS, 1*FPS], [0, 0, 1]);
   const shiftInputUpwards = interpolate(frame, [0, 0.5*FPS, 1*FPS], [0, 0, 50]);
 
-  const [input, setInput] = useState(_input.split(""))
+  const [inputString, setInputString] = useState(input.split(""))
   const [alphabet, setAlphabet] = useState("abcdefghijklmnopqrstuvwxyz".split(""))
+  const [alphabetShifted, setAlphabetShifted] = useState("abcdefghijklmnopqrstuvwxyz".split(""))
   
+  useEffect(() => {
+    setInputString(input.split(""))
+  }, [input])
+
   useEffect(() => {
     if (frame === 0.5*FPS- 1) {
       const letter = document.querySelectorAll('.video-letter')[0]
@@ -47,14 +58,15 @@ function CaesarVideo({_input}) {
               transform: `translateY(${-shiftInputUpwards}%)`,
             }}
           >
-            {input.map((letter, index) => (
-              <div 
+            {inputString.map((letter, index) => (
+              <div
                 className="video-letter"
                 style={{
                   color: "white",
                   border: `1px solid rgba(255, 255, 255, ${opacity})`,
-                }} 
-                key={`input-${index}`}>
+                }}
+                key={`input-${index}`}
+              >
                 {letter}
               </div>
             ))}
@@ -72,21 +84,50 @@ function CaesarVideo({_input}) {
               color: "white",
               gap: `0.5rem`,
               opacity: `${opacityAlphabet}`,
+              transform: `translateY(${-translateAlphabet}%)`,
             }}
           >
             {alphabet.map((letter, index) => (
-              <div 
+              <div
                 className="video-letter-alphabet"
                 style={{
                   color: "white",
                   border: `1px solid rgba(255, 255, 255, ${opacityAlphabet})`,
-                }} 
-                key={`alphabet-${index}`}>
+                }}
+                key={`alphabet-${index}`}
+              >
                 {letter}
               </div>
             ))}
           </div>
-
+          <div
+            style={{
+              position: "absolute",
+              fontSize: "5rem",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
+              width: "100%",
+              color: "white",
+              gap: `0.5rem`,
+              opacity: `${opacityAlphabetShifted}`,
+              transform: `translateY(${translateAlphabetShifted}%)`,
+            }}
+          >
+            {alphabetShifted.map((letter, index) => (
+              <div
+                className="video-letter-alphabet-shifted"
+                style={{
+                  color: "white",
+                  border: `1px solid rgba(255, 255, 255, ${opacityAlphabetShifted})`,
+                }}
+                key={`alphabet-${index}`}
+              >
+                {letter}
+              </div>
+            ))}
+          </div>
         </AbsoluteFill>
       </Sequence>
       <Sequence from={1 * FPS} durationInFrames={2 * FPS}>
@@ -105,7 +146,7 @@ function Caesar() {
 
   const [shift, setShift] = useState(0)
 
-  const [input, setInput] = useState('')
+  const [input, setInput] = useState('this is a very long string')
   const [output, setOutput] = useState('')
 
   useEffect(() => {
@@ -183,13 +224,13 @@ function Caesar() {
         <Player
           style={{width: '90%'}}
           component={CaesarVideo}
-          durationInFrames={1*30}
+          durationInFrames={3*30}
           compositionWidth={1280}
           compositionHeight={720}
           fps={30}
           autoPlay={true}
           controls
-          inputProps={{_input: "this is a very long word"}}
+          inputProps={{input}}
         />
       </div>
     </>
