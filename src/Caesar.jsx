@@ -9,46 +9,14 @@ const FPS = 30
 function CaesarVideo({_input}) {
 
   const frame = useCurrentFrame()
-  const opacity = interpolate(frame, [0, 0.5*FPS], [0, 1], {
-    extrapolateRight: "clamp",
-  });
-  const gap = interpolate(frame, [0, 0.5*FPS, 1*FPS], [0, 0, 1], {
-    extrapolateRight: "clamp",
-  });
+  const opacity = interpolate(frame, [0, 0.5*FPS], [0, 1]);
+  const opacityAlphabet = interpolate(frame, [0.5*FPS, 1*FPS], [0, 1]);
+  const gap = interpolate(frame, [0, 0.5*FPS, 1*FPS], [0, 0, 1]);
+  const shiftInputUpwards = interpolate(frame, [0, 0.5*FPS, 1*FPS], [0, 0, 50]);
 
-  const [alphabetStyle, setAlphabetStyle] = useState({
-    fontSize: "5rem",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100%",
-    color: "white",
-    gap: `0rem`,
-  })
-
-  const [letterStyle, setLetterStyle] = useState({
-    color: "white",
-  })
   const [input, setInput] = useState(_input.split(""))
   const [alphabet, setAlphabet] = useState("abcdefghijklmnopqrstuvwxyz".split(""))
   
-  useEffect(() => {
-    setLetterStyle((style) => {
-      return {
-        ...style,
-        border: `1px solid rgba(255, 255, 255, ${opacity})`,
-      }
-    })
-  }, [opacity])
-  useEffect(() => {
-    
-    setAlphabetStyle((style) => {
-      return {
-        ...style,
-        gap: `${gap}rem`,
-      }
-    })
-  }, [gap])
   useEffect(() => {
     if (frame === 0.5*FPS- 1) {
       const letter = document.querySelectorAll('.video-letter')[0]
@@ -56,24 +24,74 @@ function CaesarVideo({_input}) {
       letter.style.border = "2px solid red"
     }
     if (frame === 0.5*FPS) {
+
       
     }
   }, [frame])
 
   return (
     <>
-      <Sequence from={0} durationInFrames={1*FPS}>
+      <Sequence from={0} durationInFrames={1 * FPS}>
         <AbsoluteFill style={{backgroundColor: "#000"}}>
-      <div style={alphabetStyle}>
-        {input.map((letter, index) => <div className='video-letter' style={letterStyle} key={index}>{letter}</div>)}
-      </div>
+          <div
+            style={{
+              position: "absolute",
+              fontSize: "5rem",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
+              width: "100%",
+              color: "white",
+              gap: `${gap}rem`,
+              transform: `translateY(${-shiftInputUpwards}%)`,
+            }}
+          >
+            {input.map((letter, index) => (
+              <div 
+                className="video-letter"
+                style={{
+                  color: "white",
+                  border: `1px solid rgba(255, 255, 255, ${opacity})`,
+                }} 
+                key={`input-${index}`}>
+                {letter}
+              </div>
+            ))}
+          </div>
+
+          <div
+            style={{
+              position: "absolute",
+              fontSize: "5rem",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
+              width: "100%",
+              color: "white",
+              gap: `0.5rem`,
+              opacity: `${opacityAlphabet}`,
+            }}
+          >
+            {alphabet.map((letter, index) => (
+              <div 
+                className="video-letter-alphabet"
+                style={{
+                  color: "white",
+                  border: `1px solid rgba(255, 255, 255, ${opacityAlphabet})`,
+                }} 
+                key={`alphabet-${index}`}>
+                {letter}
+              </div>
+            ))}
+          </div>
+
         </AbsoluteFill>
       </Sequence>
-      <Sequence from={1*FPS} durationInFrames={2*FPS}>
+      <Sequence from={1 * FPS} durationInFrames={2 * FPS}>
         <AbsoluteFill style={{backgroundColor: "#000"}}>
-          <h1>
-            Caesar
-          </h1>
+          <h1>Caesar</h1>
         </AbsoluteFill>
       </Sequence>
     </>
