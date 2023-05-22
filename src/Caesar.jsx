@@ -12,15 +12,41 @@ function CaesarVideo({input, shift, output}) {
   const {durationInFrames} = useVideoConfig()
   const FPS = durationInFrames
 
+  const animationSteps = [
+    0,
+    0.2,
+    0.4,
+    0.5,
+    0.6,
+    0.9,
+    1
+  ]
+
+  function step(num) {
+    if (num > animationSteps.length - 1) return durationInFrames
+    return animationSteps[num] * durationInFrames
+  }
+
+  function inter(frames, values) {
+    return interpolate(frame, frames.map((f) => step(f)), values, {
+      extrapolateRight: 'clamp',
+      extrapolateLeft: 'clamp'
+    })
+  }
+
   const [queue, setQueue] = useState(new Array())
 
-  const opacity = interpolate(frame, [0, 0.5*FPS], [0, 1]);
-  const opacityAlphabet = interpolate(frame, [0.5*FPS, 1*FPS], [0, 1]);
-  const translateAlphabet = interpolate(frame, [0.5*FPS, 1*FPS], [0, 15]);
-  const opacityAlphabetShifted = interpolate(frame, [0.5*FPS, 1*FPS], [0, 1]);
-  const translateAlphabetShifted = interpolate(frame, [0.5*FPS, 1*FPS], [0, 15]);
-  const gap = interpolate(frame, [0, 0.5*FPS, 1*FPS], [0, 0, 1]);
-  const shiftInputUpwards = interpolate(frame, [0, 0.5*FPS, 1*FPS], [0, 0, 40]);
+  // Eingabe anzeigen und in Kästchen verteilen, dann nach oben schieben
+  const opacity = inter([0, 1], [0, 1]);
+  const shiftInputUpwards = inter([1, 2], [0, 40]);
+  const gap = inter([1, 2], [0, 1]);
+
+  const opacityAlphabet = inter([2, 3], [0, 1]);
+  const translateAlphabet = inter([2, 3], [0, 15]);
+  const opacityAlphabetShifted = inter([2, 3], [0, 1]);
+  const translateAlphabetShifted = inter([2, 3], [0, 15]);
+
+  const opacityOutput = inter([4, 5], [0, 1]);
 
   const [inputString, setInputString] = useState(input.split(""))
   const [alphabet, setAlphabet] = useState("abcdefghijklmnopqrstuvwxyz".split(""))
@@ -42,6 +68,37 @@ function CaesarVideo({input, shift, output}) {
       })
     })
   }
+
+  useEffect(() => {
+    setAlphabet((alphabet) => {
+      return alphabet
+    })
+  }, [])
+
+  useEffect(() => {
+    addToQueue(step(1), () => {
+      const letter = document.querySelectorAll('.video-letter')[0]
+      letter.style.color = "red"
+      letter.style.border = "2px solid red"
+    })
+    addToQueue(step(3), () => {
+      const letter = document.querySelectorAll('.video-letter')[0]
+      const alphabetIndex = letter.textContent.toLowerCase().charCodeAt(0) - "a".charCodeAt(0)
+      const alphabetLetter = document.querySelectorAll('.video-letter-alphabet')[alphabetIndex]
+      alphabetLetter.style.color = "red"
+      alphabetLetter.style.border = "2px solid red"
+    })
+    addToQueue(step(4), () => {
+      const letter = document.querySelectorAll('.video-letter')[0]
+      const alphabetIndex = (letter.textContent.toLowerCase().charCodeAt(0) - "a".charCodeAt(0) + shift + 26) % 26
+      const alphabetLetter = document.querySelectorAll('.video-letter-alphabet-shifted')[alphabetIndex]
+      alphabetLetter.style.color = "red"
+      alphabetLetter.style.border = "2px solid red"
+      addToQueue(frame + 5, (frame) => {
+      })
+    })
+  }, [])
+
   useEffect(() => {
     shiftAlphabet()
   }, [shift])
@@ -51,29 +108,6 @@ function CaesarVideo({input, shift, output}) {
   }, [input])
 
   useEffect(() => {
-    if (frame === 0.5*FPS- 1) {
-      const letter = document.querySelectorAll('.video-letter')[0]
-      letter.style.color = "red"
-      letter.style.border = "2px solid red"
-    }
-    if (frame === 0.5*FPS) {
-      const letter = document.querySelectorAll('.video-letter')[0]
-      const alphabetIndex = letter.textContent.toLowerCase().charCodeAt(0) - "a".charCodeAt(0)
-      const alphabetLetter = document.querySelectorAll('.video-letter-alphabet')[alphabetIndex]
-      alphabetLetter.style.color = "red"
-      alphabetLetter.style.border = "2px solid red"
-    }
-    if (frame === 0.5*FPS) {
-      const letter = document.querySelectorAll('.video-letter')[0]
-      const alphabetIndex = (letter.textContent.toLowerCase().charCodeAt(0) - "a".charCodeAt(0) + shift + 26) % 26
-      const alphabetLetter = document.querySelectorAll('.video-letter-alphabet-shifted')[alphabetIndex]
-      alphabetLetter.style.color = "red"
-      alphabetLetter.style.border = "2px solid red"
-      addToQueue(frame + 5, (frame) => {
-        console.log("frame", frame)
-      })
-    }
-
     queue.forEach((item) => {
       if (item.frame === frame) {
         item.callback(frame)
@@ -152,6 +186,7 @@ function CaesarVideo({input, shift, output}) {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            opacity: '0'
           }}>+ {shift}</div>
 
           <div
@@ -200,8 +235,8 @@ function CaesarVideo({input, shift, output}) {
               <div
                 className="video-letter"
                 style={{
-                  color: "white",
-                  border: `1px solid rgba(255, 255, 255, 1)`,
+                  color: `rgba(255, 255, 255, ${opacityOutput}`,
+                  border: `1px solid rgba(255, 255, 255, ${opacityOutput})`,
                 }}
                 key={`output-${index}`}
               >
