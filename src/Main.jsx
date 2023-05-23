@@ -36,8 +36,8 @@ function Main() {
       </div>
 
       <div className='footer'>
-        <button onClick={prevChapter}>Zurück</button>
-        <button onClick={nextChapter}>Weiter</button>
+        <button id='btn-prev' onClick={prevChapter}>Zurück</button>
+        <button id='btn-next' onClick={nextChapter}>Weiter</button>
       </div>
     </main>
   )

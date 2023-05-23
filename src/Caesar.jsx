@@ -3,14 +3,14 @@ import { useState } from 'react'
 import { Player } from '@remotion/player'
 import './Caesar.css'
 import { useCurrentFrame, interpolate, AbsoluteFill, Sequence, useVideoConfig, getInputProps } from 'remotion'
-import Xarrow from 'react-xarrows'
 
 function LetterList({letters, gap, shiftInputUpwards, opacity, type, myClass}) {
+
   return (
     <div
       style={{
         position: "absolute",
-        fontSize: "5rem",
+        fontSize: "2rem",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -25,6 +25,13 @@ function LetterList({letters, gap, shiftInputUpwards, opacity, type, myClass}) {
         <div
           className={myClass}
           style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: "2rem",
+            maxHeight: "2rem",
+            minWidth: "2rem",
+            maxWidth: "2rem",
             color: `rgba(255, 255, 255, ${opacity}`,
             border: `1px solid rgba(255, 255, 255, ${opacity})`,
           }}
@@ -38,6 +45,26 @@ function LetterList({letters, gap, shiftInputUpwards, opacity, type, myClass}) {
   )
 }
 
+function ShiftAmount({shift, opacity}) {
+  return (
+    <div
+      style={{
+        color: "white",
+        fontSize: "4rem",
+        position: "absolute",
+        height: "100%",
+        width: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        opacity: `${opacity}`,
+      }}
+    >
+      + {shift}
+    </div>
+  )
+}
+
 
 function CaesarVideo({input, shift, output}) {
   
@@ -47,18 +74,61 @@ function CaesarVideo({input, shift, output}) {
   const FPS = durationInFrames
 
   const animationSteps = [
-    0,
+    0,        // 
+    0.025,    // 1: Fade in
+    0.05,     // 2: Move up
+    0.075,    // 3: Fade an shift alphabets
+    0.1,      // 4: show shift
+
+    0.125,
+    0.15,
+    0.175,
     0.2,
+
+    0.225,
+    0.25,
+    0.275,
+    0.3,
+
+    0.325,
+    0.35,
+    0.375,
     0.4,
+
+    0.425,
+    0.45,
+    0.475,
     0.5,
+
+    0.525,
+    0.55,
+    0.575,
     0.6,
+
+    0.625,
+    0.65,
+    0.675,
+    0.7,
+
+    0.725,
+    0.75,
+    0.775,
+    0.8,
+
+    0.825,
+    0.85,
+    0.875,
     0.9,
-    1
+
+    0.925,
+    0.95,
+    0.975,
+    1         //
   ]
 
   function step(num) {
     if (num > animationSteps.length - 1) return durationInFrames
-    return animationSteps[num] * durationInFrames
+    return Math.floor(animationSteps[num] * durationInFrames)
   }
 
   function inter(frames, values) {
@@ -79,6 +149,8 @@ function CaesarVideo({input, shift, output}) {
   const translateAlphabet = inter([2, 3], [0, 15]);
   const opacityAlphabetShifted = inter([2, 3], [0, 1]);
   const translateAlphabetShifted = inter([2, 3], [0, 15]);
+
+  const opacityShift = inter([3, 4], [0, 1]);
 
   const opacityOutput = inter([4, 5], [0, 1]);
 
@@ -112,31 +184,58 @@ function CaesarVideo({input, shift, output}) {
   }, [])
 
   useEffect(() => {
-    addToQueue(step(1), () => {
-      const letter = document.querySelectorAll('.video-letter')[0]
-      letter.style.color = "red"
-      letter.style.border = "2px solid red"
-    })
-    addToQueue(step(3), () => {
-      const letter = document.querySelectorAll('.video-letter')[0]
-      const alphabetIndex = letter.textContent.toLowerCase().charCodeAt(0) - "a".charCodeAt(0)
-      const alphabetLetter = document.querySelectorAll('.video-letter-alphabet')[alphabetIndex]
-      alphabetLetter.style.color = "red"
-      alphabetLetter.style.border = "2px solid red"
-    })
-    addToQueue(step(2), () => {
-      const letter = document.querySelectorAll('.video-letter')[0]
-      const alphabetIndex = (letter.textContent.toLowerCase().charCodeAt(0) - "a".charCodeAt(0) + shift + 26) % 26
-      const alphabetIndexFrom = (letter.textContent.toLowerCase().charCodeAt(0) - "a".charCodeAt(0))
-      const alphabetLetter = document.querySelectorAll('.video-letter-alphabet-shifted')[alphabetIndex]
-      alphabetLetter.style.color = "red"
-      alphabetLetter.style.border = "2px solid red"
-      setArrows((arrows) => {
-        return [...arrows, {from: `alphabet-${alphabetIndexFrom}`, to: `alphabet-shifted-${alphabetIndex}`}]
+    const base = 4
+    const numSteps = 4
+    for (let i = 0; i < inputString.length; i++) {
+      
+      // Mark the first letter in the word
+      addToQueue(step(base + i*numSteps + 2), () => {
+        if (i > 0) {
+          // cleanup from last iteration
+          const letter = document.querySelectorAll('.video-letter')[i-1]
+          letter.style.color = "white"
+          letter.style.border = "1px solid white"
+          const alphabetIndex = letter.textContent.toLowerCase().charCodeAt(0) - "a".charCodeAt(0)
+          const alphabetLetter = document.querySelectorAll('.video-letter-alphabet')[alphabetIndex]
+          alphabetLetter.style.color = "white"
+          alphabetLetter.style.border = "1px solid white"
+          const alphabetLetterShifted = document.querySelectorAll('.video-letter-alphabet-shifted')[alphabetIndex]
+          alphabetLetterShifted.style.color = "white"
+          alphabetLetterShifted.style.border = "1px solid white"
+          const outLetter = document.querySelectorAll('.output-letter')[i-1]
+          outLetter.style.color = "white"
+          outLetter.style.border = "1px solid white"
+        }
+        const letter = document.querySelectorAll('.video-letter')[i]
+        letter.style.color = "red"
+        letter.style.border = "2px solid red"
       })
-      addToQueue(frame + 5, (frame) => {
+
+      // Mark this letter in the alphabet
+      addToQueue(step(base + i*numSteps + 3), () => {
+        const letter = document.querySelectorAll('.video-letter')[i]
+        const alphabetIndex = letter.textContent.toLowerCase().charCodeAt(0) - "a".charCodeAt(0)
+        const alphabetLetter = document.querySelectorAll('.video-letter-alphabet')[alphabetIndex]
+        alphabetLetter.style.color = "red"
+        alphabetLetter.style.border = "2px solid red"
       })
-    })
+
+      // Mark this letter in the shifted alphabet
+      addToQueue(step(base + i*numSteps + 4), () => {
+        const letter = document.querySelectorAll('.video-letter')[i]
+        const alphabetIndex = (letter.textContent.toLowerCase().charCodeAt(0) - "a".charCodeAt(0))
+        const alphabetLetter = document.querySelectorAll('.video-letter-alphabet-shifted')[alphabetIndex]
+        alphabetLetter.style.color = "red"
+        alphabetLetter.style.border = "2px solid red"
+      })
+
+      // Mark this letter in the output
+      addToQueue(step(base + i*numSteps + 5), () => {
+        const letter = document.querySelectorAll('.output-letter')[i]
+        letter.style.color = "red"
+        letter.style.border = "2px solid red"
+      })
+    }
   }, [])
   
   useEffect(() => {
@@ -164,23 +263,10 @@ function CaesarVideo({input, shift, output}) {
           <LetterList myClass="video-letter" type="input" letters={inputString} gap={gap} opacity={opacity} shiftInputUpwards={shiftInputUpwards} />
           <LetterList myClass="video-letter-alphabet" type="alphabet" letters={alphabet} gap={0.5} opacity={opacityAlphabet} shiftInputUpwards={translateAlphabet} />
           <LetterList myClass="video-letter-alphabet-shifted" type="alphabet-shifted" letters={alphabetShifted} gap={0.5} opacity={opacityAlphabetShifted} shiftInputUpwards={-translateAlphabetShifted} />
-          <LetterList myClass="output-letter" type="output-letter" letters={output.split("")} gap={0.5} opacity={opacityOutput} shiftInputUpwards={-30} />
+          <LetterList myClass="output-letter" type="output-letter" letters={output.split("")} gap={0.5} opacity={0} shiftInputUpwards={-30} />
 
-          <div style={{
-            color: "white",
-            fontSize: "5rem",
-            position: "absolute",
-            height: "100%",
-            width: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            opacity: '0'
-          }}>+ {shift}</div>
+          <ShiftAmount shift={shift} opacity={opacityShift} />
           
-          {arrows.map((arrow, index) => (
-            <Xarrow start={arrow.from} end={arrow.to} key={`arrow-${index}`} id={`arrow-${index}`}/>)
-          )}
         </AbsoluteFill>
       </Sequence>
       <Sequence from={1 * FPS} durationInFrames={2 * FPS}>
@@ -199,7 +285,7 @@ function Caesar() {
 
   const [shift, setShift] = useState(18)
 
-  const [input, setInput] = useState('this is a very long string')
+  const [input, setInput] = useState('thisisaverysecuremessage')
   const [output, setOutput] = useState('')
 
   useEffect(() => {
@@ -248,12 +334,6 @@ function Caesar() {
         <button onClick={() => setShift(0)}>Reset</button>
         <button onClick={() => setShift((shift) => (shift + 1) % 26)}>+1</button>
       </div>
-      <div className="alphabet">
-        {alphabet.map((letter, index) => <div className="letter" key={index}>{letter}</div>)}
-      </div>
-      <div className="alphabet">
-        {alphabetShifted.map((letter, index) => <div className="letter" key={index}>{letter}</div>)}
-      </div>
 
       <div className='input-area'>
         <label htmlFor="clear-text-field">Eingabe:</label>
@@ -264,20 +344,12 @@ function Caesar() {
           id="clear-text-field" />
       </div>
 
-      <div className='output-area'>
-        <label htmlFor="output-text-field">Ausgabe:</label>
-        <input 
-          onChange={(e) => setOutput(e.target.value)}
-          type="text"
-          value={output}
-          id="output-text-field" />
-      </div>
 
       <div className="video-container">
         <Player
           style={{width: '90%'}}
           component={CaesarVideo}
-          durationInFrames={3*30}
+          durationInFrames={6*30}
           compositionWidth={1280}
           compositionHeight={720}
           fps={30}
@@ -285,6 +357,14 @@ function Caesar() {
           controls
           inputProps={{input, shift, output}}
         />
+      </div>
+      <div className='output-area'>
+        <label htmlFor="output-text-field">Ausgabe:</label>
+        <input 
+          onChange={(e) => setOutput(e.target.value)}
+          type="text"
+          value={output}
+          id="output-text-field" />
       </div>
     </>
   )
