@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Player } from '@remotion/player'
 import './Caesar.css'
 import { useCurrentFrame, interpolate, AbsoluteFill, Sequence, useVideoConfig, getInputProps } from 'remotion'
+import Xarrow from 'react-xarrows'
 
 
 function CaesarVideo({input, shift, output}) {
@@ -51,6 +52,8 @@ function CaesarVideo({input, shift, output}) {
   const [inputString, setInputString] = useState(input.split(""))
   const [alphabet, setAlphabet] = useState("abcdefghijklmnopqrstuvwxyz".split(""))
   const [alphabetShifted, setAlphabetShifted] = useState("abcdefghijklmnopqrstuvwxyz".split(""))
+
+  const [arrows, setArrows] = useState([])
   
   function shiftAlphabet() {
     setAlphabetShifted(alphabetShifted => {
@@ -88,26 +91,31 @@ function CaesarVideo({input, shift, output}) {
       alphabetLetter.style.color = "red"
       alphabetLetter.style.border = "2px solid red"
     })
-    addToQueue(step(4), () => {
+    addToQueue(step(2), () => {
       const letter = document.querySelectorAll('.video-letter')[0]
       const alphabetIndex = (letter.textContent.toLowerCase().charCodeAt(0) - "a".charCodeAt(0) + shift + 26) % 26
+      const alphabetIndexFrom = (letter.textContent.toLowerCase().charCodeAt(0) - "a".charCodeAt(0))
       const alphabetLetter = document.querySelectorAll('.video-letter-alphabet-shifted')[alphabetIndex]
       alphabetLetter.style.color = "red"
       alphabetLetter.style.border = "2px solid red"
+      setArrows((arrows) => {
+        return [...arrows, {from: `alphabet-${alphabetIndexFrom}`, to: `alphabet-shifted-${alphabetIndex}`}]
+      })
       addToQueue(frame + 5, (frame) => {
       })
     })
   }, [])
-
+  
   useEffect(() => {
     shiftAlphabet()
   }, [shift])
-
+  
   useEffect(() => {
     setInputString(input.split(""))
   }, [input])
-
+  
   useEffect(() => {
+    console.log(arrows)
     queue.forEach((item) => {
       if (item.frame === frame) {
         item.callback(frame)
@@ -115,7 +123,7 @@ function CaesarVideo({input, shift, output}) {
       }
     })
   }, [frame])
-
+  
   return (
     <>
       <Sequence from={0} durationInFrames={1 * FPS}>
@@ -142,6 +150,7 @@ function CaesarVideo({input, shift, output}) {
                   border: `1px solid rgba(255, 255, 255, ${opacity})`,
                 }}
                 key={`input-${index}`}
+                id={`input-${index}`}
               >
                 {letter}
               </div>
@@ -171,6 +180,7 @@ function CaesarVideo({input, shift, output}) {
                   border: `1px solid rgba(255, 255, 255, ${opacityAlphabet})`,
                 }}
                 key={`alphabet-${index}`}
+                id={`alphabet-${index}`}
               >
                 {letter}
               </div>
@@ -211,7 +221,8 @@ function CaesarVideo({input, shift, output}) {
                   color: "white",
                   border: `1px solid rgba(255, 255, 255, ${opacityAlphabetShifted})`,
                 }}
-                key={`alphabet-${index}`}
+                key={`alphabet-shifted-${index}`}
+                id={`alphabet-shifted-${index}`}
               >
                 {letter}
               </div>
@@ -239,11 +250,15 @@ function CaesarVideo({input, shift, output}) {
                   border: `1px solid rgba(255, 255, 255, ${opacityOutput})`,
                 }}
                 key={`output-${index}`}
+                id={`output-${index}`}
               >
                 {letter}
               </div>
             ))}
           </div>
+          {arrows.map((arrow, index) => (
+            <Xarrow start={arrow.from} end={arrow.to} key={`arrow-${index}`} id={`arrow-${index}`}/>)
+          )}
         </AbsoluteFill>
       </Sequence>
       <Sequence from={1 * FPS} durationInFrames={2 * FPS}>
