@@ -1,8 +1,10 @@
 import { useEffect } from 'react'
-import { useState } from 'react'
+import { useState, createContext, useContext } from 'react'
 import { Player } from '@remotion/player'
 import './Caesar.css'
 import { useCurrentFrame, interpolate, AbsoluteFill, Sequence, useVideoConfig, getInputProps } from 'remotion'
+
+export const CaesarContext = createContext(null)
 
 function LetterList({letters, gap, shiftInputUpwards, opacity, type, myClass}) {
 
@@ -45,7 +47,8 @@ function LetterList({letters, gap, shiftInputUpwards, opacity, type, myClass}) {
   )
 }
 
-function ShiftAmount({shift, opacity}) {
+function ShiftAmount({opacity}) {
+  const caesarContext = useContext(CaesarContext)
   return (
     <div
       style={{
@@ -60,15 +63,17 @@ function ShiftAmount({shift, opacity}) {
         opacity: `${opacity}`,
       }}
     >
-      + {shift}
+      + {caesarContext.shift}
     </div>
   )
 }
 
 
-function CaesarVideo({input, shift, output}) {
+function CaesarVideo() {
   
   const frame = useCurrentFrame()
+
+  const caesarContext = useContext(CaesarContext)
   
   const {durationInFrames} = useVideoConfig()
   const FPS = durationInFrames
@@ -154,7 +159,7 @@ function CaesarVideo({input, shift, output}) {
 
   const opacityOutput = inter([4, 5], [0, 1]);
 
-  const [inputString, setInputString] = useState(input.split(""))
+  const [inputString, setInputString] = useState(caesarContext.input.split(""))
   const [alphabet, setAlphabet] = useState("abcdefghijklmnopqrstuvwxyz".split(""))
   const [alphabetShifted, setAlphabetShifted] = useState("abcdefghijklmnopqrstuvwxyz".split(""))
 
@@ -163,7 +168,7 @@ function CaesarVideo({input, shift, output}) {
   function shiftAlphabet() {
     setAlphabetShifted(alphabetShifted => {
       return alphabetShifted.map((_, index) => {
-        return alphabet[(index + shift + 26) % 26]
+        return alphabet[(index + caesarContext.shift + 26) % 26]
       })
     })
   }
@@ -240,11 +245,11 @@ function CaesarVideo({input, shift, output}) {
   
   useEffect(() => {
     shiftAlphabet()
-  }, [shift])
+  }, [caesarContext.shift])
   
   useEffect(() => {
-    setInputString(input.split(""))
-  }, [input])
+    setInputString(caesarContext.input.split(""))
+  }, [caesarContext.input])
   
   useEffect(() => {
     console.log(arrows)
@@ -263,9 +268,9 @@ function CaesarVideo({input, shift, output}) {
           <LetterList myClass="video-letter" type="input" letters={inputString} gap={gap} opacity={opacity} shiftInputUpwards={shiftInputUpwards} />
           <LetterList myClass="video-letter-alphabet" type="alphabet" letters={alphabet} gap={0.5} opacity={opacityAlphabet} shiftInputUpwards={translateAlphabet} />
           <LetterList myClass="video-letter-alphabet-shifted" type="alphabet-shifted" letters={alphabetShifted} gap={0.5} opacity={opacityAlphabetShifted} shiftInputUpwards={-translateAlphabetShifted} />
-          <LetterList myClass="output-letter" type="output-letter" letters={output.split("")} gap={0.5} opacity={0} shiftInputUpwards={-30} />
+          <LetterList myClass="output-letter" type="output-letter" letters={caesarContext.output.split("")} gap={0.5} opacity={0} shiftInputUpwards={-30} />
 
-          <ShiftAmount shift={shift} opacity={opacityShift} />
+          <ShiftAmount opacity={opacityShift} />
           
         </AbsoluteFill>
       </Sequence>
@@ -326,46 +331,40 @@ function Caesar() {
 
   return (
     <>
-      <div>Caesar mit Verschiebung: 
-        <input type="number" onChange={(e) => setShift(e.target.value)} value={shift}/>
-      </div>
-      <div className="controls">
-        <button onClick={() => setShift((shift) => (shift - 1) % 26)}>-1</button>
-        <button onClick={() => setShift(0)}>Reset</button>
-        <button onClick={() => setShift((shift) => (shift + 1) % 26)}>+1</button>
-      </div>
+      <CaesarContext.Provider value={{input, shift, output}}>
+        <div>
+          Caesar mit Verschiebung:
+          <input type="number" onChange={e => setShift(e.target.value)} value={shift} />
+        </div>
+        <div className="controls">
+          <button onClick={() => setShift(shift => (shift - 1) % 26)}>-1</button>
+          <button onClick={() => setShift(0)}>Reset</button>
+          <button onClick={() => setShift(shift => (shift + 1) % 26)}>+1</button>
+        </div>
 
-      <div className='input-area'>
-        <label htmlFor="clear-text-field">Eingabe:</label>
-        <input 
-          onChange={(e) => setInput(e.target.value)}
-          type="text"
-          value={input}
-          id="clear-text-field" />
-      </div>
+        <div className="input-area">
+          <label htmlFor="clear-text-field">Eingabe:</label>
+          <input onChange={e => setInput(e.target.value)} type="text" value={input} id="clear-text-field" />
+        </div>
 
-
-      <div className="video-container">
-        <Player
-          style={{width: '90%'}}
-          component={CaesarVideo}
-          durationInFrames={6*30}
-          compositionWidth={1280}
-          compositionHeight={720}
-          fps={30}
-          autoPlay={true}
-          controls
-          inputProps={{input, shift, output}}
-        />
-      </div>
-      <div className='output-area'>
-        <label htmlFor="output-text-field">Ausgabe:</label>
-        <input 
-          onChange={(e) => setOutput(e.target.value)}
-          type="text"
-          value={output}
-          id="output-text-field" />
-      </div>
+        <div className="video-container">
+          <Player
+            style={{width: "90%"}}
+            component={CaesarVideo}
+            durationInFrames={6 * 30}
+            compositionWidth={1280}
+            compositionHeight={720}
+            fps={30}
+            autoPlay={true}
+            controls
+            inputProps={{shift, output}}
+          />
+        </div>
+        <div className="output-area">
+          <label htmlFor="output-text-field">Ausgabe:</label>
+          <input onChange={e => setOutput(e.target.value)} type="text" value={output} id="output-text-field" />
+        </div>
+      </CaesarContext.Provider>
     </>
   )
 }
