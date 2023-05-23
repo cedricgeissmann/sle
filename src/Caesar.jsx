@@ -5,6 +5,39 @@ import './Caesar.css'
 import { useCurrentFrame, interpolate, AbsoluteFill, Sequence, useVideoConfig, getInputProps } from 'remotion'
 import Xarrow from 'react-xarrows'
 
+function LetterList({letters, gap, shiftInputUpwards, opacity, type, myClass}) {
+  return (
+    <div
+      style={{
+        position: "absolute",
+        fontSize: "5rem",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100%",
+        width: "100%",
+        color: "white",
+        gap: `${gap}rem`,
+        transform: `translateY(${-shiftInputUpwards}%)`,
+      }}
+    >
+      {letters.map((letter, index) => (
+        <div
+          className={myClass}
+          style={{
+            color: `rgba(255, 255, 255, ${opacity}`,
+            border: `1px solid rgba(255, 255, 255, ${opacity})`,
+          }}
+          key={`${type}-${index}`}
+          id={`${type}-${index}`}
+        >
+          {letter}
+        </div>
+      ))}
+    </div>
+  )
+}
+
 
 function CaesarVideo({input, shift, output}) {
   
@@ -128,64 +161,10 @@ function CaesarVideo({input, shift, output}) {
     <>
       <Sequence from={0} durationInFrames={1 * FPS}>
         <AbsoluteFill style={{backgroundColor: "#000"}}>
-          <div
-            style={{
-              position: "absolute",
-              fontSize: "5rem",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "100%",
-              width: "100%",
-              color: "white",
-              gap: `${gap}rem`,
-              transform: `translateY(${-shiftInputUpwards}%)`,
-            }}
-          >
-            {inputString.map((letter, index) => (
-              <div
-                className="video-letter"
-                style={{
-                  color: "white",
-                  border: `1px solid rgba(255, 255, 255, ${opacity})`,
-                }}
-                key={`input-${index}`}
-                id={`input-${index}`}
-              >
-                {letter}
-              </div>
-            ))}
-          </div>
-
-          <div
-            style={{
-              position: "absolute",
-              fontSize: "5rem",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "100%",
-              width: "100%",
-              color: "white",
-              gap: `0.5rem`,
-              opacity: `${opacityAlphabet}`,
-              transform: `translateY(${-translateAlphabet}%)`,
-            }}
-          >
-            {alphabet.map((letter, index) => (
-              <div
-                className="video-letter-alphabet"
-                style={{
-                  color: "white",
-                  border: `1px solid rgba(255, 255, 255, ${opacityAlphabet})`,
-                }}
-                key={`alphabet-${index}`}
-                id={`alphabet-${index}`}
-              >
-                {letter}
-              </div>
-            ))}
-          </div>
+          <LetterList myClass="video-letter" type="input" letters={inputString} gap={gap} opacity={opacity} shiftInputUpwards={shiftInputUpwards} />
+          <LetterList myClass="video-letter-alphabet" type="alphabet" letters={alphabet} gap={0.5} opacity={opacityAlphabet} shiftInputUpwards={translateAlphabet} />
+          <LetterList myClass="video-letter-alphabet-shifted" type="alphabet-shifted" letters={alphabetShifted} gap={0.5} opacity={opacityAlphabetShifted} shiftInputUpwards={-translateAlphabetShifted} />
+          <LetterList myClass="output-letter" type="output-letter" letters={output.split("")} gap={0.5} opacity={opacityOutput} shiftInputUpwards={-30} />
 
           <div style={{
             color: "white",
@@ -198,64 +177,7 @@ function CaesarVideo({input, shift, output}) {
             alignItems: "center",
             opacity: '0'
           }}>+ {shift}</div>
-
-          <div
-            style={{
-              position: "absolute",
-              fontSize: "5rem",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "100%",
-              width: "100%",
-              color: "white",
-              gap: `0.5rem`,
-              opacity: `${opacityAlphabetShifted}`,
-              transform: `translateY(${translateAlphabetShifted}%)`,
-            }}
-          >
-            {alphabetShifted.map((letter, index) => (
-              <div
-                className="video-letter-alphabet-shifted"
-                style={{
-                  color: "white",
-                  border: `1px solid rgba(255, 255, 255, ${opacityAlphabetShifted})`,
-                }}
-                key={`alphabet-shifted-${index}`}
-                id={`alphabet-shifted-${index}`}
-              >
-                {letter}
-              </div>
-            ))}
-          </div>
-          <div
-            style={{
-              position: "absolute",
-              fontSize: "5rem",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "100%",
-              width: "100%",
-              color: "white",
-              gap: `1rem`,
-              transform: `translateY(30%)`,
-            }}
-          >
-            {output.split("").map((letter, index) => (
-              <div
-                className="video-letter"
-                style={{
-                  color: `rgba(255, 255, 255, ${opacityOutput}`,
-                  border: `1px solid rgba(255, 255, 255, ${opacityOutput})`,
-                }}
-                key={`output-${index}`}
-                id={`output-${index}`}
-              >
-                {letter}
-              </div>
-            ))}
-          </div>
+          
           {arrows.map((arrow, index) => (
             <Xarrow start={arrow.from} end={arrow.to} key={`arrow-${index}`} id={`arrow-${index}`}/>)
           )}
