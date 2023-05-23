@@ -68,6 +68,90 @@ function ShiftAmount({opacity}) {
   )
 }
 
+function IntroSequence() {
+  const caesarContext = useContext(CaesarContext)
+  const [inputString, setInputString] = useState(caesarContext.input.split(""))
+  const frame = useCurrentFrame()
+  
+  const opacity = inter(frame, [0, 1], [0, 1]);
+  const shiftInputUpwards = inter(frame, [1, 2], [0, 40]);
+  const gap = inter(frame, [1, 2], [0, 1]);
+
+  const opacityAlphabet = inter(frame, [2, 3], [0, 1]);
+  const translateAlphabet = inter(frame, [2, 3], [0, 15]);
+  const opacityAlphabetShifted = inter(frame, [2, 3], [0, 1]);
+  const translateAlphabetShifted = inter(frame, [2, 3], [0, 15]);
+
+  const opacityShift = inter(frame, [3, 4], [0, 1]);
+
+  const [alphabet, setAlphabet] = useState("abcdefghijklmnopqrstuvwxyz".split(""))
+  const [alphabetShifted, setAlphabetShifted] = useState("abcdefghijklmnopqrstuvwxyz".split(""))
+  return (
+      <Sequence from={0} durationInFrames={2 * 30}>
+        <AbsoluteFill style={{backgroundColor: "#000"}}>
+          <LetterList myClass="video-letter" type="input" letters={inputString} gap={gap} opacity={opacity} shiftInputUpwards={shiftInputUpwards} />
+          <LetterList myClass="video-letter-alphabet" type="alphabet" letters={alphabet} gap={0.5} opacity={opacityAlphabet} shiftInputUpwards={translateAlphabet} />
+          <LetterList myClass="video-letter-alphabet-shifted" type="alphabet-shifted" letters={alphabetShifted} gap={0.5} opacity={opacityAlphabetShifted} shiftInputUpwards={-translateAlphabetShifted} />
+          <LetterList myClass="output-letter" type="output-letter" letters={caesarContext.output.split("")} gap={0.5} opacity={0} shiftInputUpwards={-30} />
+          <ShiftAmount opacity={opacityShift} />
+        </AbsoluteFill>
+      </Sequence>
+  )
+}
+
+function MidSequence() {
+  const caesarContext = useContext(CaesarContext)
+  const [inputString, setInputString] = useState(caesarContext.input.split(""))
+  const frame = useCurrentFrame()
+  const [alphabet, setAlphabet] = useState("abcdefghijklmnopqrstuvwxyz".split(""))
+  const [alphabetShifted, setAlphabetShifted] = useState("abcdefghijklmnopqrstuvwxyz".split(""))
+  return (
+    <Sequence from={2 * 30} durationInFrames={6 * 30}>
+      <AbsoluteFill style={{backgroundColor: "#000"}}>
+        <LetterList
+          myClass="video-letter"
+          type="input"
+          letters={inputString}
+          gap={1}
+          opacity={1}
+          shiftInputUpwards={40}
+        />
+        <LetterList
+          myClass="video-letter-alphabet"
+          type="alphabet"
+          letters={alphabet}
+          gap={0.5}
+          opacity={1}
+          shiftInputUpwards={15}
+        />
+        <LetterList
+          myClass="video-letter-alphabet-shifted"
+          type="alphabet-shifted"
+          letters={alphabetShifted}
+          gap={0.5}
+          opacity={1}
+          shiftInputUpwards={-15}
+        />
+        <LetterList
+          myClass="output-letter"
+          type="output-letter"
+          letters={caesarContext.output.split("")}
+          gap={0.5}
+          opacity={0}
+          shiftInputUpwards={-30}
+        />
+        <ShiftAmount opacity={1} />
+      </AbsoluteFill>
+    </Sequence>
+  )
+}
+
+function inter(frame, frames, values) {
+  return interpolate(frame, frames.map((f) => f * 15), values, {
+    extrapolateRight: 'clamp',
+    extrapolateLeft: 'clamp'
+  })
+}
 
 function CaesarVideo() {
   
@@ -76,94 +160,13 @@ function CaesarVideo() {
   const caesarContext = useContext(CaesarContext)
   
   const {durationInFrames} = useVideoConfig()
-  const FPS = durationInFrames
-
-  const animationSteps = [
-    0,        // 
-    0.025,    // 1: Fade in
-    0.05,     // 2: Move up
-    0.075,    // 3: Fade an shift alphabets
-    0.1,      // 4: show shift
-
-    0.125,
-    0.15,
-    0.175,
-    0.2,
-
-    0.225,
-    0.25,
-    0.275,
-    0.3,
-
-    0.325,
-    0.35,
-    0.375,
-    0.4,
-
-    0.425,
-    0.45,
-    0.475,
-    0.5,
-
-    0.525,
-    0.55,
-    0.575,
-    0.6,
-
-    0.625,
-    0.65,
-    0.675,
-    0.7,
-
-    0.725,
-    0.75,
-    0.775,
-    0.8,
-
-    0.825,
-    0.85,
-    0.875,
-    0.9,
-
-    0.925,
-    0.95,
-    0.975,
-    1         //
-  ]
-
-  function step(num) {
-    if (num > animationSteps.length - 1) return durationInFrames
-    return Math.floor(animationSteps[num] * durationInFrames)
-  }
-
-  function inter(frames, values) {
-    return interpolate(frame, frames.map((f) => step(f)), values, {
-      extrapolateRight: 'clamp',
-      extrapolateLeft: 'clamp'
-    })
-  }
 
   const [queue, setQueue] = useState(new Array())
-
-  // Eingabe anzeigen und in Kästchen verteilen, dann nach oben schieben
-  const opacity = inter([0, 1], [0, 1]);
-  const shiftInputUpwards = inter([1, 2], [0, 40]);
-  const gap = inter([1, 2], [0, 1]);
-
-  const opacityAlphabet = inter([2, 3], [0, 1]);
-  const translateAlphabet = inter([2, 3], [0, 15]);
-  const opacityAlphabetShifted = inter([2, 3], [0, 1]);
-  const translateAlphabetShifted = inter([2, 3], [0, 15]);
-
-  const opacityShift = inter([3, 4], [0, 1]);
-
-  const opacityOutput = inter([4, 5], [0, 1]);
 
   const [inputString, setInputString] = useState(caesarContext.input.split(""))
   const [alphabet, setAlphabet] = useState("abcdefghijklmnopqrstuvwxyz".split(""))
   const [alphabetShifted, setAlphabetShifted] = useState("abcdefghijklmnopqrstuvwxyz".split(""))
 
-  const [arrows, setArrows] = useState([])
   
   function shiftAlphabet() {
     setAlphabetShifted(alphabetShifted => {
@@ -188,60 +191,60 @@ function CaesarVideo() {
     })
   }, [])
 
-  useEffect(() => {
-    const base = 4
-    const numSteps = 4
-    for (let i = 0; i < inputString.length; i++) {
+  // useEffect(() => {
+  //   const base = 4
+  //   const numSteps = 4
+  //   for (let i = 0; i < inputString.length; i++) {
       
-      // Mark the first letter in the word
-      addToQueue(step(base + i*numSteps + 2), () => {
-        if (i > 0) {
-          // cleanup from last iteration
-          const letter = document.querySelectorAll('.video-letter')[i-1]
-          letter.style.color = "white"
-          letter.style.border = "1px solid white"
-          const alphabetIndex = letter.textContent.toLowerCase().charCodeAt(0) - "a".charCodeAt(0)
-          const alphabetLetter = document.querySelectorAll('.video-letter-alphabet')[alphabetIndex]
-          alphabetLetter.style.color = "white"
-          alphabetLetter.style.border = "1px solid white"
-          const alphabetLetterShifted = document.querySelectorAll('.video-letter-alphabet-shifted')[alphabetIndex]
-          alphabetLetterShifted.style.color = "white"
-          alphabetLetterShifted.style.border = "1px solid white"
-          const outLetter = document.querySelectorAll('.output-letter')[i-1]
-          outLetter.style.color = "white"
-          outLetter.style.border = "1px solid white"
-        }
-        const letter = document.querySelectorAll('.video-letter')[i]
-        letter.style.color = "red"
-        letter.style.border = "2px solid red"
-      })
+  //     // Mark the first letter in the word
+  //     addToQueue(step(base + i*numSteps + 2), () => {
+  //       if (i > 0) {
+  //         // cleanup from last iteration
+  //         const letter = document.querySelectorAll('.video-letter')[i-1]
+  //         letter.style.color = "white"
+  //         letter.style.border = "1px solid white"
+  //         const alphabetIndex = letter.textContent.toLowerCase().charCodeAt(0) - "a".charCodeAt(0)
+  //         const alphabetLetter = document.querySelectorAll('.video-letter-alphabet')[alphabetIndex]
+  //         alphabetLetter.style.color = "white"
+  //         alphabetLetter.style.border = "1px solid white"
+  //         const alphabetLetterShifted = document.querySelectorAll('.video-letter-alphabet-shifted')[alphabetIndex]
+  //         alphabetLetterShifted.style.color = "white"
+  //         alphabetLetterShifted.style.border = "1px solid white"
+  //         const outLetter = document.querySelectorAll('.output-letter')[i-1]
+  //         outLetter.style.color = "white"
+  //         outLetter.style.border = "1px solid white"
+  //       }
+  //       const letter = document.querySelectorAll('.video-letter')[i]
+  //       letter.style.color = "red"
+  //       letter.style.border = "2px solid red"
+  //     })
 
-      // Mark this letter in the alphabet
-      addToQueue(step(base + i*numSteps + 3), () => {
-        const letter = document.querySelectorAll('.video-letter')[i]
-        const alphabetIndex = letter.textContent.toLowerCase().charCodeAt(0) - "a".charCodeAt(0)
-        const alphabetLetter = document.querySelectorAll('.video-letter-alphabet')[alphabetIndex]
-        alphabetLetter.style.color = "red"
-        alphabetLetter.style.border = "2px solid red"
-      })
+  //     // Mark this letter in the alphabet
+  //     addToQueue(step(base + i*numSteps + 3), () => {
+  //       const letter = document.querySelectorAll('.video-letter')[i]
+  //       const alphabetIndex = letter.textContent.toLowerCase().charCodeAt(0) - "a".charCodeAt(0)
+  //       const alphabetLetter = document.querySelectorAll('.video-letter-alphabet')[alphabetIndex]
+  //       alphabetLetter.style.color = "red"
+  //       alphabetLetter.style.border = "2px solid red"
+  //     })
 
-      // Mark this letter in the shifted alphabet
-      addToQueue(step(base + i*numSteps + 4), () => {
-        const letter = document.querySelectorAll('.video-letter')[i]
-        const alphabetIndex = (letter.textContent.toLowerCase().charCodeAt(0) - "a".charCodeAt(0))
-        const alphabetLetter = document.querySelectorAll('.video-letter-alphabet-shifted')[alphabetIndex]
-        alphabetLetter.style.color = "red"
-        alphabetLetter.style.border = "2px solid red"
-      })
+  //     // Mark this letter in the shifted alphabet
+  //     addToQueue(step(base + i*numSteps + 4), () => {
+  //       const letter = document.querySelectorAll('.video-letter')[i]
+  //       const alphabetIndex = (letter.textContent.toLowerCase().charCodeAt(0) - "a".charCodeAt(0))
+  //       const alphabetLetter = document.querySelectorAll('.video-letter-alphabet-shifted')[alphabetIndex]
+  //       alphabetLetter.style.color = "red"
+  //       alphabetLetter.style.border = "2px solid red"
+  //     })
 
-      // Mark this letter in the output
-      addToQueue(step(base + i*numSteps + 5), () => {
-        const letter = document.querySelectorAll('.output-letter')[i]
-        letter.style.color = "red"
-        letter.style.border = "2px solid red"
-      })
-    }
-  }, [])
+  //     // Mark this letter in the output
+  //     addToQueue(step(base + i*numSteps + 5), () => {
+  //       const letter = document.querySelectorAll('.output-letter')[i]
+  //       letter.style.color = "red"
+  //       letter.style.border = "2px solid red"
+  //     })
+  //   }
+  // }, [])
   
   useEffect(() => {
     shiftAlphabet()
@@ -252,7 +255,6 @@ function CaesarVideo() {
   }, [caesarContext.input])
   
   useEffect(() => {
-    console.log(arrows)
     queue.forEach((item) => {
       if (item.frame === frame) {
         item.callback(frame)
@@ -263,22 +265,19 @@ function CaesarVideo() {
   
   return (
     <>
-      <Sequence from={0} durationInFrames={1 * FPS}>
+      <IntroSequence />
+
+      <MidSequence />
+
+      {/*<Sequence from={6 * 30} durationInFrames={8*30}>
         <AbsoluteFill style={{backgroundColor: "#000"}}>
           <LetterList myClass="video-letter" type="input" letters={inputString} gap={gap} opacity={opacity} shiftInputUpwards={shiftInputUpwards} />
           <LetterList myClass="video-letter-alphabet" type="alphabet" letters={alphabet} gap={0.5} opacity={opacityAlphabet} shiftInputUpwards={translateAlphabet} />
           <LetterList myClass="video-letter-alphabet-shifted" type="alphabet-shifted" letters={alphabetShifted} gap={0.5} opacity={opacityAlphabetShifted} shiftInputUpwards={-translateAlphabetShifted} />
           <LetterList myClass="output-letter" type="output-letter" letters={caesarContext.output.split("")} gap={0.5} opacity={0} shiftInputUpwards={-30} />
-
           <ShiftAmount opacity={opacityShift} />
-          
         </AbsoluteFill>
-      </Sequence>
-      <Sequence from={1 * FPS} durationInFrames={2 * FPS}>
-        <AbsoluteFill style={{backgroundColor: "#000"}}>
-          <h1>Caesar</h1>
-        </AbsoluteFill>
-      </Sequence>
+      </Sequence> */}
     </>
   )
 }
@@ -351,7 +350,7 @@ function Caesar() {
           <Player
             style={{width: "90%"}}
             component={CaesarVideo}
-            durationInFrames={6 * 30}
+            durationInFrames={8 * 30}
             compositionWidth={1280}
             compositionHeight={720}
             fps={30}
