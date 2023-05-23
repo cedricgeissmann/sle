@@ -357,7 +357,6 @@ function Caesar() {
             fps={30}
             autoPlay={true}
             controls
-            inputProps={{shift, output}}
           />
         </div>
         <div className="output-area">
