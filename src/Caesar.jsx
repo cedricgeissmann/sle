@@ -19,7 +19,7 @@ function highlightLetter(currentLetter, alphabet, setAlphabet, shift = 0) {
   }
 }
 
-function Letter({letter, opacity, myClass}) {
+function Letter({letter, opacity, myClass, myStyle}) {
 
   const [style, setStyle] = useState({
     color: `rgba(255, 255, 255, ${opacity}`,
@@ -43,24 +43,25 @@ function Letter({letter, opacity, myClass}) {
   return (
     <div
       className={`${myClass} video-letter`}
-      style={style}
+      style={{...style, ...myStyle}}
     >
       {letter.letter}
     </div>
   )
 }
 
-function LetterList({letters, gap, shiftInputUpwards, opacity, type, myClass}) {
+function LetterList({letters, gap, shiftInputUpwards, opacity, type, myClass, style, letterStyle}) {
 
   return (
     <div className="letter-list"
       style={{
+        ...style,
         gap: `${gap}rem`,
         transform: `translateY(${-shiftInputUpwards}%)`,
       }}
     >
       {letters.map((letter, index) => (
-        <Letter letter={letter} opacity={opacity} key={`${type}-${index}`} type={type} myClass={myClass} />
+        <Letter myStyle={{...letterStyle}} letter={letter} opacity={opacity} key={`${type}-${index}`} type={type} myClass={myClass} />
       ))}
     </div>
   )
@@ -102,6 +103,59 @@ function IntroSequence() {
           <LetterList myClass="video-letter-alphabet" type="alphabet" letters={alphabet} gap={0.5} opacity={opacityAlphabet} shiftInputUpwards={translateAlphabet} />
           <LetterList myClass="video-letter-alphabet-shifted" type="alphabet-shifted" letters={alphabetShifted} gap={0.5} opacity={opacityAlphabetShifted} shiftInputUpwards={-translateAlphabetShifted} />
           <ShiftAmount opacity={opacityShift} />
+        </AbsoluteFill>
+      </Sequence>
+  )
+}
+
+function OutroScene() {
+  const {input, output, alphabet, alphabetShifted} = useContext(CaesarContext)
+  const frame = useCurrentFrame()
+  const {durationInFrames} = useVideoConfig()
+
+  useEffect(() => {
+    console.log(durationInFrames, opacity)
+  })
+  
+  const opacity = interpolate(frame, [durationInFrames - 60, durationInFrames - 30], [1, 0]);
+  const opacityAlphabet = interpolate(frame, [durationInFrames - 60, durationInFrames - 30], [1, 0]);
+  const opacityAlphabetShifted = interpolate(frame, [durationInFrames - 60, durationInFrames - 30], [1, 0]);
+
+  const opacityShift = interpolate(frame, [durationInFrames - 60, durationInFrames - 30], [1, 0]);
+  const outputShift = interpolate(frame, [durationInFrames - 30, durationInFrames], [-30, 0]);
+  const gap = interpolate(frame, [durationInFrames - 30, durationInFrames], [1, 2]);
+
+  const [fontSize, setFontSize] = useState(5)
+  useEffect(() => {
+    setFontSize(Math.max(10 / output.length, 2))
+  }, [output.length])
+
+  return (
+      <Sequence from={durationInFrames - 60} durationInFrames={durationInFrames}>
+        <AbsoluteFill style={{backgroundColor: "#000"}}>
+          <LetterList myClass="video-letter-input" type="input" letters={input} gap={1} opacity={opacity} shiftInputUpwards={40} />
+          <LetterList myClass="video-letter-alphabet" type="alphabet" letters={alphabet} gap={0.5} opacity={opacityAlphabet} shiftInputUpwards={15} />
+          <LetterList myClass="video-letter-alphabet-shifted" type="alphabet-shifted" letters={alphabetShifted} gap={0.5} opacity={opacityAlphabetShifted} shiftInputUpwards={-15} />
+          <ShiftAmount opacity={opacityShift} />
+          <LetterList
+            style={{
+              transform: `translateY(${outputShift}%)`,
+            }}
+            myClass="output-letter"
+            type="output-letter"
+            letters={output}
+            gap={gap}
+            opacity={1}
+            shiftInputUpwards={outputShift}
+            letterStyle={{
+              fontSize: `${fontSize}rem`,
+              color: "white",
+              minWidth: "2em",
+              maxWidth: "2em",
+              minHeight: "2em",
+              maxHeight: "2em",
+            }}
+          />
         </AbsoluteFill>
       </Sequence>
   )
@@ -225,6 +279,7 @@ function CaesarVideo() {
     <>
       <IntroSequence />
       <MidSequence from={60} durationInFrames={input.length * 30}/>
+      <OutroScene />
     </>
   )
 }
