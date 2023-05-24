@@ -6,6 +6,37 @@ import { useCurrentFrame, interpolate, AbsoluteFill, Sequence, useVideoConfig, g
 
 export const CaesarContext = createContext(null)
 
+function Letter({letter, opacity, myClass}) {
+
+  const [style, setStyle] = useState({
+    color: `rgba(255, 255, 255, ${opacity}`,
+    border: `1px solid rgba(255, 255, 255, ${opacity})`,
+  })
+
+  useEffect(() => {
+    if (letter.active) {
+      setStyle({
+        color: `rgba(255, 0, 0, ${opacity})`,
+        border: `2px solid rgba(255, 0, 0, ${opacity})`,
+      })
+    } else {
+      setStyle({
+        color: `rgba(255, 255, 255, ${opacity}`,
+        border: `1px solid rgba(255, 255, 255, ${opacity})`,
+      })
+    }
+  }, [letter.active, opacity])
+
+  return (
+    <div
+      className={`${myClass} video-letter`}
+      style={style}
+    >
+      {letter.letter}
+    </div>
+  )
+}
+
 function LetterList({letters, gap, shiftInputUpwards, opacity, type, myClass}) {
 
   return (
@@ -16,17 +47,7 @@ function LetterList({letters, gap, shiftInputUpwards, opacity, type, myClass}) {
       }}
     >
       {letters.map((letter, index) => (
-        <div
-          className={`${myClass} video-letter`}
-          style={{
-            color: `rgba(255, 255, 255, ${opacity}`,
-            border: `1px solid rgba(255, 255, 255, ${opacity})`,
-          }}
-          key={`${type}-${index}`}
-          id={`${type}-${index}`}
-        >
-          {letter}
-        </div>
+        <Letter letter={letter} opacity={opacity} key={`${type}-${index}`} type={type} myClass={myClass} />
       ))}
     </div>
   )
@@ -47,8 +68,7 @@ function ShiftAmount({opacity}) {
 }
 
 function IntroSequence() {
-  const caesarContext = useContext(CaesarContext)
-  const [inputString, setInputString] = useState(caesarContext.input.split(""))
+  const {input, output, alphabet, alphabetShifted} = useContext(CaesarContext)
   const frame = useCurrentFrame()
   
   const opacity = inter(frame, [0, 1], [0, 1]);
@@ -62,34 +82,56 @@ function IntroSequence() {
 
   const opacityShift = inter(frame, [3, 4], [0, 1]);
 
-  const [alphabet, setAlphabet] = useState("abcdefghijklmnopqrstuvwxyz".split(""))
-  const [alphabetShifted, setAlphabetShifted] = useState("abcdefghijklmnopqrstuvwxyz".split(""))
   return (
       <Sequence from={0} durationInFrames={2 * 30}>
         <AbsoluteFill style={{backgroundColor: "#000"}}>
-          <LetterList myClass="video-letter" type="input" letters={inputString} gap={gap} opacity={opacity} shiftInputUpwards={shiftInputUpwards} />
+          <LetterList myClass="video-letter-input" type="input" letters={input} gap={gap} opacity={opacity} shiftInputUpwards={shiftInputUpwards} />
           <LetterList myClass="video-letter-alphabet" type="alphabet" letters={alphabet} gap={0.5} opacity={opacityAlphabet} shiftInputUpwards={translateAlphabet} />
           <LetterList myClass="video-letter-alphabet-shifted" type="alphabet-shifted" letters={alphabetShifted} gap={0.5} opacity={opacityAlphabetShifted} shiftInputUpwards={-translateAlphabetShifted} />
-          <LetterList myClass="output-letter" type="output-letter" letters={caesarContext.output.split("")} gap={0.5} opacity={0} shiftInputUpwards={-30} />
+          <LetterList myClass="output-letter" type="output-letter" letters={output.split("")} gap={0.5} opacity={0} shiftInputUpwards={-30} />
           <ShiftAmount opacity={opacityShift} />
         </AbsoluteFill>
       </Sequence>
   )
 }
 
-function MidSequence() {
-  const caesarContext = useContext(CaesarContext)
-  const [inputString, setInputString] = useState(caesarContext.input.split(""))
+function MidSequence({from, durationInFrames}) {
+  const {input, output, alphabet, alphabetShifted, animationIndex, setAnimationIndex} = useContext(CaesarContext)
   const frame = useCurrentFrame()
-  const [alphabet, setAlphabet] = useState("abcdefghijklmnopqrstuvwxyz".split(""))
-  const [alphabetShifted, setAlphabetShifted] = useState("abcdefghijklmnopqrstuvwxyz".split(""))
+  const [animationStep, setAnimationStep] = useState(0)
+
+
+  useEffect(() => {
+    if (animationIndex > 0 && animationIndex < input.length + 1) {
+      input[animationIndex - 1].active = false
+    }
+    if (animationIndex < input.length) {
+      input[animationIndex].active = true
+    }
+  }, [animationIndex])
+
+  useEffect(() => {
+    if (animationStep === 1) {
+      alphabet[animationIndex].active = true
+    }
+  }, [animationStep])
+
+  useEffect(() => {
+    if ((frame - from) % (animationStep * 5) === 0) {
+      setAnimationStep(animationStep + 1)
+    }
+    if (animationStep % 5 === 0) {
+      setAnimationIndex(animationIndex + 1)
+      setAnimationStep(0)
+    }
+  }, [frame])
   return (
-    <Sequence from={2 * 30} durationInFrames={6 * 30}>
+    <Sequence from={from} durationInFrames={durationInFrames}>
       <AbsoluteFill style={{backgroundColor: "#000"}}>
         <LetterList
-          myClass="video-letter"
+          myClass="video-letter-input"
           type="input"
-          letters={inputString}
+          letters={input}
           gap={1}
           opacity={1}
           shiftInputUpwards={40}
@@ -113,7 +155,7 @@ function MidSequence() {
         <LetterList
           myClass="output-letter"
           type="output-letter"
-          letters={caesarContext.output.split("")}
+          letters={output.split("")}
           gap={0.5}
           opacity={0}
           shiftInputUpwards={-30}
@@ -134,40 +176,6 @@ function inter(frame, frames, values) {
 function CaesarVideo() {
   
   const frame = useCurrentFrame()
-
-  const caesarContext = useContext(CaesarContext)
-  
-  const {durationInFrames} = useVideoConfig()
-
-  const [queue, setQueue] = useState(new Array())
-
-  const [inputString, setInputString] = useState(caesarContext.input.split(""))
-  const [alphabet, setAlphabet] = useState("abcdefghijklmnopqrstuvwxyz".split(""))
-  const [alphabetShifted, setAlphabetShifted] = useState("abcdefghijklmnopqrstuvwxyz".split(""))
-
-  
-  function shiftAlphabet() {
-    setAlphabetShifted(alphabetShifted => {
-      return alphabetShifted.map((_, index) => {
-        return alphabet[(index + caesarContext.shift + 26) % 26]
-      })
-    })
-  }
-
-  function addToQueue(frame, cb) {
-    setQueue((queue) => {
-      return queue.concat({
-        frame: frame,
-        callback: cb
-      })
-    })
-  }
-
-  useEffect(() => {
-    setAlphabet((alphabet) => {
-      return alphabet
-    })
-  }, [])
 
   // useEffect(() => {
   //   const base = 4
@@ -224,28 +232,11 @@ function CaesarVideo() {
   //   }
   // }, [])
   
-  useEffect(() => {
-    shiftAlphabet()
-  }, [caesarContext.shift])
-  
-  useEffect(() => {
-    setInputString(caesarContext.input.split(""))
-  }, [caesarContext.input])
-  
-  useEffect(() => {
-    queue.forEach((item) => {
-      if (item.frame === frame) {
-        item.callback(frame)
-        queue.splice(queue.indexOf(item), 1)
-      }
-    })
-  }, [frame])
-  
   return (
     <>
       <IntroSequence />
 
-      <MidSequence />
+      <MidSequence from={2 * 30} durationInFrames={6 * 30}/>
 
       {/*<Sequence from={6 * 30} durationInFrames={8*30}>
         <AbsoluteFill style={{backgroundColor: "#000"}}>
@@ -262,13 +253,36 @@ function CaesarVideo() {
 
 function Caesar() {
 
-  const [alphabet, setAlphabet] = useState(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'])
-  const [alphabetShifted, setAlphabetShifted] = useState(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'])
+  const [alphabet, setAlphabet] = useState(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'].map(
+    (letter) => {
+      return {
+        letter: letter,
+        active: false
+      }
+    }
+  ))
+  const [alphabetShifted, setAlphabetShifted] = useState(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'].map(
+    (letter) => {
+      return {
+        letter: letter,
+        active: false
+      }
+    }
+  ))
 
   const [shift, setShift] = useState(18)
 
-  const [input, setInput] = useState('thisisaverysecuremessage')
+  const [input, setInput] = useState('thisisaverysecuremessage'.split("").map(
+    (letter) => {
+      return {
+        letter: letter,
+        active: false
+      }
+    }
+  ))
   const [output, setOutput] = useState('')
+
+  const [animationIndex, setAnimationIndex] = useState(0)
 
   useEffect(() => {
     setOutput(() => {
@@ -279,9 +293,9 @@ function Caesar() {
   }, [input, shift])
 
 
-  function caesarShift(text) {
-    return text.split("").map(
-      (letter) => {
+  function caesarShift(characterList) {
+    return characterList.map(
+      ({letter}) => {
         if (letter.charCodeAt(0) >= 65 && letter.charCodeAt(0) <= 90
           || letter.charCodeAt(0) >= 97 && letter.charCodeAt(0) <= 122) {
         let base = "a".charCodeAt(0)
@@ -297,18 +311,27 @@ function Caesar() {
   }
   
   function shiftAlphabet() {
-  setAlphabetShifted(
-    (alphabetShifted) => {
-      return alphabetShifted.map(
-        (_, index) => {
-          return alphabet[(index + shift + 26) % 26]
-        })
+    setAlphabetShifted(alphabetShifted => {
+      return alphabetShifted.map((_, index) => {
+        return alphabet[(index + shift + 26) % 26]
       })
-    }
+    })
+  }
+
+  function updateInput(inputValue) {
+    setInput(
+      inputValue.split("").map(letter => {
+        return {
+          letter: letter,
+          active: false,
+        }
+      })
+    )
+  }
 
   return (
     <>
-      <CaesarContext.Provider value={{input, shift, output}}>
+      <CaesarContext.Provider value={{input, shift, output, alphabet, alphabetShifted, setAlphabetShifted, animationIndex, setAnimationIndex}}>
         <div>
           Caesar mit Verschiebung:
           <input type="number" onChange={e => setShift(e.target.value)} value={shift} />
@@ -321,7 +344,7 @@ function Caesar() {
 
         <div className="input-area">
           <label htmlFor="clear-text-field">Eingabe:</label>
-          <input onChange={e => setInput(e.target.value)} type="text" value={input} id="clear-text-field" />
+          <input onChange={e => updateInput(e.target.value)} type="text" value={input.map((letter) => letter.letter).join("")} id="clear-text-field" />
         </div>
 
         <div className="video-container">
