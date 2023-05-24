@@ -20,3 +20,36 @@
   align-items: center;
   padding: 10px;
 }
+
+
+.letter-list {
+  position: absolute;
+  font-size: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  color: white;
+}
+
+.video-letter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 2rem;
+  max-height: 2rem;
+  min-width: 2rem;
+  max-width: 2rem;
+}
+
+.shift-amount {
+  color: white;
+  font-size: 4rem;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
