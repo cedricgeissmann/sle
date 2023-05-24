@@ -88,7 +88,7 @@ function IntroSequence() {
           <LetterList myClass="video-letter-input" type="input" letters={input} gap={gap} opacity={opacity} shiftInputUpwards={shiftInputUpwards} />
           <LetterList myClass="video-letter-alphabet" type="alphabet" letters={alphabet} gap={0.5} opacity={opacityAlphabet} shiftInputUpwards={translateAlphabet} />
           <LetterList myClass="video-letter-alphabet-shifted" type="alphabet-shifted" letters={alphabetShifted} gap={0.5} opacity={opacityAlphabetShifted} shiftInputUpwards={-translateAlphabetShifted} />
-          <LetterList myClass="output-letter" type="output-letter" letters={output.split("")} gap={0.5} opacity={0} shiftInputUpwards={-30} />
+          <LetterList myClass="output-letter" type="output-letter" letters={output} gap={0.5} opacity={0} shiftInputUpwards={-30} />
           <ShiftAmount opacity={opacityShift} />
         </AbsoluteFill>
       </Sequence>
@@ -98,31 +98,38 @@ function IntroSequence() {
 function MidSequence({from, durationInFrames}) {
   const {input, output, alphabet, alphabetShifted, animationIndex, setAnimationIndex} = useContext(CaesarContext)
   const frame = useCurrentFrame()
-  const [animationStep, setAnimationStep] = useState(0)
+  const [animationStep, setAnimationStep] = useState(1)
 
 
   useEffect(() => {
     if (animationIndex > 0 && animationIndex < input.length + 1) {
       input[animationIndex - 1].active = false
+      output[animationIndex - 1].active = false
     }
     if (animationIndex < input.length) {
       input[animationIndex].active = true
+      alphabet.filter((l) => l.active).forEach((l) => l.active = false)
+      alphabetShifted.filter((l) => l.active).forEach((l) => l.active = false)
     }
   }, [animationIndex])
 
   useEffect(() => {
     if (animationStep === 1) {
       alphabet[animationIndex].active = true
+    } else if (animationStep === 2) {
+      alphabetShifted[animationIndex].active = true
+    } else if (animationStep === 3) {
+      output[animationIndex].active = true
     }
   }, [animationStep])
 
   useEffect(() => {
-    if ((frame - from) % (animationStep * 5) === 0) {
+    if ((frame - from) % (5) === 0) {
       setAnimationStep(animationStep + 1)
     }
     if (animationStep % 5 === 0) {
       setAnimationIndex(animationIndex + 1)
-      setAnimationStep(0)
+      setAnimationStep(1)
     }
   }, [frame])
   return (
@@ -155,7 +162,7 @@ function MidSequence({from, durationInFrames}) {
         <LetterList
           myClass="output-letter"
           type="output-letter"
-          letters={output.split("")}
+          letters={output}
           gap={0.5}
           opacity={0}
           shiftInputUpwards={-30}
@@ -287,7 +294,14 @@ function Caesar() {
   useEffect(() => {
     setOutput(() => {
       if (input.length <= 0) return ''
-      return caesarShift(input)
+      return caesarShift(input).map(
+        (letter) => {
+          return {
+            letter: letter,
+            active: false
+          }
+        }
+      )
     })
     shiftAlphabet()
   }, [input, shift])
@@ -306,7 +320,7 @@ function Caesar() {
       } else {
         return letter
       }
-      }).join("")
+      })
 
   }
   
