@@ -98,7 +98,6 @@ function IntroSequence() {
           <LetterList myClass="video-letter-input" type="input" letters={input} gap={gap} opacity={opacity} shiftInputUpwards={shiftInputUpwards} />
           <LetterList myClass="video-letter-alphabet" type="alphabet" letters={alphabet} gap={0.5} opacity={opacityAlphabet} shiftInputUpwards={translateAlphabet} />
           <LetterList myClass="video-letter-alphabet-shifted" type="alphabet-shifted" letters={alphabetShifted} gap={0.5} opacity={opacityAlphabetShifted} shiftInputUpwards={-translateAlphabetShifted} />
-          <LetterList myClass="output-letter" type="output-letter" letters={output} gap={0.5} opacity={0} shiftInputUpwards={-30} />
           <ShiftAmount opacity={opacityShift} />
         </AbsoluteFill>
       </Sequence>
@@ -138,7 +137,7 @@ function MidSequence({from, durationInFrames}) {
     if ((frame - from) % (30) === 0) {
       setAnimationStep(animationStep + 1)
     }
-    if (animationStep % 4 === 0) {
+    if (animationStep % 5 === 0) {
       setAnimationIndex(animationIndex + 1)
       setAnimationStep(1)
     }
@@ -174,8 +173,8 @@ function MidSequence({from, durationInFrames}) {
           myClass="output-letter"
           type="output-letter"
           letters={output}
-          gap={0.5}
-          opacity={0}
+          gap={1}
+          opacity={1}
           shiftInputUpwards={-30}
         />
         <ShiftAmount opacity={1} />
@@ -298,7 +297,7 @@ function Caesar() {
       }
     }
   ))
-  const [output, setOutput] = useState('')
+  const [output, setOutput] = useState([])
 
   const [animationIndex, setAnimationIndex] = useState(0)
 
