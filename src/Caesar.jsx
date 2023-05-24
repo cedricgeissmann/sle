@@ -9,31 +9,16 @@ export const CaesarContext = createContext(null)
 function LetterList({letters, gap, shiftInputUpwards, opacity, type, myClass}) {
 
   return (
-    <div
+    <div className="letter-list"
       style={{
-        position: "absolute",
-        fontSize: "2rem",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100%",
-        width: "100%",
-        color: "white",
         gap: `${gap}rem`,
         transform: `translateY(${-shiftInputUpwards}%)`,
       }}
     >
       {letters.map((letter, index) => (
         <div
-          className={myClass}
+          className={`${myClass} video-letter`}
           style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            minHeight: "2rem",
-            maxHeight: "2rem",
-            minWidth: "2rem",
-            maxWidth: "2rem",
             color: `rgba(255, 255, 255, ${opacity}`,
             border: `1px solid rgba(255, 255, 255, ${opacity})`,
           }}
@@ -51,15 +36,8 @@ function ShiftAmount({opacity}) {
   const caesarContext = useContext(CaesarContext)
   return (
     <div
+      className='shift-amount'
       style={{
-        color: "white",
-        fontSize: "4rem",
-        position: "absolute",
-        height: "100%",
-        width: "100%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
         opacity: `${opacity}`,
       }}
     >
