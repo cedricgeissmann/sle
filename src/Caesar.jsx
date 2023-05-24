@@ -7,7 +7,6 @@ import { useCurrentFrame, interpolate, AbsoluteFill, Sequence, useVideoConfig, g
 export const CaesarContext = createContext(null)
 
 function highlightLetter(currentLetter, alphabet, setAlphabet, shift = 0) {
-  console.log(currentLetter.charCodeAt(0))
   if (currentLetter.charCodeAt(0) >= 97 && currentLetter.charCodeAt(0) <= 122) {
   const alphabetIndex = alphabet.findIndex(l => l.letter === currentLetter)
   const idx = (alphabetIndex + shift + 26) % 26
@@ -113,10 +112,6 @@ function OutroScene() {
   const frame = useCurrentFrame()
   const {durationInFrames} = useVideoConfig()
 
-  useEffect(() => {
-    console.log(durationInFrames, opacity)
-  })
-  
   const opacity = interpolate(frame, [durationInFrames - 60, durationInFrames - 30], [1, 0]);
   const opacityAlphabet = interpolate(frame, [durationInFrames - 60, durationInFrames - 30], [1, 0]);
   const opacityAlphabetShifted = interpolate(frame, [durationInFrames - 60, durationInFrames - 30], [1, 0]);
@@ -303,9 +298,9 @@ function Caesar() {
     }
   ))
 
-  const [shift, setShift] = useState(18)
+  const [shift, setShift] = useState(13)
 
-  const [input, setInput] = useState('th'.split("").map(
+  const [input, setInput] = useState('secure message'.split("").map(
     (letter) => {
       return {
         letter: letter,
