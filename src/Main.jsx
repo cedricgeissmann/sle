@@ -2,6 +2,7 @@ import './Main.css'
 import {AppContext} from './App.jsx'
 import { useContext } from 'react'
 import Caesar from './Caesar.jsx'
+import CaesarQuiz from './CaesarQuiz.jsx'
 import Vigenere from './Vigenere.jsx'
 
 function Main() {
@@ -30,6 +31,9 @@ function Main() {
           <Caesar />
         }
         {chapterContext.chapter === 2 &&
+          <CaesarQuiz />
+        }
+        {chapterContext.chapter === 3 &&
           <Vigenere />
         }
       </section>

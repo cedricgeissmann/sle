@@ -9,6 +9,7 @@ function Side() {
     <ul>
       <li><ChapterLink chapter={1} /></li>
       <li><ChapterLink chapter={2} /></li>
+      <li><ChapterLink chapter={3} /></li>
     </ul>
   )
 }
