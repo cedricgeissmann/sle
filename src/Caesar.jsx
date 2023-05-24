@@ -6,6 +6,16 @@ import { useCurrentFrame, interpolate, AbsoluteFill, Sequence, useVideoConfig, g
 
 export const CaesarContext = createContext(null)
 
+function highlightLetter(currentLetter, alphabet, setAlphabet, shift = 0) {
+  const alphabetIndex = alphabet.findIndex(l => l.letter === currentLetter)
+  const idx = (alphabetIndex + shift + 26) % 26
+  setAlphabet((currentAlphabet) => (
+    currentAlphabet.map((item, index) => {
+      return index === idx ? {...item, active: true} : {...item, active: false}
+    })
+  ))
+}
+
 function Letter({letter, opacity, myClass}) {
 
   const [style, setStyle] = useState({
@@ -96,7 +106,7 @@ function IntroSequence() {
 }
 
 function MidSequence({from, durationInFrames}) {
-  const {input, output, alphabet, alphabetShifted, animationIndex, setAnimationIndex} = useContext(CaesarContext)
+  const {input, shift, output, alphabet, alphabetShifted, animationIndex, setAnimationIndex, setAlphabet, setAlphabetShifted} = useContext(CaesarContext)
   const frame = useCurrentFrame()
   const [animationStep, setAnimationStep] = useState(1)
 
@@ -108,26 +118,27 @@ function MidSequence({from, durationInFrames}) {
     }
     if (animationIndex < input.length) {
       input[animationIndex].active = true
-      alphabet.filter((l) => l.active).forEach((l) => l.active = false)
-      alphabetShifted.filter((l) => l.active).forEach((l) => l.active = false)
     }
   }, [animationIndex])
 
   useEffect(() => {
     if (animationStep === 1) {
-      alphabet[animationIndex].active = true
+      alphabet.filter((l) => l.active).forEach((l) => l.active = false)
+      alphabetShifted.filter((l) => l.active).forEach((l) => l.active = false)
     } else if (animationStep === 2) {
-      alphabetShifted[animationIndex].active = true
+      highlightLetter(input[animationIndex].letter, alphabet, setAlphabet)
     } else if (animationStep === 3) {
+      highlightLetter(input[animationIndex].letter, alphabetShifted, setAlphabetShifted, shift)
+    } else if (animationStep === 4) {
       output[animationIndex].active = true
     }
   }, [animationStep])
 
   useEffect(() => {
-    if ((frame - from) % (5) === 0) {
+    if ((frame - from) % (30) === 0) {
       setAnimationStep(animationStep + 1)
     }
-    if (animationStep % 5 === 0) {
+    if (animationStep % 4 === 0) {
       setAnimationIndex(animationIndex + 1)
       setAnimationStep(1)
     }
@@ -345,7 +356,7 @@ function Caesar() {
 
   return (
     <>
-      <CaesarContext.Provider value={{input, shift, output, alphabet, alphabetShifted, setAlphabetShifted, animationIndex, setAnimationIndex}}>
+      <CaesarContext.Provider value={{input, shift, output, alphabet, alphabetShifted, setAlphabet, setAlphabetShifted, animationIndex, setAnimationIndex}}>
         <div>
           Caesar mit Verschiebung:
           <input type="number" onChange={e => setShift(e.target.value)} value={shift} />
