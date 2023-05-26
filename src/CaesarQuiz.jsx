@@ -97,7 +97,7 @@ function CaesarQuiz() {
             ))}
           </div>
         ))}
-        <button type="submit">Fertig</button>
+        <button className="btn-submit" type="submit">Fertig</button>
       </form>
       
     </>

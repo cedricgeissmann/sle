@@ -4,3 +4,21 @@ h3 {
   justify-content: space-between;
   align-items: center;
 }
+
+form {
+  
+}
+
+.btn-submit {
+  position: absolute;
+  bottom: 0px;
+  width: 100px;
+  left: calc(50% - 50px);
+  z-index: 2;
+  background-color: rgb(36, 120, 180);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 1.3rem;
+  margin-bottom: 10px;
+}
