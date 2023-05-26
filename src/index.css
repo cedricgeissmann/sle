@@ -15,3 +15,12 @@ body {
   --bg-color-1: rgb(111, 111, 111);
   --bg-color-2: rgb(58, 58, 58);
 }
+
+input,
+.box {
+  border-radius: 5px;
+}
+
+.box {
+  box-shadow: 2px 5px 5px rgba(0, 0, 0, 0.5);
+}

@@ -4,6 +4,7 @@ import { useContext } from 'react'
 import Caesar from './Caesar.jsx'
 import CaesarQuiz from './CaesarQuiz.jsx'
 import Vigenere from './Vigenere.jsx'
+import Verschluesselung from './Verschluesselung'
 
 function Main() {
 
@@ -28,12 +29,15 @@ function Main() {
       <h2>Chapter {chapterContext.chapter}</h2>
       <section>
         {chapterContext.chapter === 1 &&
-          <Caesar />
+          <Verschluesselung />
         }
         {chapterContext.chapter === 2 &&
-          <CaesarQuiz />
+          <Caesar />
         }
         {chapterContext.chapter === 3 &&
+          <CaesarQuiz />
+        }
+        {chapterContext.chapter === 4 &&
           <Vigenere />
         }
       </section>

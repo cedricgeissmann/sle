@@ -376,25 +376,48 @@ function Caesar() {
 
   return (
     <>
-      <CaesarContext.Provider value={{input, shift, output, alphabet, alphabetShifted, setAlphabet, setAlphabetShifted, animationIndex, setAnimationIndex}}>
-        <div>
-          Caesar mit Verschiebung:
-          <input type="number" onChange={e => setShift(e.target.value)} value={shift} />
-        </div>
-        <div className="controls">
-          <button onClick={() => setShift(shift => (shift - 1) % 26)}>-1</button>
-          <button onClick={() => setShift(0)}>Reset</button>
-          <button onClick={() => setShift(shift => (shift + 1) % 26)}>+1</button>
-        </div>
-
-        <div className="input-area">
-          <label htmlFor="clear-text-field">Eingabe:</label>
-          <input onChange={e => updateInput(e.target.value)} type="text" value={input.map((letter) => letter.letter).join("")} id="clear-text-field" />
+      <CaesarContext.Provider
+        value={{
+          input,
+          shift,
+          output,
+          alphabet,
+          alphabetShifted,
+          setAlphabet,
+          setAlphabetShifted,
+          animationIndex,
+          setAnimationIndex,
+        }}
+      >
+        <p>
+          Das folgende Beispiel zeigt wie eine Verschlüsselung mit dem Caesar-Verfahren aussehen könnte. Man nimmt jedes
+          Zeichen in der Eingabe, und verschiebt es jeweils um den Schlüssel, dann ergibt sich daraus der Kryptotext.
+        </p>
+        <div className="box">
+          <div className="inline-container">
+            Caesar mit Verschiebung:
+            <input className="num-input" type="number" onChange={e => setShift(e.target.value)} value={shift} />
+          </div>
+          <div className="controls inline-container">
+            <button onClick={() => setShift(shift => (shift - 1) % 26)}>-1</button>
+            <button onClick={() => setShift(0)}>Reset</button>
+            <button onClick={() => setShift(shift => (shift + 1) % 26)}>+1</button>
+          </div>
+          <div className="input-area inline-container">
+            <label htmlFor="clear-text-field">Eingabe:</label>
+            <input
+              className="text-input"
+              onChange={e => updateInput(e.target.value)}
+              type="text"
+              value={input.map(letter => letter.letter).join("")}
+              id="clear-text-field"
+            />
+          </div>
         </div>
 
         <div className="video-container">
           <Player
-            style={{width: "90%"}}
+            style={{height: "240px"}}
             component={CaesarVideo}
             durationInFrames={60 + input.length * 30 + 60}
             compositionWidth={1280}
@@ -405,9 +428,11 @@ function Caesar() {
             loop={true}
           />
         </div>
-        <div className="output-area">
-          <span>Ausgabe:</span>
-          <span>{output.map((letter) => letter.letter).join("")}</span>
+        <div className="box">
+          <div className="output-area">
+            <span>Ausgabe:</span>
+            <span>{output.map(letter => letter.letter).join("")}</span>
+          </div>
         </div>
       </CaesarContext.Provider>
     </>

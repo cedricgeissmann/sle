@@ -1,4 +1,3 @@
-import { AppContext } from './App'
 import ChapterLink from './ChapterLink'
 import './Side.css'
 
@@ -7,9 +6,9 @@ function Side() {
 
   return (
     <ul>
-      <li><ChapterLink chapter={1} /></li>
-      <li><ChapterLink chapter={2} /></li>
-      <li><ChapterLink chapter={3} /></li>
+      <li><ChapterLink chapter={1} name="Caesar-Verfahren"/></li>
+      <li><ChapterLink chapter={2} name="Quiz: Caesar-Verfahren"/></li>
+      <li><ChapterLink chapter={3} name="Vigenère" /></li>
     </ul>
   )
 }
