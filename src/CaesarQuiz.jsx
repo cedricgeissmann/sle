@@ -1,5 +1,6 @@
 import { useState, useEffect, createContext, useContext } from 'react'
 import './CaesarQuiz.css'
+import { getSessionStorageOrDefault } from './utils'
 
 const QUESTIONS = [
   {
@@ -39,13 +40,24 @@ const QUESTIONS = [
 
 ]
 
+
+function updateListEntry(list, index, cb) {
+  return list.map((item, i) => {
+    if (i === index) {
+      return cb(item)
+    } else {
+      return item
+    }
+  })
+}
+
 function CaesarQuiz() {
 
   const [questions, setQuestions] = useState(QUESTIONS)
-  const [points, setPoints] = useState(0)
+  const [points, setPoints] = useState(getSessionStorageOrDefault('quiz-caesar-points', 0))
 
   useEffect(() => {
-    console.log(points)
+    sessionStorage.setItem('quiz-caesar-points', points)
   }, [points])
 
   function evaluateQuiz(e) {
@@ -60,9 +72,15 @@ function CaesarQuiz() {
         }
       })
     })
+    setQuestions((currentQuestions) => currentQuestions.map(question => {
+      const len = question.answers.filter(answer => answer.checked === true && answer.correct === true).length
+      return {...question, correct: len > 0 }
+    })
+    )
   }
 
   function answerSelected(e, i, j) {
+    console.log(e.target.parentElement.parentElement)
     setQuestions((currentQuestions) => {
       return currentQuestions.map((question, index) => {
         if (index === i) {
