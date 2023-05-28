@@ -2,45 +2,6 @@ import { useState, useEffect } from 'react'
 import './CaesarQuiz.css'
 import { getSessionStorageOrDefault } from './utils'
 
-const QUESTIONS = [
-  {
-    question: 'Das Caesarverfahren kann verwendet werden um einen Text zu verschlüsseln.',
-    answers: [{
-      text: "Ja",
-      checked: false,
-      correct: true
-    }, {
-      text: "Nein",
-      checked: false,
-      correct: false
-    }]
-  }, {
-    question: 'Das Caesarverfahren gilt als sicheres Verschlüsselungverfahren.',
-    answers: [{
-      text: "Ja",
-      checked: false,
-      correct: false
-    }, {
-      text: "Nein",
-      checked: false,
-      correct: true
-    }]
-  }, {
-    question: 'Der Schlüsselraum für das Caesarverfahren ist 26 Elemente gross.',
-    answers: [{
-      text: "Ja",
-      checked: false,
-      correct: true
-    }, {
-      text: "Nein",
-      checked: false,
-      correct: false
-    }]
-  }
-
-]
-
-
 function updateListEntry(list, index, cb) {
   return list.map((item, i) => {
     if (i === index) {
@@ -54,10 +15,6 @@ function updateListEntry(list, index, cb) {
 function Questions({question, index, answerSelected}) {
 
   const [answers, setAnswers] = useState(question.answers)
-
-  useEffect(() => {
-    console.log(answers)
-  })
 
   let bgColor = 'rgba(255, 255, 255, 0.2)'
   if (question.correct === true) {
@@ -87,8 +44,14 @@ function Questions({question, index, answerSelected}) {
 
 function CaesarQuiz() {
 
-  const [questions, setQuestions] = useState(QUESTIONS)
+  const [questions, setQuestions] = useState([])
   const [points, setPoints] = useState(getSessionStorageOrDefault('quiz-caesar-points', 0))
+
+  useEffect(() => {
+    fetch("src/assets/questions/caesar.json").then(res => res.json()).then(data => {
+      setQuestions(data)
+    })
+  }, [])
 
   useEffect(() => {
     sessionStorage.setItem('quiz-caesar-points', points)
@@ -119,7 +82,6 @@ function CaesarQuiz() {
   }
 
   function answerSelected(e, i, j) {
-    console.log(e.target.parentElement.parentElement)
     setQuestions((currentQuestions) => {
       return currentQuestions.map((question, index) => {
         if (index === i) {

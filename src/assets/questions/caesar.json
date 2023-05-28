@@ -1,0 +1,34 @@
+[{
+    "question": "Das Caesarverfahren kann verwendet werden um einen Text zu verschlüsseln.",
+    "answers": [{
+      "text": "Ja",
+      "checked": false,
+      "correct": true
+    }, {
+      "text": "Nein",
+      "checked": false,
+      "correct": false
+    }]
+  }, {
+    "question": "Das Caesarverfahren gilt als sicheres Verschlüsselungverfahren.",
+    "answers": [{
+      "text": "Ja",
+      "checked": false,
+      "correct": false
+    }, {
+      "text": "Nein",
+      "checked": false,
+      "correct": true
+    }]
+  }, {
+    "question": "Der Schlüsselraum für das Caesarverfahren ist 26 Elemente gross.",
+    "answers": [{
+      "text": "Ja",
+      "checked": false,
+      "correct": true
+    }, {
+      "text": "Nein",
+      "checked": false,
+      "correct": false
+    }]
+  }]
