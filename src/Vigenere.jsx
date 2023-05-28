@@ -1,66 +1,76 @@
-import { useEffect } from 'react'
-import { useState } from 'react'
+import { useEffect, useState, createContext } from 'react'
+import { Player } from '@remotion/player'
 import './Vigenere.css'
+import { useCurrentFrame, interpolate, AbsoluteFill, Sequence, useVideoConfig, getInputProps } from 'remotion'
+
+const VigenereContext = createContext(null)
+
+function MySequence({children}) {
+  return (
+    <Sequence from={0} durationInFrames={60}>
+      <AbsoluteFill style={{
+        backgroundColor: 'black',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'relative'
+      }}>
+        {children}
+      </AbsoluteFill>
+    </Sequence>
+  )
+}
+
+function VideoElement({children, top, left, right}) {
+  return (
+      <div style={{
+        position: 'absolute',
+        top: typeof top === 'function' ? top() : top,
+        left: typeof left === 'function' ? left() : left,
+        right: typeof right === 'function' ? right() : right,
+      }}>
+        {children}
+      </div>
+  )
+}
+
+function VigenereVideo() {
+  const frame = useCurrentFrame()
+  const top = () => interpolate(frame, [0, 60], [0, 1080], {extrapolateRight: 'clamp'})
+  const right = () => interpolate(frame, [0, 60], [0, 1920], {extrapolateRight: 'clamp'})
+  return (
+    <MySequence>
+      <VideoElement top={50} right={right}>
+        <h1>Vigenere</h1>
+      </VideoElement>
+    </MySequence>
+  )
+}
 
 function Vigenere() {
 
-  const [keyword, setKeyword] = useState('averysecurekeyword')
-
-  const [input, setInput] = useState('Dieser Text wird verschlüsselt.')
-  const [output, setOutput] = useState('')
-
-  useEffect(() => {
-    setOutput(() => {
-      if (input.length <= 0) return ''
-      return caesarShift(input)
-    })
-  }, [input, keyword])
-
-
-  function caesarShift(text) {
-    let keyIndex = 0;
-    return text.split("").map(
-      (letter) => {
-        if (letter.charCodeAt(0) >= 65 && letter.charCodeAt(0) <= 90
-          || letter.charCodeAt(0) >= 97 && letter.charCodeAt(0) <= 122) {
-        let base = "a".charCodeAt(0)
-        if (letter.toUpperCase() === letter) {
-          base = "A".charCodeAt(0)
-        }
-        let shift = keyword.toLowerCase().charCodeAt(keyIndex) - "a".charCodeAt(0);
-        const char = String.fromCharCode((letter.charCodeAt(0) + shift + 26 - base) % 26 + base);
-        keyIndex = (keyIndex + 1) % (keyword.length)
-        return char
-      } else {
-        return letter
-      }
-      }).join("")
-
-  }
-
   return (
     <>
-      <div>Vigenere mit Schlüsselwort: 
-        <input type="text" onChange={(e) => setKeyword(e.target.value)} value={keyword}/>
-      </div>
 
-      <div className='input-area'>
-        <label htmlFor="clear-text-field">Eingabe:</label>
-        <input 
-          onChange={(e) => setInput(e.target.value)}
-          type="text"
-          value={input}
-          id="clear-text-field" />
-      </div>
+      <VigenereContext.Provider
+        value={{
+        }}
+      >
 
-      <div className='output-area'>
-        <label htmlFor="output-text-field">Ausgabe:</label>
-        <input 
-          onChange={(e) => setOutput(e.target.value)}
-          type="text"
-          value={output}
-          id="output-text-field" />
-      </div>
+        <div className="video-container">
+          <Player
+            style={{height: "240px"}}
+            component={VigenereVideo}
+            durationInFrames={60}
+            compositionWidth={1280}
+            compositionHeight={720}
+            fps={30}
+            autoPlay={true}
+            controls
+            loop={true}
+          />
+        </div>
+      </VigenereContext.Provider>
     </>
   )
 }
