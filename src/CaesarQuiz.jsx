@@ -1,4 +1,4 @@
-import { useState, useEffect, createContext, useContext } from 'react'
+import { useState, useEffect } from 'react'
 import './CaesarQuiz.css'
 import { getSessionStorageOrDefault } from './utils'
 
@@ -52,15 +52,35 @@ function updateListEntry(list, index, cb) {
 }
 
 function Questions({question, index, answerSelected}) {
+
+  const [answers, setAnswers] = useState(question.answers)
+
+  useEffect(() => {
+    console.log(answers)
+  })
+
+  let bgColor = 'rgba(255, 255, 255, 0.2)'
+  if (question.correct === true) {
+    bgColor = 'rgba(0, 255, 0, 0.2)'
+  } else if (question.correct === false) {
+    bgColor = 'rgba(255, 0, 0, 0.2)'
+  }
+  const style={
+    backgroundColor: bgColor,
+  }
+
   return (
     <div key={`question-${index}`}>
       <h4>{question.question}</h4>
-      {question.answers.map((answer, j) => (
+      <div style={style}>
+      {answers.map((answer, j) => (
         <div key={`q${index}-a${j}`}>
           <input onClick={e => answerSelected(e, index, j)} type="radio" id={`q${index}-a${j}`} name={`question-${index}`} />
           <label htmlFor={`q${index}-a${j}`}>{answer.text}</label> <br />
         </div>
+
       ))}
+      </div>
     </div>
   )
 }
@@ -74,21 +94,26 @@ function CaesarQuiz() {
     sessionStorage.setItem('quiz-caesar-points', points)
   }, [points])
 
+  function checkAnswer(question) {
+    const len = question.answers.filter(answer => answer.checked === true && answer.correct === true).length
+    return len
+  }
+
   function evaluateQuiz(e) {
     e.preventDefault()
     setPoints(0)
-    questions.map(question => {
-      question.answers.map(answer => {
-        if (answer.checked === true && answer.correct === true) {
-          setPoints(currentPoints => {
-            return currentPoints + 1
-          })
-        }
-      })
+    questions.forEach(question => {
+      const correctAnswers = checkAnswer(question)
+      setPoints(points => points + correctAnswers)
     })
     setQuestions((currentQuestions) => currentQuestions.map(question => {
-      const len = question.answers.filter(answer => answer.checked === true && answer.correct === true).length
-      return {...question, correct: len > 0 }
+      const len = checkAnswer(question)
+      const checked = question.answers.filter(answer => answer.checked === true).length
+      if (checked > 0) {
+        return {...question, correct: len > 0 }
+      } else {
+        return question
+      }
     })
     )
   }
