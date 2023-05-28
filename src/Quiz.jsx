@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import './CaesarQuiz.css'
+import './Quiz.css'
 import { getSessionStorageOrDefault } from './utils'
 
 function updateListEntry(list, index, cb) {
@@ -42,19 +42,19 @@ function Questions({question, index, answerSelected}) {
   )
 }
 
-function CaesarQuiz() {
+function Quiz({quizType}) {
 
   const [questions, setQuestions] = useState([])
-  const [points, setPoints] = useState(getSessionStorageOrDefault('quiz-caesar-points', 0))
+  const [points, setPoints] = useState(getSessionStorageOrDefault(`quiz-${quizType}-points`, 0))
 
   useEffect(() => {
-    fetch("src/assets/questions/caesar.json").then(res => res.json()).then(data => {
+    fetch(`src/assets/questions/${quizType}.json`).then(res => res.json()).then(data => {
       setQuestions(data)
     })
   }, [])
 
   useEffect(() => {
-    sessionStorage.setItem('quiz-caesar-points', points)
+    sessionStorage.setItem(`quiz-${quizType}-points`, points)
   }, [points])
 
   function checkAnswer(question) {
@@ -101,7 +101,12 @@ function CaesarQuiz() {
 
   return (
     <>
-      <h3><span>Caesar Quiz</span><span>Punkte: {points}/{questions.length}</span></h3>
+      <h3><span>{quizType.split("").map((char, i) => {
+        if (i === 0) {
+          return char.toUpperCase()
+        } else {
+          return char
+        }}).join("")} Quiz</span><span>Punkte: {points}/{questions.length}</span></h3>
       <form onSubmit={(e) => evaluateQuiz(e)}>
         {questions.map((question, i) => (
           <Questions question={question} index={i} key={`question-${i}`} answerSelected={answerSelected} />
@@ -113,4 +118,4 @@ function CaesarQuiz() {
   )
 }
 
-export default CaesarQuiz
+export default Quiz

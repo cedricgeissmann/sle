@@ -2,7 +2,7 @@ import './Main.css'
 import {AppContext} from './App.jsx'
 import { useContext } from 'react'
 import Caesar from './Caesar.jsx'
-import CaesarQuiz from './CaesarQuiz.jsx'
+import Quiz from './Quiz.jsx'
 import Vigenere from './Vigenere.jsx'
 import Verschluesselung from './Verschluesselung'
 
@@ -35,7 +35,7 @@ function Main() {
           <Caesar />
         }
         {chapterContext.chapter === 3 &&
-          <CaesarQuiz />
+          <Quiz quizType={'caesar'}/>
         }
         {chapterContext.chapter === 4 &&
           <Vigenere />
