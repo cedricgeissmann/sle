@@ -3,26 +3,15 @@ import Nav from './Nav.jsx'
 import Main from './Main.jsx'
 import Side from './Side.jsx'
 
-import {getSessionStorageOrDefault} from './utils.js'
+import useStorage from './useStorage'
 
-import {createContext, useEffect, useState} from 'react'
+import {createContext} from 'react'
 
 export const AppContext = createContext(null)
 function App() {
 
-  const [chapter, setChapter] = useState(
-    getSessionStorageOrDefault('chapter', 1)
-  )
-  useEffect(() => {
-    sessionStorage.setItem('chapter', chapter)
-  }, [chapter])
-
-  const [finishedChapter, setFinishedChapter] = useState(
-    getSessionStorageOrDefault('finishedChapter', 0)
-  )
-  useEffect(() => {
-    sessionStorage.setItem('finishedChapter', finishedChapter)
-  }, [finishedChapter])
+  const [chapter, setChapter] = useStorage('chapter', 1)
+  const [finishedChapter, setFinishedChapter] = useStorage('finishedChapter', 0)
 
 
   return (

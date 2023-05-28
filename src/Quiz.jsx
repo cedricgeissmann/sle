@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import './Quiz.css'
-import { getSessionStorageOrDefault } from './utils'
+import useStorage from './useStorage'
 
 function updateListEntry(list, index, cb) {
   return list.map((item, i) => {
@@ -45,7 +45,7 @@ function Questions({question, index, answerSelected}) {
 function Quiz({quizType}) {
 
   const [questions, setQuestions] = useState([])
-  const [points, setPoints] = useState(getSessionStorageOrDefault(`quiz-${quizType}-points`, 0))
+  const [points, setPoints] = useStorage(`quiz-${quizType}-points`, 0)
 
   useEffect(() => {
     fetch(`src/assets/questions/${quizType}.json`).then(res => res.json()).then(data => {

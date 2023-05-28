@@ -8,36 +8,36 @@ import Verschluesselung from './Verschluesselung'
 
 function Main() {
 
-  const chapterContext = useContext(AppContext)
+  const {chapter, setChapter, finishedChapter, setFinishedChapter, maxChapter} = useContext(AppContext)
 
   function nextChapter() {
-    if (chapterContext.chapter >= chapterContext.maxChapter) return
-    chapterContext.setChapter((chapter) => chapter + 1)
-    if (chapterContext.chapter > chapterContext.finishedChapter) {
-      chapterContext.setFinishedChapter(chapterContext.chapter)
+    if (chapter >= maxChapter) return
+    setChapter((chapter) => chapter + 1)
+    if (chapter > finishedChapter) {
+      setFinishedChapter(chapter)
     }
   }
 
   function prevChapter() {
-    if (chapterContext.chapter <= 1) return
-    chapterContext.setChapter((chapter) => chapter - 1)
+    if (chapter <= 1) return
+    setChapter((chapter) => chapter - 1)
   }
 
   return (
     <main>
       <div className="chapter">
-      <h2>Chapter {chapterContext.chapter}</h2>
+      <h2>Chapter {chapter}</h2>
       <section>
-        {chapterContext.chapter === 1 &&
+        {chapter === 1 &&
           <Verschluesselung />
         }
-        {chapterContext.chapter === 2 &&
+        {chapter === 2 &&
           <Caesar />
         }
-        {chapterContext.chapter === 3 &&
+        {chapter === 3 &&
           <Quiz quizType={'caesar'}/>
         }
-        {chapterContext.chapter === 4 &&
+        {chapter === 4 &&
           <Vigenere />
         }
       </section>

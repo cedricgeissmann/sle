@@ -3,10 +3,10 @@ import './Side.css'
 import { AppContext } from './App'
 
 function ChapterLink({chapter, name}) {
-  const chapterContext = useContext(AppContext)
+  const {setChapter} = useContext(AppContext)
 
   const updateChapter = useCallback((event) => {
-    chapterContext.setChapter(chapter)
+    setChapter(chapter)
   })
 
   return (
