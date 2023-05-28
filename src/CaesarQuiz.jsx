@@ -51,6 +51,20 @@ function updateListEntry(list, index, cb) {
   })
 }
 
+function Questions({question, index, answerSelected}) {
+  return (
+    <div key={`question-${index}`}>
+      <h4>{question.question}</h4>
+      {question.answers.map((answer, j) => (
+        <div key={`q${index}-a${j}`}>
+          <input onClick={e => answerSelected(e, index, j)} type="radio" id={`q${index}-a${j}`} name={`question-${index}`} />
+          <label htmlFor={`q${index}-a${j}`}>{answer.text}</label> <br />
+        </div>
+      ))}
+    </div>
+  )
+}
+
 function CaesarQuiz() {
 
   const [questions, setQuestions] = useState(QUESTIONS)
@@ -103,17 +117,7 @@ function CaesarQuiz() {
       <h3><span>Caesar Quiz</span><span>Punkte: {points}/{questions.length}</span></h3>
       <form onSubmit={(e) => evaluateQuiz(e)}>
         {questions.map((question, i) => (
-          <div key={`question-${i}`}>
-            <h4>{question.question}</h4>
-            {question.answers.map((answer, j) => (
-              <div key={`q${i}-a${j}`}>
-                <input onClick={(e) => answerSelected(e, i, j)} type="radio" id={`q${i}-a${j}`} name={`question-${i}`} />
-                <label htmlFor={`q${i}-a${j}`}>
-                  {answer.text}
-                </label> <br/>
-              </div>
-            ))}
-          </div>
+          <Questions question={question} index={i} key={`question-${i}`} answerSelected={answerSelected} />
         ))}
         <button className="btn-submit" type="submit">Fertig</button>
       </form>
