@@ -2,12 +2,13 @@ import { useEffect, useState, createContext } from 'react'
 import { Player } from '@remotion/player'
 import './Vigenere.css'
 import { useCurrentFrame, interpolate, AbsoluteFill, Sequence, useVideoConfig, getInputProps } from 'remotion'
+import { LetterList, Letter } from './LetterList'
 
 const VigenereContext = createContext(null)
 
-function MySequence({children}) {
+function MySequence({children, from, durationInFrames}) {
   return (
-    <Sequence from={0} durationInFrames={60}>
+    <Sequence from={from} durationInFrames={durationInFrames}>
       <AbsoluteFill style={{
         backgroundColor: 'black',
         display: 'flex',
@@ -21,13 +22,15 @@ function MySequence({children}) {
   )
 }
 
-function VideoElement({children, top, left, right}) {
+function VideoElement({children, top, left, right, bottom}) {
   return (
       <div style={{
         position: 'absolute',
+        color: 'white',
         top: typeof top === 'function' ? top() : top,
         left: typeof left === 'function' ? left() : left,
         right: typeof right === 'function' ? right() : right,
+        bottom: typeof bottom === 'function' ? bottom() : bottom,
       }}>
         {children}
       </div>
@@ -36,14 +39,29 @@ function VideoElement({children, top, left, right}) {
 
 function VigenereVideo() {
   const frame = useCurrentFrame()
-  const top = () => interpolate(frame, [0, 60], [0, 1080], {extrapolateRight: 'clamp'})
-  const right = () => interpolate(frame, [0, 60], [0, 1920], {extrapolateRight: 'clamp'})
+  const top = () => interpolate(frame, [0, 60], [360, 120], {extrapolateRight: 'clamp'})
+  const opacity = interpolate(frame, [0, 60], [0, 1], {extrapolateRight: 'clamp'})
+  const gap = interpolate(frame, [0, 60], [0, 1], {extrapolateRight: 'clamp'})
   return (
-    <MySequence>
-      <VideoElement top={50} right={right}>
-        <h1>Vigenere</h1>
+    <>
+    <MySequence from={0} durationInFrames={60}>
+      <VideoElement top={top}>
+        <LetterList 
+          letters={'abcd'.split("").map(l => (
+          {letter: l, active: false}
+          ))
+          } 
+          opacity={opacity}
+          gap={gap}
+          letterStyle={{fontSize: '7rem'}} />
       </VideoElement>
     </MySequence>
+    <MySequence from={60} durationInFrames={60}>
+      <VideoElement top={"50%"} left={"20%"}>
+        <Letter myStyle={{fontSize: '7rem'}} letter={{letter: 'e', active: true}}/>
+      </VideoElement>
+    </MySequence>
+    </>
   )
 }
 
@@ -61,7 +79,7 @@ function Vigenere() {
           <Player
             style={{height: "240px"}}
             component={VigenereVideo}
-            durationInFrames={60}
+            durationInFrames={2*60}
             compositionWidth={1280}
             compositionHeight={720}
             fps={30}
