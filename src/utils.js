@@ -5,3 +5,17 @@ export function getSessionStorageOrDefault(key, defaultValue) {
   }
   return JSON.parse(stored);
 }
+
+export function keyToAlphabet(key) {
+  console.log(key)
+  return key.toLowerCase().charCodeAt(0) - 'a'.charCodeAt(0)
+}
+
+export function codeToChar(code) {
+  return String.fromCharCode(code + 'a'.charCodeAt(0))
+}
+
+export function shiftChar(char, shift) {
+  const charCode = keyToAlphabet(char)
+  return codeToChar((charCode + 26 + shift) % 26)
+}

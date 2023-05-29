@@ -1,8 +1,9 @@
-import { useEffect, useState, createContext } from 'react'
+import { useEffect, useState, createContext, useContext } from 'react'
 import { Player } from '@remotion/player'
 import './Vigenere.css'
 import { useCurrentFrame, interpolate, AbsoluteFill, Sequence, useVideoConfig, getInputProps } from 'remotion'
-import { LetterList, Letter } from './LetterList'
+import { LetterList, Letter, ShiftingLetter } from './LetterList'
+import { keyToAlphabet} from './utils'
 
 const VigenereContext = createContext(null)
 
@@ -31,35 +32,63 @@ function VideoElement({children, top, left, right, bottom}) {
         left: typeof left === 'function' ? left() : left,
         right: typeof right === 'function' ? right() : right,
         bottom: typeof bottom === 'function' ? bottom() : bottom,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
       }}>
         {children}
       </div>
   )
 }
 
-function VigenereVideo() {
+
+function IntroSequence() {
+  const {input} = useContext(VigenereContext)
   const frame = useCurrentFrame()
-  const top = () => interpolate(frame, [0, 60], [360, 120], {extrapolateRight: 'clamp'})
-  const opacity = interpolate(frame, [0, 60], [0, 1], {extrapolateRight: 'clamp'})
+  
+  const opacity = interpolate(frame, [0, 60], [0, 1], {extrapolateRight: 'clamp', extrapolateLeft: 'clamp'})
   const gap = interpolate(frame, [0, 60], [0, 1], {extrapolateRight: 'clamp'})
+
+  return (
+      <MySequence from={0} durationInFrames={2 * 30}>
+        <VideoElement 
+          top={ () => interpolate(frame, [0, 60], [360, 120], {extrapolateRight: 'clamp', extrapolateLeft: 'clamp'}) }>
+          <LetterList type="input" letters={input} gap={gap} opacity={opacity}/>
+        </VideoElement>
+      </MySequence>
+  )
+}
+
+
+function VigenereVideo() {
+  const {input, key} = useContext(VigenereContext)
+  const frame = useCurrentFrame()
+
+  const [index, setIndex] = useState(0)
+
+  const top = () => interpolate(frame, [60, 120], [360, 120], {extrapolateRight: 'clamp', extrapolateLeft: 'clamp'})
+  const opacity = interpolate(frame, [60, 120], [0, 1], {extrapolateRight: 'clamp', extrapolateLeft: 'clamp'})
+  const gap = interpolate(frame, [60, 120], [0, 1], {extrapolateRight: 'clamp'})
   return (
     <>
-    <MySequence from={0} durationInFrames={60}>
-      <VideoElement top={top}>
-        <LetterList 
-          letters={'abcd'.split("").map(l => (
-          {letter: l, active: false}
-          ))
-          } 
-          opacity={opacity}
-          gap={gap}
-          letterStyle={{fontSize: '7rem'}} />
-      </VideoElement>
-    </MySequence>
+    <IntroSequence />
     <MySequence from={60} durationInFrames={60}>
+        <VideoElement 
+          top={120}>
+          <LetterList type="input" letters={input} gap={1} opacity={1}/>
+        </VideoElement>
       <VideoElement top={"50%"} left={"20%"}>
-        <Letter myStyle={{fontSize: '7rem'}} letter={{letter: 'e', active: true}}/>
+        <Letter myStyle={{fontSize: '7rem'}} letter={input[index]}/>
       </VideoElement>
+      <VideoElement top={"50%"} left={"50%"}>
+        <div>+{keyToAlphabet(key[index])}</div>
+      </VideoElement>
+      <VideoElement top={"50%"} right={"20%"}>
+        <ShiftingLetter myStyle={{fontSize: '7rem'}} letter={input[index]} shift={keyToAlphabet(key[index])}/>
+      </VideoElement>
+
+    </MySequence>
+    <MySequence from={120} durationInFrames={60}>
     </MySequence>
     </>
   )
@@ -72,6 +101,8 @@ function Vigenere() {
 
       <VigenereContext.Provider
         value={{
+          input: 'abcde'.split("").map(l => ({letter: l, active: false})),
+          key: 'hello'.split("")
         }}
       >
 
