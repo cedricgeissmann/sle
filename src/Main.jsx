@@ -5,6 +5,7 @@ import Caesar from './Caesar.jsx'
 import Quiz from './Quiz.jsx'
 import Vigenere from './Vigenere.jsx'
 import Verschluesselung from './Verschluesselung'
+import DiffieHellman from './DiffieHellman'
 
 function Main() {
 
@@ -39,6 +40,9 @@ function Main() {
         }
         {chapter === 4 &&
           <Vigenere />
+        }
+        {chapter === 5 &&
+          <DiffieHellman />
         }
       </section>
       </div>
