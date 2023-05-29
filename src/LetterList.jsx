@@ -47,8 +47,8 @@ export function Letter({letter, opacity, myClass, myStyle}) {
   useEffect(() => {
     if (letter.active) {
       setStyle({
-        color: `rgba(255, 0, 0, ${opacity})`,
-        border: `2px solid rgba(255, 0, 0, ${opacity})`,
+        color: `rgba(255, 0, 0, 1)`,
+        border: `2px solid rgba(255, 0, 0, 1)`,
       })
     } else {
       setStyle({

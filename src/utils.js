@@ -7,7 +7,6 @@ export function getSessionStorageOrDefault(key, defaultValue) {
 }
 
 export function keyToAlphabet(key) {
-  console.log(key)
   return key.toLowerCase().charCodeAt(0) - 'a'.charCodeAt(0)
 }
 
