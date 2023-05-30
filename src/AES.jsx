@@ -38,6 +38,44 @@ class Block {
     }
   }
 
+  gmul(a, b) {
+    if (b === 1) {
+      return a
+    }
+    const tmp = (a << 1) & 0xFF
+    if (b === 2 ) {
+      if (tmp < 0xFF) {
+        return tmp
+      } else {
+        return tmp ^ 0x1B
+      }
+    }
+    if (b === 3) {
+      if (tmp < 0xFF) {
+        return tmp ^ a
+      } else {
+        return (tmp ^ 0x1B) ^ a
+      }
+    }
+  }
+
+  mixColumns() {
+
+    // db 13 53 45 => 8e 4d a1 bc
+    const column = [0xdb, 0x13, 0x53, 0x45]
+    //for (let i = 0; i < 4; i++) {
+      //const column = this.block[0]
+      const c0 = this.gmul(column[0], 2) ^ this.gmul(column[1], 3) ^ this.gmul(column[2], 1) ^ this.gmul(column[3], 1)
+      const c1 = this.gmul(column[0], 3) ^ this.gmul(column[1], 2) ^ this.gmul(column[2], 1) ^ this.gmul(column[3], 1)
+      const c2 = this.gmul(column[0], 1) ^ this.gmul(column[1], 3) ^ this.gmul(column[2], 2) ^ this.gmul(column[3], 1)
+      const c3 = this.gmul(column[0], 1) ^ this.gmul(column[1], 1) ^ this.gmul(column[2], 3) ^ this.gmul(column[3], 2)
+    //}
+     const res = [c0, c1, c2, c3].map(char => decToHex(char)).join(' ')
+     console.log(res)
+  }
+
+
+
   xor(otherBlock) {
     for (let i = 0; i < 4; i++) {
       for (let j = 0; j < 4; j++) {
@@ -46,6 +84,10 @@ class Block {
       }
     }
   }
+}
+
+function decToHex(dec) {
+  return dec.toString(16).toUpperCase()
 }
 
 function stringToHex(str) {
@@ -78,13 +120,17 @@ function AES() {
   const show = () => {
     console.log(b.block)
   }
-  const encrypt = () => {
+  const shift = () => {
     b.shiftRows()
     console.log(b.block)
   }
-  const decrypt = () => {
+  const xor = () => {
     b.xor(k)
     console.log(b)
+  }
+
+  const mix = () => {
+    b.mixColumns()
   }
 
 
@@ -96,8 +142,9 @@ function AES() {
       <span>{output}</span>
       <div>
         <button onClick={() => show()}>Show Block</button>
-        <button onClick={() => encrypt()}>Encrypt</button>
-        <button onClick={() => decrypt()}>Decrypt</button>
+        <button onClick={() => shift()}>Shift</button>
+        <button onClick={() => mix()}>Mix Columns</button>
+        <button onClick={() => xor()}>XOR</button>
       </div>
     </>
   )
