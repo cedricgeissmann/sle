@@ -26,6 +26,18 @@ class Block {
     }
   }
 
+  shiftRows() {
+    for (let i = 1; i < 4; i++) {
+      const row = this.block[i]
+      const temp = row[0]
+      for (let j = 0; j < 4; j++) {
+        row[j] = row[(j + i) % 4]
+      }
+      row[4-i] = temp
+      
+    }
+  }
+
   xor(otherBlock) {
     for (let i = 0; i < 4; i++) {
       for (let j = 0; j < 4; j++) {
@@ -63,9 +75,12 @@ function AES() {
     setK(new Block(stringToHex(key)));
   }, [key])
 
+  const show = () => {
+    console.log(b.block)
+  }
   const encrypt = () => {
-    b.xor(k)
-    console.log(b)
+    b.shiftRows()
+    console.log(b.block)
   }
   const decrypt = () => {
     b.xor(k)
@@ -80,6 +95,7 @@ function AES() {
       <input value={input} onChange={e => setInput(e.target.value)} />
       <span>{output}</span>
       <div>
+        <button onClick={() => show()}>Show Block</button>
         <button onClick={() => encrypt()}>Encrypt</button>
         <button onClick={() => decrypt()}>Decrypt</button>
       </div>
