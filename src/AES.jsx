@@ -44,14 +44,14 @@ class Block {
     }
     const tmp = (a << 1) & 0xFF
     if (b === 2 ) {
-      if (tmp < 0xFF) {
+      if (a < 0x80) {
         return tmp
       } else {
         return tmp ^ 0x1B
       }
     }
     if (b === 3) {
-      if (tmp < 0xFF) {
+      if (a < 0x80) {
         return tmp ^ a
       } else {
         return (tmp ^ 0x1B) ^ a
@@ -63,12 +63,14 @@ class Block {
 
     // db 13 53 45 => 8e 4d a1 bc
     const column = [0xdb, 0x13, 0x53, 0x45]
+    //const column = [0xf2, 0x0a, 0x22, 0x5c]
+    //const column = [0x01, 0x01, 0x01, 0x01]
     //for (let i = 0; i < 4; i++) {
       //const column = this.block[0]
       const c0 = this.gmul(column[0], 2) ^ this.gmul(column[1], 3) ^ this.gmul(column[2], 1) ^ this.gmul(column[3], 1)
-      const c1 = this.gmul(column[0], 3) ^ this.gmul(column[1], 2) ^ this.gmul(column[2], 1) ^ this.gmul(column[3], 1)
-      const c2 = this.gmul(column[0], 1) ^ this.gmul(column[1], 3) ^ this.gmul(column[2], 2) ^ this.gmul(column[3], 1)
-      const c3 = this.gmul(column[0], 1) ^ this.gmul(column[1], 1) ^ this.gmul(column[2], 3) ^ this.gmul(column[3], 2)
+      const c1 = this.gmul(column[0], 1) ^ this.gmul(column[1], 2) ^ this.gmul(column[2], 3) ^ this.gmul(column[3], 1)
+      const c2 = this.gmul(column[0], 1) ^ this.gmul(column[1], 1) ^ this.gmul(column[2], 2) ^ this.gmul(column[3], 3)
+      const c3 = this.gmul(column[0], 3) ^ this.gmul(column[1], 1) ^ this.gmul(column[2], 1) ^ this.gmul(column[3], 2)
     //}
      const res = [c0, c1, c2, c3].map(char => decToHex(char)).join(' ')
      console.log(res)
