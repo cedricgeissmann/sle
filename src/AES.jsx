@@ -68,33 +68,18 @@ class Block {
     // db 13 53 45 => 8e 4d a1 bc
     const column = [0xdb, 0x13, 0x53, 0x45]
     let columnCopy = [...column]
-    //const column = [0xf2, 0x0a, 0x22, 0x5c]
-    //const column = [0x01, 0x01, 0x01, 0x01]
-    //for (let i = 0; i < 4; i++) {
-    //const column = this.block[0]
-    // const c0 = this.gmul(column[0], 2) ^ this.gmul(column[1], 3) ^ this.gmul(column[2], 1) ^ this.gmul(column[3], 1)
-    // const c1 = this.gmul(column[0], 1) ^ this.gmul(column[1], 2) ^ this.gmul(column[2], 3) ^ this.gmul(column[3], 1)
-    // const c2 = this.gmul(column[0], 1) ^ this.gmul(column[1], 1) ^ this.gmul(column[2], 2) ^ this.gmul(column[3], 3)
-    // const c3 = this.gmul(column[0], 3) ^ this.gmul(column[1], 1) ^ this.gmul(column[2], 1) ^ this.gmul(column[3], 2)
-    // //}
-    // const res = [c0, c1, c2, c3].map(char => decToHex(char)).join(" ")
-    // console.log(res)
 
-      let s0 = column[0];
-      let s1 = column[1];
-      let s2 = column[2];
-      let s3 = column[3];
-      let h = s0 ^ s1 ^ s2 ^ s3;
-      columnCopy[0] ^= h ^ this.xtime[s0 ^ s1];
-      columnCopy[1] ^= h ^ this.xtime[s1 ^ s2];
-      columnCopy[2] ^= h ^ this.xtime[s2 ^ s3];
-      columnCopy[3] ^= h ^ this.xtime[s3 ^ s0];
+    let s0 = column[0]
+    let s1 = column[1]
+    let s2 = column[2]
+    let s3 = column[3]
+    let h = s0 ^ s1 ^ s2 ^ s3
+    columnCopy[0] ^= h ^ this.xtime[s0 ^ s1]
+    columnCopy[1] ^= h ^ this.xtime[s1 ^ s2]
+    columnCopy[2] ^= h ^ this.xtime[s2 ^ s3]
+    columnCopy[3] ^= h ^ this.xtime[s3 ^ s0]
 
     console.log(columnCopy)
-
-
-
-
   }
 
   inverseMixColumns() {
