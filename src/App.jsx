@@ -5,19 +5,20 @@ import Side from './Side.jsx'
 
 import useStorage from './useStorage'
 
-import {createContext} from 'react'
+import {createContext, useState} from 'react'
 
 export const AppContext = createContext(null)
 function App() {
 
   const [chapter, setChapter] = useStorage('chapter', 1)
   const [finishedChapter, setFinishedChapter] = useStorage('finishedChapter', 0)
+  const [maxChapter, setMaxChapter] = useState(0)
 
 
   return (
     <>
       <Nav />
-      <AppContext.Provider value={{chapter, setChapter, finishedChapter, setFinishedChapter, maxChapter: 6}}>
+      <AppContext.Provider value={{chapter, setChapter, finishedChapter, setFinishedChapter, maxChapter, setMaxChapter}}>
         <div className='container'>
           <Side />
           <Main />
