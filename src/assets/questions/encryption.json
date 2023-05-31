@@ -1,0 +1,34 @@
+[{
+    "question": "Bei einem Verschlüsselungsverfahren geht es darum dass Nachrichten nur für bestimmte Empfänger lesbar sind.",
+    "answers": [{
+      "text": "Ja",
+      "checked": false,
+      "correct": true
+    }, {
+      "text": "Nein",
+      "checked": false,
+      "correct": false
+    }]
+  }, {
+    "question": "Ein Verschlüsselungsverfahren kann nur mit dem Schlüssel rückgängig gemacht werden.",
+    "answers": [{
+      "text": "Ja",
+      "checked": false,
+      "correct": true
+    }, {
+      "text": "Nein",
+      "checked": false,
+      "correct": false
+    }]
+  }, {
+    "question": "Der Schlüssel muss unbedingt geheim gehalten werden.",
+    "answers": [{
+      "text": "Ja",
+      "checked": false,
+      "correct": true
+    }, {
+      "text": "Nein",
+      "checked": false,
+      "correct": false
+    }]
+  }]

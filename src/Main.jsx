@@ -34,18 +34,21 @@ function Main() {
           <Verschluesselung />
         }
         {chapter === 2 &&
-          <Caesar />
+          <Quiz quizType={'encryption'} />
         }
         {chapter === 3 &&
-          <Quiz quizType={'caesar'}/>
+          <Caesar />
         }
         {chapter === 4 &&
-          <Vigenere />
+          <Quiz quizType={'caesar'}/>
         }
         {chapter === 5 &&
-          <DiffieHellman />
+          <Vigenere />
         }
         {chapter === 6 &&
+          <DiffieHellman />
+        }
+        {chapter === 7 &&
           <AES />
         }
       </section>

@@ -1,10 +1,21 @@
 main {
   margin: 10px 10px;
-  border: 1px solid grey;
+  /* border: 1px solid grey; */
   border-radius: 5px;
   width: clamp(400px, 80vw, 1000px);
   padding-bottom: 60px;
   position: relative;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.chapter::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.chapter {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
 .chapter {
