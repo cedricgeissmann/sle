@@ -4,6 +4,7 @@ import { Player } from '@remotion/player'
 import './Caesar.css'
 import { useCurrentFrame, interpolate, AbsoluteFill, Sequence, useVideoConfig, getInputProps } from 'remotion'
 import { LetterList } from './LetterList'
+import Hint from './Hint'
 
 export const CaesarContext = createContext(null)
 
@@ -347,6 +348,9 @@ function Caesar() {
           Das folgende Beispiel zeigt wie eine Verschlüsselung mit dem Caesar-Verfahren aussehen könnte. Man nimmt jedes
           Zeichen in der Eingabe, und verschiebt es jeweils um den Schlüssel, dann ergibt sich daraus der Kryptotext.
         </p>
+
+        <Hint hintFile="caesar-hints.json" />
+
         <div className="box">
           <div className="inline-container">
             Caesar mit Verschiebung:

@@ -55,6 +55,7 @@ function Quiz({quizType}) {
 
   useEffect(() => {
     sessionStorage.setItem(`quiz-${quizType}-points`, points)
+    sessionStorage.setItem(`quiz-${quizType}-percent`, (parseFloat(points) / questions.length) * 100.)
   }, [points])
 
   function checkAnswer(question) {

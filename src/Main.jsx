@@ -7,6 +7,7 @@ import Vigenere from './Vigenere.jsx'
 import Verschluesselung from './Verschluesselung'
 import DiffieHellman from './DiffieHellman'
 import AES from './AES'
+import CaesarIntro from './CaesarIntro'
 
 function Main() {
 
@@ -34,26 +35,39 @@ function Main() {
           <Verschluesselung />
         }
         {chapter === 2 &&
-          <Caesar />
+          <Quiz quizType={'encryption'} />
         }
         {chapter === 3 &&
-          <Quiz quizType={'caesar'}/>
+          <CaesarIntro />
         }
         {chapter === 4 &&
-          <Vigenere />
+          <Caesar />
         }
         {chapter === 5 &&
-          <DiffieHellman />
+          <Quiz quizType={'caesar'}/>
         }
         {chapter === 6 &&
+          <Vigenere />
+        }
+        {chapter === 7 &&
+          <DiffieHellman />
+        }
+        {chapter === 8 &&
           <AES />
         }
       </section>
       </div>
 
       <div className='footer'>
-        <button id='btn-prev' onClick={prevChapter}>Zurück</button>
-        <button id='btn-next' onClick={nextChapter}>Weiter</button>
+        {chapter > 1 &&
+          <button id='btn-prev' onClick={prevChapter} disabled={chapter <= 1}>Zurück</button>
+        }
+        {chapter <= 1 &&
+          <span></span>
+        }
+        {chapter < maxChapter &&
+          <button id='btn-next' onClick={nextChapter}>Weiter</button>
+        }
       </div>
     </main>
   )
