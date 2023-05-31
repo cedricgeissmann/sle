@@ -9,7 +9,7 @@ function Side() {
 
   const {setMaxChapter} = useContext(AppContext)
   useEffect(() => {
-    setMaxChapter(5)
+    setMaxChapter(8)
   }, [])
 
   return (
@@ -19,7 +19,9 @@ function Side() {
       <li><ChapterLink chapter={3} name="Caesar: Einführung"/></li>
       <li><ChapterLink chapter={4} name="Caesar: Anwendung"/></li>
       <li><QuizLink chapter={5} name="Quiz: Caesar-Verfahren" quizType="caesar"/></li>
-      <li><ChapterLink chapter={6} name="Vigenère" /></li>
+      <li><ChapterLink chapter={6} name="Vigenère: Einführung" /></li>
+      <li><ChapterLink chapter={7} name="Vigenère: Anwendung" /></li>
+      <li><QuizLink chapter={8} name="Quiz: Vigenère-Verfahren" quizType="vigenere"/></li>
     </ul>
   )
 }

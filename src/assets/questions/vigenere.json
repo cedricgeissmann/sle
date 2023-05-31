@@ -1,0 +1,12 @@
+[{
+    "question": "Das Vigenere-Verfahren ist sicherer wie das Caesar-Verfahren.",
+    "answers": [{
+      "text": "Ja",
+      "checked": false,
+      "correct": true
+    }, {
+      "text": "Nein",
+      "checked": false,
+      "correct": false
+    }]
+  }]

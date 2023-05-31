@@ -31,4 +31,34 @@
       "checked": false,
       "correct": false
     }]
+  }, {
+    "question": "Wieso kann das Caesarverfahren einfach geknackt werden?",
+    "answers": [{
+      "text": "Weil es einen sehr kleinen Schlüsselraum hat.",
+      "checked": false,
+      "correct": true
+    }, {
+      "text": "Weil es sehr alt ist.",
+      "checked": false,
+      "correct": false
+    }]
+  }, {
+    "question": "Wie kann man das Caesarverfahren sicherer machen?",
+    "answers": [{
+      "text": "Man kann mehrere Verschiebungen nacheinander machen.",
+      "checked": false,
+      "correct": false
+    }, {
+      "text": "Man übersetzt die Nachricht in eine andere Sprache vor dem verschlüsseln.",
+      "checked": false,
+      "correct": false
+    }, {
+      "text": "Man baut absichtlich Fehler in der Verschlüsselung ein.",
+      "checked": false,
+      "correct": false
+    }, {
+      "text": "Man verwendet ein durchmischtes Alphabet zusätzlich zur Verschiebung.",
+      "checked": false,
+      "correct": true
+    }]
   }]
