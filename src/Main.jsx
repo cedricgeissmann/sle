@@ -4,6 +4,7 @@ import { useContext } from 'react'
 import Caesar from './Caesar.jsx'
 import Quiz from './Quiz.jsx'
 import Vigenere from './Vigenere.jsx'
+import VigenereIntro from './VigenereIntro'
 import Verschluesselung from './Verschluesselung'
 import DiffieHellman from './DiffieHellman'
 import AES from './AES'
@@ -47,12 +48,18 @@ function Main() {
           <Quiz quizType={'caesar'}/>
         }
         {chapter === 6 &&
-          <Vigenere />
+          <VigenereIntro />
         }
         {chapter === 7 &&
-          <DiffieHellman />
+          <Vigenere />
         }
         {chapter === 8 &&
+          <Quiz quizType={'vigenere'}/>
+        }
+        {chapter === 9 &&
+          <DiffieHellman />
+        }
+        {chapter === 10 &&
           <AES />
         }
       </section>
