@@ -6,6 +6,7 @@ import Quiz from './Quiz.jsx'
 import Vigenere from './Vigenere.jsx'
 import Verschluesselung from './Verschluesselung'
 import DiffieHellman from './DiffieHellman'
+import AES from './AES'
 
 function Main() {
 
@@ -43,6 +44,9 @@ function Main() {
         }
         {chapter === 5 &&
           <DiffieHellman />
+        }
+        {chapter === 6 &&
+          <AES />
         }
       </section>
       </div>

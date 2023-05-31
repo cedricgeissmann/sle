@@ -17,7 +17,7 @@ function App() {
   return (
     <>
       <Nav />
-      <AppContext.Provider value={{chapter, setChapter, finishedChapter, setFinishedChapter, maxChapter: 5}}>
+      <AppContext.Provider value={{chapter, setChapter, finishedChapter, setFinishedChapter, maxChapter: 6}}>
         <div className='container'>
           <Side />
           <Main />
