@@ -9,7 +9,7 @@ function Side() {
 
   const {setMaxChapter} = useContext(AppContext)
   useEffect(() => {
-    setMaxChapter(5)
+    setMaxChapter(6)
   }, [])
 
   return (
