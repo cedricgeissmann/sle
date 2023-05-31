@@ -49,7 +49,7 @@ class Block {
     this.fillBlock()
     
     this.xtime = new Array(256)
-    for (var i = 0; i < 128; i++) {
+    for (let i = 0; i < 128; i++) {
       this.xtime[i] = i << 1
       this.xtime[128 + i] = (i << 1) ^ 0x1b
     }
@@ -126,14 +126,14 @@ class Block {
   inverseMixColumns() {
     const state = [0x8e, 0x4d, 0xa1, 0xbc]
     let stateCopy = [...state]
-      var s0 = state[0];
-      var s1 = state[1];
-      var s2 = state[2];
-      var s3 = state[3];
-      var h = s0 ^ s1 ^ s2 ^ s3;
-      var xh = this.xtime[h];
-      var h1 = this.xtime[this.xtime[xh ^ s0 ^ s2]] ^ h;
-      var h2 = this.xtime[this.xtime[xh ^ s1 ^ s3]] ^ h;
+      let s0 = state[0];
+      let s1 = state[1];
+      let s2 = state[2];
+      let s3 = state[3];
+      let h = s0 ^ s1 ^ s2 ^ s3;
+      let xh = this.xtime[h];
+      let h1 = this.xtime[this.xtime[xh ^ s0 ^ s2]] ^ h;
+      let h2 = this.xtime[this.xtime[xh ^ s1 ^ s3]] ^ h;
       stateCopy[0] ^= h1 ^ this.xtime[s0 ^ s1];
       stateCopy[1] ^= h2 ^ this.xtime[s1 ^ s2];
       stateCopy[2] ^= h1 ^ this.xtime[s2 ^ s3];
@@ -177,6 +177,13 @@ class Block {
 
 function splitHLBytes(byte) {
   return decToHex(byte).split("").map(char => parseInt(char, 16))
+}
+
+function Sbox(dec) {
+  const hex = decToHex(dec)
+  console.log("Sbox lookup: ", dec, hex)
+  const [h, l] = splitHLBytes(hex)
+  return Block.sBox[h][l]
 }
 
 function decToHex(dec) {
@@ -239,8 +246,45 @@ function AES() {
 
   const subByteInverse = () => {
     b.subBytesBackward()
-    
   }
+
+
+  const expandKey = key_ => {
+    console.log("key:", key_)
+    let utf8Encode = new TextEncoder();
+    key_ = utf8Encode.encode(key_);
+    let ks = 15 << 5
+    let key = new Uint8Array(ks)
+    for (let i = 0; i < key.length; i++) {
+      key[i] = key_[i]
+    }
+    console.log("key:", key)
+
+    let kl = key.length
+    let Rcon = 1
+    let keyA = key.slice()
+    let temp = new Array(4).fill(0)
+
+    for (let i = kl; i < ks; i += 4) {
+      temp = keyA.slice(i - 4, i)
+      console.log('temp:', temp)
+      if (i % kl == 0) {
+        temp = [Sbox(temp[1]) ^ Rcon, Sbox(temp[2]), Sbox(temp[3]), Sbox(temp[0])]
+        if ((Rcon <<= 1) >= 256) {
+          Rcon ^= 0x11b
+        }
+      } else if (kl > 24 && i % kl == 16) {
+        temp = [Sbox(temp[0]), Sbox(temp[1]), Sbox(temp[2]), Sbox(temp[3])]
+      }
+      console.log('temp after: ',temp)
+      for (let j = 0; j < 4; j++) {
+        keyA[i + j] = keyA[i + j - kl] ^ temp[j]
+      }
+    }
+    console.log("keyA:", keyA)
+
+    return keyA
+  }    
 
 
 
@@ -257,6 +301,7 @@ function AES() {
         <button onClick={() => xor()}>XOR</button>
         <button onClick={() => subByte()}>SubByte</button>
         <button onClick={() => subByteInverse()}>SubByte Inverse</button>
+        <button onClick={() => expandKey(key)}>Expand Key</button>
       </div>
     </>
   )
