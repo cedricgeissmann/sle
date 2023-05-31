@@ -24,3 +24,23 @@ input,
 .box {
   box-shadow: 2px 5px 5px rgba(0, 0, 0, 0.5);
 }
+
+.hint {
+  background-color: rgba(34, 139, 34, 0.60);
+  padding: 0 10px;
+  border-radius: 5px;
+  max-height: calc(1rem + 10px);
+  overflow-y: hidden;
+  transition: max-height 0.6s ease-in-out;
+  color:rgb(255, 255, 255)
+}
+
+.hint:hover {
+  max-height: 500px;
+}
+
+.hint p:first-child {
+  margin: 5px 0;
+  font-weight: bold;
+}
+
