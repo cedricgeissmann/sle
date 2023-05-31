@@ -1,6 +1,7 @@
 import { useEffect, useState, createContext, useContext } from 'react'
 import { Player } from '@remotion/player'
 import './Vigenere.css'
+import Hint from './Hint'
 import { useCurrentFrame, interpolate, AbsoluteFill, Sequence, useVideoConfig, getInputProps } from 'remotion'
 import { LetterList, Letter, ShiftingLetter } from './LetterList'
 import { keyToAlphabet, shiftChar} from './utils'
@@ -128,9 +129,13 @@ function Vigenere() {
   return (
     <>
       <VigenereContext.Provider value={{input, setInput, key, output, setOutput}}>
+        <p>
+          Hier finden Sie das Vigenère-Verfahren, welches mit dem Schlüssel <b>{key.map(l => l.letter).join("")}</b> die Nachricht <b>{input.map(l => l.letter).join("")}</b> verschlüsselt.
+        </p>
+        <Hint hintFile="vigenere-hints.json" />
         <div className="box">
           <div className="inline-container">
-            Vigenère mit Schlüssel:
+            Schlüssel:
             <input
               className="text-input"
               type="text"
