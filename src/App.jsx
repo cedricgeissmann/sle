@@ -13,12 +13,12 @@ function App() {
   const [chapter, setChapter] = useStorage('chapter', 1)
   const [finishedChapter, setFinishedChapter] = useStorage('finishedChapter', 0)
   const [maxChapter, setMaxChapter] = useState(0)
-
+  const [renderSide, setRenderSide] = useState(false)
 
   return (
     <>
       <Nav />
-      <AppContext.Provider value={{chapter, setChapter, finishedChapter, setFinishedChapter, maxChapter, setMaxChapter}}>
+      <AppContext.Provider value={{renderSide, setRenderSide, chapter, setChapter, finishedChapter, setFinishedChapter, maxChapter, setMaxChapter}}>
         <div className='container'>
           <Side />
           <Main />

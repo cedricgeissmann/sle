@@ -23,7 +23,9 @@ ul li a {
 ul li a:hover {
   color: var(--fg-color-2);
 }
-ul li:hover {
+ul li:hover,
+ul li:has(a.active),
+ul li a.active {
   background-color: var(--bg-color-2);
 }
 

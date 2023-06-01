@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import './Quiz.css'
 import useStorage from './useStorage'
+import { AppContext } from './App'
 
 function updateListEntry(list, index, cb) {
   return list.map((item, i) => {
@@ -44,6 +45,8 @@ function Questions({question, index, answerSelected}) {
 
 function Quiz({quizType}) {
 
+  const {setRenderSide} = useContext(AppContext)
+
   const [questions, setQuestions] = useState([])
   const [points, setPoints] = useStorage(`quiz-${quizType}-points`, 0)
 
@@ -54,8 +57,9 @@ function Quiz({quizType}) {
   }, [])
 
   useEffect(() => {
-    sessionStorage.setItem(`quiz-${quizType}-points`, points)
-    sessionStorage.setItem(`quiz-${quizType}-percent`, (parseFloat(points) / questions.length) * 100.)
+    localStorage.setItem(`quiz-${quizType}-points`, points)
+    localStorage.setItem(`quiz-${quizType}-percent`, questions.length && Math.round((parseFloat(points) / questions.length) * 100))
+    setRenderSide(true)
   }, [points])
 
   function checkAnswer(question) {

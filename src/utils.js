@@ -1,5 +1,5 @@
 export function getSessionStorageOrDefault(key, defaultValue) {
-  const stored = sessionStorage.getItem(key);
+  const stored = localStorage.getItem(key);
   if (!stored) {
     return defaultValue;
   }
