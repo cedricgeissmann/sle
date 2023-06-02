@@ -132,7 +132,7 @@ function Vigenere() {
         <p>
           Hier finden Sie das Vigenère-Verfahren, welches mit dem Schlüssel <b>{key.map(l => l.letter).join("")}</b> die Nachricht <b>{input.map(l => l.letter).join("")}</b> verschlüsselt.
         </p>
-        <Hint hintFile="vigenere-hints.json" />
+        <Hint hintFile="vigenere" />
         <div className="box">
           <div className="inline-container">
             Schlüssel:

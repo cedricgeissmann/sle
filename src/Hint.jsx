@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import {HINTS} from './hints.js'
 
 function Hint({hintFile = '', hintText = '', title = 'Tipp'}) {
   const [hint, setHint] = useState([])
@@ -6,12 +7,10 @@ function Hint({hintFile = '', hintText = '', title = 'Tipp'}) {
 
   useEffect(() => {
     if (hintFile) {
-    fetch(`src/assets/hints/${hintFile}`).then(res => res.json()).then(data => {
-      setHint(data)
-    })
-  } else {
-    setHint([hintText])
-  }
+      setHint(HINTS[hintFile])
+    } else {
+      setHint([hintText])
+    }
   }, [])
 
   function newHint() {

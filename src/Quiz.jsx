@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from 'react'
 import './Quiz.css'
 import useStorage from './useStorage'
 import { AppContext } from './App'
+import { QUESTIONS } from './questions.js'
 
 function updateListEntry(list, index, cb) {
   return list.map((item, i) => {
@@ -51,9 +52,10 @@ function Quiz({quizType}) {
   const [points, setPoints] = useStorage(`quiz-${quizType}-points`, 0)
 
   useEffect(() => {
-    fetch(`src/assets/questions/${quizType}.json`).then(res => res.json()).then(data => {
-      setQuestions(data)
-    })
+    setQuestions(QUESTIONS[quizType])
+    // fetch(`src/assets/questions/${quizType}.json`).then(res => res.json()).then(data => {
+    //   setQuestions(data)
+    // })
   }, [])
 
   useEffect(() => {

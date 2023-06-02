@@ -349,7 +349,7 @@ function Caesar() {
           Zeichen in der Eingabe, und verschiebt es jeweils um den Schlüssel, dann ergibt sich daraus der Kryptotext.
         </p>
 
-        <Hint hintFile="caesar-hints.json" />
+        <Hint hintFile="caesar" />
 
         <div className="box">
           <div className="inline-container">
