@@ -30,7 +30,7 @@ function Main() {
   return (
     <main>
       <div className="chapter">
-      <h2>Chapter {chapter}</h2>
+      <h2>Kapitel {chapter}</h2>
       <section>
         {chapter === 1 &&
           <Verschluesselung />
