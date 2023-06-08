@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { decToHex, splitHLBytes, stringToHex, sBox, sBoxInv, toIndex, xor, shiftIndex, mixColumns, inverseMixColumns } from './utils.js'
+import { decToHex, splitHLBytes, stringToHex, sBox, sBoxInv, RCON, toIndex, xor, shiftIndex, mixColumns, inverseMixColumns } from './utils.js'
 
 function BlockComponent({b}) {
 
@@ -219,7 +219,8 @@ function AES() {
   }
 
 
-  const expandKey = key_ => {
+
+  const expandKey_ = key_ => {
     console.log("key:", key_)
     let utf8Encode = new TextEncoder();
     key_ = utf8Encode.encode(key_);

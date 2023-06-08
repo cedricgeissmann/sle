@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { decToHex, stringToHex, splitHLBytes } from "/src/utils.js";
 import { Block } from "/src/AES.jsx";
-import { inverseMixColumns, mixColumns } from "../src/utils";
+import { expandKey, inverseMixColumns, mixColumns } from "../src/utils";
 
 describe("Utility functions for AES", () => {
   it("should convert dec to hex", () => {
@@ -129,6 +129,12 @@ describe("Utility functions for AES", () => {
     expect(b.hexArray).not.toEqual(a.hexArray)
     b.inverseMixColumns()
     expect(b.hexArray).toEqual(a.hexArray)
+  })
+
+  it("should expand the key", () => {
+    const key = new Block("yellow submarine")
+    const newKey = expandKey(key.hexArray)
+    expect(newKey).toHaveLength(16 * 11)
   })
 
 })
