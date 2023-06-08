@@ -162,34 +162,19 @@ export class Block {
 
   xor(otherBlock) {
     for (let i = 0; i < this.hexArray.length; i++) {
-      console.log(this.hexArray[i], otherBlock.hexArray[i], xor(this.hexArray[i] ^ otherBlock.hexArray[i]))
       this.hexArray[i] = xor(this.hexArray[i], otherBlock.hexArray[i])
     }
   }
 
-  subBytesForward() {
-    for (let i = 0; i < 4; i++) {
-      for (let j = 0; j < 4; j++) {
-        const temp = this.block[i][j]
-        const [h, l] = splitHLBytes(temp)
-        console.log(temp, h, l)
-        this.block[i][j] = sBox[h][l]
-      }
+  subBytes(options = {backward: false}) {
+    console.log(options)
+    const lookup = options.backward ? sBoxInv : sBox
+    for (let i = 0; i < this.hexArray.length; i++) {
+      const [h, l] = splitHLBytes(this.hexArray[i])
+      this.hexArray[i] = decToHex(lookup[h][l])
     }
-    console.log(this.block)
   }
 
-  subBytesBackward() {
-    for (let i = 0; i < 4; i++) {
-      for (let j = 0; j < 4; j++) {
-        const temp = this.block[i][j]
-        const [h, l] = splitHLBytes(temp)
-        console.log(temp, h, l)
-        this.block[i][j] = sBoxInv[h][l]
-      }
-    }
-    console.log(this.block)
-  }
 }
 
 function AES() {

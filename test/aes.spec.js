@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { decToHex, stringToHex } from "/src/utils.js";
+import { decToHex, stringToHex, splitHLBytes } from "/src/utils.js";
 import { Block } from "/src/AES.jsx";
 
 describe("Utility functions for AES", () => {
@@ -55,4 +55,43 @@ describe("Utility functions for AES", () => {
     b.xor(key)
     expect(b.hexArray).toEqual(a.hexArray)
   })
+
+  it("should substitute in the sbox", () => {
+    const b = new Block("A")
+    const res = [
+      '83', '63', '63', '63',
+      '63', '63', '63', '63',
+      '63', '63', '63', '63',
+      '63', '63', '63', '63'
+    ]
+    b.subBytes()
+    expect(b.hexArray).toEqual(res)
+  })
+
+  it("should reverse substitution in the sbox", () => {
+    const a = new Block("just some random strings")
+    const b = new Block("just some random strings")
+    console.log(a.hexArray, b.hexArray)
+    b.subBytes()
+    console.log(b.hexArray)
+    expect(b.hexArray).not.toEqual(a.hexArray)
+    b.subBytes({backward: true})
+    console.log(b.hexArray)
+    expect(b.hexArray).toEqual(a.hexArray)
+  })
+
+  it("should split '02' correctly", () => {
+    const byte = '02'
+    const [h, l] = splitHLBytes(byte)
+    expect(h).toBe(0x0)
+    expect(l).toBe(0x2)
+  })
+
+  it("should split '9D' correctly", () => {
+    const byte = '9D'
+    const [h, l] = splitHLBytes(byte)
+    expect(h).toBe(0x9)
+    expect(l).toBe(0xD)
+  })
+
 })
