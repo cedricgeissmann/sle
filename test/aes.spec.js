@@ -17,7 +17,7 @@ describe("Utility functions for AES", () => {
     // expect(b.block).not.toEqual(copy)
   })
 
-  it("should hav a hex array", () => {
+  it("should have a hex array", () => {
     const b = new Block("secret")
     expect(b.hexArray).toBeInstanceOf(Array)
     expect(b.hexArray).toHaveLength(16)
@@ -25,7 +25,7 @@ describe("Utility functions for AES", () => {
     console.log("As block", b.toBlock())
   })
 
-  it("should hav a dec array", () => {
+  it("should have a dec array", () => {
     const b = new Block("secret")
     expect(b.decArray).toBeInstanceOf(Array)
     expect(b.decArray).toHaveLength(16)
