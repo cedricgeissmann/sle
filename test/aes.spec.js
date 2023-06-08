@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { decToHex, stringToHex, splitHLBytes } from "/src/utils.js";
 import { Block } from "/src/AES.jsx";
+import { inverseMixColumns, mixColumns } from "../src/utils";
 
 describe("Utility functions for AES", () => {
   it("should convert dec to hex", () => {
@@ -99,10 +100,24 @@ describe("Utility functions for AES", () => {
       [ '00', '00', '63', '00' ],
       [ '00', '72', '00', '00' ]
     ]
-    console.log(b.toBlock())
     b.shiftRows()
-    console.log(b.toBlock())
     expect(b.toBlock()).toEqual(res)
+  })
+
+  it("should mix columns", () => {
+    const col = ["F2", "0A", "22", "5C"]
+    const res = ["9F", "DC", "58", "9D"]
+
+    const calc = mixColumns(col)
+    expect(calc).toEqual(res)
+  })
+
+  it("should inverse mix columns", () => {
+    const col = ["9F", "DC", "58", "9D"]
+    const res = ["F2", "0A", "22", "5C"]
+
+    const calc = inverseMixColumns(col)
+    expect(calc).toEqual(res)
   })
 
 })
