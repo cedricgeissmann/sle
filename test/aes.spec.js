@@ -120,4 +120,15 @@ describe("Utility functions for AES", () => {
     expect(calc).toEqual(res)
   })
 
+  it("should reverse the column mix", () => {
+    const a = new Block("i want to mix this thing up")
+    const b = new Block("i want to mix this thing up")
+
+    expect(b.hexArray).toEqual(a.hexArray)
+    b.mixColumns()
+    expect(b.hexArray).not.toEqual(a.hexArray)
+    b.inverseMixColumns()
+    expect(b.hexArray).toEqual(a.hexArray)
+  })
+
 })

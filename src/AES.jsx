@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { decToHex, splitHLBytes, Sbox, stringToHex, sBox, sBoxInv, toIndex, xor, shiftIndex } from './utils.js'
+import { decToHex, splitHLBytes, stringToHex, sBox, sBoxInv, toIndex, xor, shiftIndex, mixColumns, inverseMixColumns } from './utils.js'
 
 function BlockComponent({b}) {
 
@@ -51,6 +51,22 @@ export class Block {
     for (let i = 0; i < 128; i++) {
       this.xtime[i] = i << 1
       this.xtime[128 + i] = (i << 1) ^ 0x1b
+    }
+  }
+
+  getColumn(col) {
+    const column = [
+      this.hexArray[toIndex(col, 0)],
+      this.hexArray[toIndex(col, 1)],
+      this.hexArray[toIndex(col, 2)],
+      this.hexArray[toIndex(col, 3)],
+    ]
+    return column
+  }
+
+  setColumn(col, newCol) {
+    for (let i = 0; i < newCol.length; i++) {
+      this.hexArray[toIndex(col, i)] = newCol[i]
     }
   }
 
@@ -122,39 +138,19 @@ export class Block {
   }
 
   mixColumns() {
-    // db 13 53 45 => 8e 4d a1 bc
-    const column = [0xdb, 0x13, 0x53, 0x45]
-    let columnCopy = [...column]
-
-    let s0 = column[0]
-    let s1 = column[1]
-    let s2 = column[2]
-    let s3 = column[3]
-    let h = s0 ^ s1 ^ s2 ^ s3
-    columnCopy[0] ^= h ^ this.xtime[s0 ^ s1]
-    columnCopy[1] ^= h ^ this.xtime[s1 ^ s2]
-    columnCopy[2] ^= h ^ this.xtime[s2 ^ s3]
-    columnCopy[3] ^= h ^ this.xtime[s3 ^ s0]
-
-    console.log(columnCopy)
+    for (let i=0; i < 4; i++) {
+      const column = this.getColumn(i)
+      const mix = mixColumns(column)
+      this.setColumn(i, mix)
+    }
   }
 
   inverseMixColumns() {
-    const state = [0x8e, 0x4d, 0xa1, 0xbc]
-    let stateCopy = [...state]
-      let s0 = state[0];
-      let s1 = state[1];
-      let s2 = state[2];
-      let s3 = state[3];
-      let h = s0 ^ s1 ^ s2 ^ s3;
-      let xh = this.xtime[h];
-      let h1 = this.xtime[this.xtime[xh ^ s0 ^ s2]] ^ h;
-      let h2 = this.xtime[this.xtime[xh ^ s1 ^ s3]] ^ h;
-      stateCopy[0] ^= h1 ^ this.xtime[s0 ^ s1];
-      stateCopy[1] ^= h2 ^ this.xtime[s1 ^ s2];
-      stateCopy[2] ^= h1 ^ this.xtime[s2 ^ s3];
-      stateCopy[3] ^= h2 ^ this.xtime[s3 ^ s0];
-      console.log(stateCopy.map(entry => decToHex(entry)).join(" "))
+    for (let i=0; i < 4; i++) {
+      const column = this.getColumn(i)
+      const mix = inverseMixColumns(column)
+      this.setColumn(i, mix)
+    }
   }
 
   xor(otherBlock) {
