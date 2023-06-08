@@ -91,3 +91,8 @@ export function toIndex(row, col) {
 export function xor(a, b) {
   return decToHex(hexToDec(a) ^ hexToDec(b))
 }
+
+export function shiftIndex(index) {
+  const lookup = [0, 5, 10, 15, 4, 9, 14, 3, 8, 13, 2, 7, 12, 1, 6, 11]
+  return lookup[index]
+}

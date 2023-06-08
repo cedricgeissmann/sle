@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { decToHex, splitHLBytes, Sbox, stringToHex, sBox, sBoxInv, toIndex, xor } from './utils.js'
+import { decToHex, splitHLBytes, Sbox, stringToHex, sBox, sBoxInv, toIndex, xor, shiftIndex } from './utils.js'
 
 function BlockComponent({b}) {
 
@@ -93,13 +93,10 @@ export class Block {
   }
 
   shiftRows() {
-    for (let i = 1; i < 4; i++) {
-      const row = this.block[i]
-      const temp = row[0]
-      for (let j = 0; j < 4; j++) {
-        row[j] = row[(j + i) % 4]
-      }
-      row[4 - i] = temp
+    const copy = [...this.hexArray]
+    for (let i = 0; i < this.hexArray.length; i++) {
+      const targetIndex = shiftIndex(i)
+      this.hexArray[i] = copy[targetIndex]
     }
   }
 
@@ -167,7 +164,6 @@ export class Block {
   }
 
   subBytes(options = {backward: false}) {
-    console.log(options)
     const lookup = options.backward ? sBoxInv : sBox
     for (let i = 0; i < this.hexArray.length; i++) {
       const [h, l] = splitHLBytes(this.hexArray[i])

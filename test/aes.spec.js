@@ -71,12 +71,9 @@ describe("Utility functions for AES", () => {
   it("should reverse substitution in the sbox", () => {
     const a = new Block("just some random strings")
     const b = new Block("just some random strings")
-    console.log(a.hexArray, b.hexArray)
     b.subBytes()
-    console.log(b.hexArray)
     expect(b.hexArray).not.toEqual(a.hexArray)
     b.subBytes({backward: true})
-    console.log(b.hexArray)
     expect(b.hexArray).toEqual(a.hexArray)
   })
 
@@ -92,6 +89,20 @@ describe("Utility functions for AES", () => {
     const [h, l] = splitHLBytes(byte)
     expect(h).toBe(0x9)
     expect(l).toBe(0xD)
+  })
+
+  it("should shift rows", () => {
+    const b = new Block("secret")
+    const res = [
+      [ '73', '65', '00', '00' ],
+      [ '74', '00', '00', '65' ],
+      [ '00', '00', '63', '00' ],
+      [ '00', '72', '00', '00' ]
+    ]
+    console.log(b.toBlock())
+    b.shiftRows()
+    console.log(b.toBlock())
+    expect(b.toBlock()).toEqual(res)
   })
 
 })
