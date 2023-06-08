@@ -26,13 +26,24 @@ function BlockComponent({b}) {
   )
 }
 
+/* 
+ * Take an input and convert it to a 4x4 block.
+ * Fill up the block if needed, or cut of the block if it is to long.
+ */
 export class Block {
-  constructor(hexString) {
-    this.hexString = hexString
-    this.hexArray = hexString.split(" ").map(char => parseInt(char, 16))
-    for (let i = this.hexArray.length; i < 16; i++) {
-      this.hexArray.push(0)
+  constructor(inputString) {
+    this.hexString = stringToHex(inputString.substring(0, 16))
+    this.decArray = this.hexString.split(" ").map(char => parseInt(char, 16))
+    for (let i = this.decArray.length; i < 16; i++) {
+      this.decArray.push(0)
     }
+    // Array of the incomming data encoded in hey string
+    this.hexArray = this.hexString.split(" ")
+    for (let i = this.hexArray.length; i < 16; i++) {
+      this.hexArray.push('00')
+    }
+
+
     this.createBlock()
     this.fillBlock()
     
@@ -41,6 +52,19 @@ export class Block {
       this.xtime[i] = i << 1
       this.xtime[128 + i] = (i << 1) ^ 0x1b
     }
+  }
+
+  toBlock() {
+    const block = []
+    for (let i = 0; i < 4; i++) {
+      block.push(new Array(4).fill(0))
+    }
+    for (let i = 0; i < 4; i++) {
+      for (let j = 0; j < 4; j++) {
+        block[j][i] = this.hexArray[i * 4 + j]
+      }
+    }
+    return block
   }
 
   createBlock() {
@@ -174,11 +198,11 @@ function AES() {
   }, [input])
 
   useEffect(() => {
-    setB(new Block(output));
+    setB(new Block(input));
   }, [output])
 
   useEffect(() => {
-    setK(new Block(stringToHex(key)));
+    setK(new Block(key));
   }, [key])
 
   const show = () => {
