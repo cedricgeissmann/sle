@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { decToHex, splitHLBytes, Sbox, stringToHex, sBox, sBoxInv } from './utils.js'
+import { decToHex, splitHLBytes, Sbox, stringToHex, sBox, sBoxInv, toIndex, xor } from './utils.js'
 
 function BlockComponent({b}) {
 
@@ -62,6 +62,16 @@ export class Block {
     for (let i = 0; i < 4; i++) {
       for (let j = 0; j < 4; j++) {
         block[j][i] = this.hexArray[i * 4 + j]
+      }
+    }
+    return block
+  }
+
+  printBlock() {
+    const block = []
+    for (let i = 0; i < 4; i++) {
+      for (let j = 0; j < 4; j++) {
+        block.push(this.hexArray[toIndex(i, j)])
       }
     }
     return block
@@ -151,11 +161,9 @@ export class Block {
   }
 
   xor(otherBlock) {
-    for (let i = 0; i < 4; i++) {
-      for (let j = 0; j < 4; j++) {
-        console.log(this.block[i][j], otherBlock.block[i][j], this.block[i][j] ^ otherBlock.block[i][j])
-        this.block[i][j] = this.block[i][j] ^ otherBlock.block[i][j]
-      }
+    for (let i = 0; i < this.hexArray.length; i++) {
+      console.log(this.hexArray[i], otherBlock.hexArray[i], xor(this.hexArray[i] ^ otherBlock.hexArray[i]))
+      this.hexArray[i] = xor(this.hexArray[i], otherBlock.hexArray[i])
     }
   }
 

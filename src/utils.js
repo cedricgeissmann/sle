@@ -38,9 +38,13 @@ export function decToHex(dec) {
   return dec.toString(16).toUpperCase()
 }
 
+export function hexToDec(hex) {
+  return parseInt(hex, 16)
+}
+
 export function stringToHex(str) {
   return str.split("").map(char => {
-    return char.charCodeAt(0).toString(16)
+    return char.charCodeAt(0).toString(16).toUpperCase()
   }).join(" ")
 }
 
@@ -81,3 +85,15 @@ export function stringToHex(str) {
       [0xa0, 0xe0, 0x3b, 0x4d, 0xae, 0x2a, 0xf5, 0xb0, 0xc8, 0xeb, 0xbb, 0x3c, 0x83, 0x53, 0x99, 0x61],
       [0x17, 0x2b, 0x04, 0x7e, 0xba, 0x77, 0xd6, 0x26, 0xe1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0c, 0x7d],
     ]
+
+
+/*
+ * Calculate the index in a column first 4x4 block.
+ */
+export function toIndex(row, col) {
+  return 4 * col + row
+}
+
+export function xor(a, b) {
+  return decToHex(hexToDec(a) ^ hexToDec(b))
+}

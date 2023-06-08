@@ -21,13 +21,38 @@ describe("Utility functions for AES", () => {
     const b = new Block("secret")
     expect(b.hexArray).toBeInstanceOf(Array)
     expect(b.hexArray).toHaveLength(16)
-    console.log("b.hexArray", b.hexArray)
-    console.log("As block", b.toBlock())
   })
 
   it("should have a dec array", () => {
     const b = new Block("secret")
     expect(b.decArray).toBeInstanceOf(Array)
     expect(b.decArray).toHaveLength(16)
+  })
+
+  it("should trim to fit the block", () => {
+    const b = new Block("this is a very long string that does not fit the box")
+    expect(b.hexArray).toHaveLength(16)
+  })
+
+  it("should xor to blocks", () => {
+    const b = new Block("secret")
+    const key = new Block("key")
+    const res = [
+      '18', '00', '1A', '72',
+      '65', '74', '00', '00',
+      '00', '00', '00', '00',
+      '00', '00', '00', '00'
+    ]
+    b.xor(key)
+    expect(b.hexArray).toEqual(res)
+  })
+
+  it("should reverse itself", () => {
+    const a = new Block("a very long stri")
+    const b = new Block("a very long stri")
+    const key = new Block("just some random key")
+    b.xor(key)
+    b.xor(key)
+    expect(b.hexArray).toEqual(a.hexArray)
   })
 })
