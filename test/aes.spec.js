@@ -104,29 +104,48 @@ describe("Utility functions for AES", () => {
     expect(b.toBlock()).toEqual(res)
   })
 
-  it("should mix columns", () => {
-    const col = ["F2", "0A", "22", "5C"]
-    const res = ["9F", "DC", "58", "9D"]
+  // it("should mix columns", () => {
+  //   const col = ["F2", "0A", "22", "5C"]
+  //   const res = ["9F", "DC", "58", "9D"]
 
-    const calc = mixColumns(col)
-    expect(calc).toEqual(res)
-  })
+  //   const calc = mixColumns(col)
+  //   expect(calc).toEqual(res)
+  // })
 
-  it("should inverse mix columns", () => {
-    const col = ["9F", "DC", "58", "9D"]
-    const res = ["F2", "0A", "22", "5C"]
+  // it("should inverse mix columns", () => {
+  //   const col = ["9F", "DC", "58", "9D"]
+  //   const res = ["F2", "0A", "22", "5C"]
 
-    const calc = inverseMixColumns(col)
-    expect(calc).toEqual(res)
-  })
+  //   const calc = inverseMixColumns(col)
+  //   expect(calc).toEqual(res)
+  // })
 
   it("should reverse the column mix", () => {
+    const res = [
+      "8E", "4D", "A1", "BC",
+      "9F", "DC", "58", "9D",	
+      "01", "01", "01", "01",	
+      "C6", "C6", "C6", "C6",
+    ]
     const a = new Block("i want to mix this thing up")
+    a.hexArray = [
+      "DB", "13", "53", "45",
+      "F2", "0A", "22", "5C",	
+      "01", "01", "01", "01",
+      "C6", "C6", "C6", "C6",
+    ]
     const b = new Block("i want to mix this thing up")
+    b.hexArray = [
+      "DB", "13", "53", "45",
+      "F2", "0A", "22", "5C",	
+      "01", "01", "01", "01",
+      "C6", "C6", "C6", "C6",
+    ]
 
     expect(b.hexArray).toEqual(a.hexArray)
     b.mixColumns()
     expect(b.hexArray).not.toEqual(a.hexArray)
+    expect(b.hexArray).toEqual(res)
     b.inverseMixColumns()
     expect(b.hexArray).toEqual(a.hexArray)
   })

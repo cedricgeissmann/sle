@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { decToHex, splitHLBytes, stringToHex, sBox, sBoxInv, RCON, toIndex, xor, shiftIndex, mixColumns, inverseMixColumns } from './utils.js'
+import { decToHex, splitHLBytes, stringToHex, sBox, sBoxInv, RCON, toIndex, xor, shiftIndex, mixColumns, inverseMixColumns, inverseMixColumns_ } from './utils.js'
 
 function BlockComponent({b}) {
 
@@ -138,19 +138,24 @@ export class Block {
   }
 
   mixColumns() {
-    for (let i=0; i < 4; i++) {
-      const column = this.getColumn(i)
-      const mix = mixColumns(column)
-      this.setColumn(i, mix)
-    }
+    console.log(this.hexArray)
+    const res = mixColumns(this.hexArray)
+    //const res2 = inverseMixColumns(res)
+    // for (let i=0; i < 4; i++) {
+    //   const column = this.getColumn(i)
+    //   const mix = mixColumns(column)
+    //   this.setColumn(i, mix)
+    // }
   }
 
   inverseMixColumns() {
-    for (let i=0; i < 4; i++) {
-      const column = this.getColumn(i)
-      const mix = inverseMixColumns(column)
-      this.setColumn(i, mix)
-    }
+    console.log(this.hexArray)
+    inverseMixColumns(this.hexArray)
+    // for (let i=0; i < 4; i++) {
+    //   const column = this.getColumn(i)
+    //   const mix = inverseMixColumns(column)
+    //   this.setColumn(i, mix)
+    // }
   }
 
   xor(otherBlock) {

@@ -228,6 +228,19 @@ export function shiftIndex(index) {
   return lookup[index]
 }
 
+function gmul(a, b) {
+  const val = hexToDec(b)
+  switch (a) {
+    case 2: return MUL2[val]
+    case 3: return MUL3[val]
+    case 9: return MUL9[val]
+    case 11: return MUL11[val]
+    case 13: return MUL13[val]
+    case 14: return MUL14[val]
+    default: return val
+  }
+}
+
 export function mixColumns(block_) {
   let block = [...block_]
     for (let i = 0; i < block.length; i += 4) {
@@ -236,19 +249,21 @@ export function mixColumns(block_) {
       // b2 = 1a0 + 1a1 + 2a2 + 3a3
       // b3 = 3a0 + 1a1 + 1a2 + 2a3
       let a = block.slice(i, i + 4);
+      
       let b = [
-        MUL2[a[0]] ^ MUL3[a[1]] ^        a[2]  ^        a[3] ,
-               a[0]  ^ MUL2[a[1]] ^ MUL3[a[2]] ^        a[3] ,
-               a[0]  ^        a[1]  ^ MUL2[a[2]] ^ MUL3[a[3]],
-        MUL3[a[0]] ^        a[1]  ^        a[2]  ^ MUL2[a[3]],
-      ];
+        gmul(2, a[0]) ^ gmul(3, a[1]) ^ gmul(1, a[2]) ^ gmul(1, a[3]),
+        gmul(1, a[0]) ^ gmul(2, a[1]) ^ gmul(3, a[2]) ^ gmul(1, a[3]),
+        gmul(1, a[0]) ^ gmul(1, a[1]) ^ gmul(2, a[2]) ^ gmul(3, a[3]),
+        gmul(3, a[0]) ^ gmul(1, a[1]) ^ gmul(1, a[2]) ^ gmul(2, a[3]),
+      ]
 
-      block[i + 0] = b[0];
-      block[i + 1] = b[1];
-      block[i + 2] = b[2];
-      block[i + 3] = b[3];
+      block[i + 0] = decToHex(b[0]);
+      block[i + 1] = decToHex(b[1]);
+      block[i + 2] = decToHex(b[2]);
+      block[i + 3] = decToHex(b[3]);
     }
-    return block.map(elem => decToHex(elem))
+    block.forEach((e, i) => block_[i] = e)
+    return block
   }
 
 export function inverseMixColumns(block_) {
@@ -260,18 +275,19 @@ export function inverseMixColumns(block_) {
       // a3 = 11b0 + 13b1 +  9b2 + 14b3
       let b = block.slice(i, i + 4);
       let a = [
-        MUL14[b[0]] ^ MUL11[b[1]] ^ MUL13[b[2]] ^ MUL9[b[3]],
-        MUL9[b[0]] ^ MUL14[b[1]] ^ MUL11[b[2]] ^ MUL13[b[3]],
-        MUL13[b[0]] ^ MUL9[b[1]] ^ MUL14[b[2]] ^ MUL11[b[3]],
-        MUL11[b[0]] ^ MUL13[b[1]] ^ MUL9[b[2]] ^ MUL14[b[3]],
+        gmul(14, b[0]) ^ gmul(11, b[1]) ^ gmul(13, b[2]) ^ gmul(9, b[3]),
+        gmul(9, b[0]) ^ gmul(14, b[1]) ^ gmul(11, b[2]) ^ gmul(13, b[3]),
+        gmul(13, b[0]) ^ gmul(9, b[1]) ^ gmul(14, b[2]) ^ gmul(11, b[3]),
+        gmul(11, b[0]) ^ gmul(13, b[1]) ^ gmul(9, b[2]) ^ gmul(14, b[3]),
       ];
 
-      block[i + 0] = a[0];
-      block[i + 1] = a[1];
-      block[i + 2] = a[2];
-      block[i + 3] = a[3];
+      block[i + 0] = decToHex(a[0]);
+      block[i + 1] = decToHex(a[1]);
+      block[i + 2] = decToHex(a[2]);
+      block[i + 3] = decToHex(a[3]);
     }
-    return block.map(elem => decToHex(elem))
+    block.forEach((e, i) => block_[i] = e)
+    return block
   }
 
 
