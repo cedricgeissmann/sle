@@ -245,10 +245,6 @@ function gmul(a, b) {
 export function mixColumns(block_) {
   let block = [...block_]
     for (let i = 0; i < block.length; i += 4) {
-      // b0 = 2a0 + 3a1 + 1a2 + 1a3
-      // b1 = 1a0 + 2a1 + 3a2 + 1a3
-      // b2 = 1a0 + 1a1 + 2a2 + 3a3
-      // b3 = 3a0 + 1a1 + 1a2 + 2a3
       let a = block.slice(i, i + 4);
       
       let b = [
@@ -270,10 +266,6 @@ export function mixColumns(block_) {
 export function inverseMixColumns(block_) {
   let block = [...block_]
     for (let i = 0; i < block.length; i += 4) {
-      // a0 = 14b0 + 11b1 + 13b2 +  9b3
-      // a1 =  9b0 + 14b1 + 11b2 + 13b3
-      // a2 = 13b0 +  9b1 + 14b2 + 11b3
-      // a3 = 11b0 + 13b1 +  9b2 + 14b3
       let b = block.slice(i, i + 4);
       let a = [
         gmul(14, b[0]) ^ gmul(11, b[1]) ^ gmul(13, b[2]) ^ gmul(9, b[3]),
@@ -289,45 +281,6 @@ export function inverseMixColumns(block_) {
     }
     block.forEach((e, i) => block_[i] = e)
     return block
-  }
-
-
-
-  export function mixColumns_(column_) {
-    // db 13 53 45 => 8e 4d a1 bc
-    //const column = [0xdb, 0x13, 0x53, 0x45]
-    const column = column_.map(s => hexToDec(s))
-    let columnCopy = [...column]
-
-    let s0 = column[0]
-    let s1 = column[1]
-    let s2 = column[2]
-    let s3 = column[3]
-    let h = s0 ^ s1 ^ s2 ^ s3
-    columnCopy[0] ^= h ^ xtime[s0 ^ s1]
-    columnCopy[1] ^= h ^ xtime[s1 ^ s2]
-    columnCopy[2] ^= h ^ xtime[s2 ^ s3]
-    columnCopy[3] ^= h ^ xtime[s3 ^ s0]
-
-    return columnCopy.map(entry => decToHex(entry))
-  }
-
-  export function inverseMixColumns_(column) {
-    const state = column.map(s => hexToDec(s))
-    let stateCopy = [...state]
-      let s0 = state[0];
-      let s1 = state[1];
-      let s2 = state[2];
-      let s3 = state[3];
-      let h = s0 ^ s1 ^ s2 ^ s3;
-      let xh = this.xtime[h];
-      let h1 = this.xtime[this.xtime[xh ^ s0 ^ s2]] ^ h;
-      let h2 = this.xtime[this.xtime[xh ^ s1 ^ s3]] ^ h;
-      stateCopy[0] ^= h1 ^ this.xtime[s0 ^ s1];
-      stateCopy[1] ^= h2 ^ this.xtime[s1 ^ s2];
-      stateCopy[2] ^= h1 ^ this.xtime[s2 ^ s3];
-      stateCopy[3] ^= h2 ^ this.xtime[s3 ^ s0];
-      return stateCopy.map(entry => decToHex(entry))
   }
 
   export function expandKey(key_) {
