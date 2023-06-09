@@ -208,7 +208,7 @@ function inter(frame, frames, values) {
 }
 
 function CaesarVideo() {
-  const {input, setAnimationIndex, setAlphabet, setAlphabetShifted} = useContext(CaesarContext)
+  const {input, setAnimationIndex, setAlphabet, setAlphabetShifted, showIntro} = useContext(CaesarContext)
   const frame = useCurrentFrame()
   useEffect(() => {
     if (frame === 0) {
@@ -227,7 +227,7 @@ function CaesarVideo() {
   }, [frame])
   return (
     <>
-      <IntroSequence />
+    {showIntro && <IntroSequence /> }
       <MidSequence from={60} durationInFrames={input.length * 30}/>
       <OutroScene />
     </>
@@ -235,6 +235,8 @@ function CaesarVideo() {
 }
 
 function Caesar() {
+
+  const [showIntro, setShowIntro] = useState(true)
 
   const [alphabet, setAlphabet] = useState(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'].map(
     (letter) => {
@@ -342,12 +344,15 @@ function Caesar() {
           setAlphabetShifted,
           animationIndex,
           setAnimationIndex,
+          showIntro,
         }}
       >
         <p>
           Das folgende Beispiel zeigt wie eine Verschlüsselung mit dem Caesar-Verfahren aussehen könnte. Man nimmt jedes
           Zeichen in der Eingabe, und verschiebt es jeweils um den Schlüssel, dann ergibt sich daraus der Kryptotext.
         </p>
+
+        <button onClick={() => setShowIntro((v) => !v)}>Intro</button>
 
         <Hint hintFile="caesar" />
 
