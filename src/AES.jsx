@@ -1,26 +1,33 @@
 import React, { useState, useEffect } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { decToHex, splitHLBytes, stringToHex, sBox, sBoxInv, toIndex, xor, shiftIndex, mixColumns, inverseMixColumns } from './utils.js'
+import { stringToHex } from './utils.js'
 
 function BlockComponent({b}) {
 
-  const columnStyle = {
-    display: 'inline-block',
-    minHeight: '50px',
-    minWidth: '50px',
+  const blockStyle = {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(4, auto)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '.5rem'
   }
 
-  const blockEntry = {
-    minHeight: '50px',
-    minWidth: '50px',
-    display: 'inline-block',
+  const entryStyle = {
+    height: '50px',
+    width: '50px',
+    border: '1px solid black',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 
   return (
-    <div>
-      {b.block && b.block.map((column, i) => <span style={columnStyle} key={i}>
-        {column.map((entry, j) => <span style={blockEntry} key={j}>{entry}</span>)}
+    <div style={blockStyle}>
+      {b && b.hexArray.map((column, i) => (
+        <span style={entryStyle} key={i}>
+          {column}
         </span>
+      )
       )}
     </div>
   )
