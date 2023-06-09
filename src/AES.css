@@ -1,0 +1,18 @@
+button {
+  height: 2rem;
+}
+
+h2 > span {
+  float: right;
+}
+
+.active-key {
+  color: magenta;
+}
+
+.output > span {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: baseline;
+}
