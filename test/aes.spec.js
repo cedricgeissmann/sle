@@ -104,22 +104,6 @@ describe("Utility functions for AES", () => {
     expect(b.toBlock()).toEqual(res)
   })
 
-  // it("should mix columns", () => {
-  //   const col = ["F2", "0A", "22", "5C"]
-  //   const res = ["9F", "DC", "58", "9D"]
-
-  //   const calc = mixColumns(col)
-  //   expect(calc).toEqual(res)
-  // })
-
-  // it("should inverse mix columns", () => {
-  //   const col = ["9F", "DC", "58", "9D"]
-  //   const res = ["F2", "0A", "22", "5C"]
-
-  //   const calc = inverseMixColumns(col)
-  //   expect(calc).toEqual(res)
-  // })
-
   it("should reverse the column mix", () => {
     const res = [
       "8E", "4D", "A1", "BC",
