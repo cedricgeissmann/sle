@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { decToHex, splitHLBytes, stringToHex, sBox, sBoxInv, RCON, toIndex, xor, shiftIndex, mixColumns, inverseMixColumns, inverseMixColumns_ } from './utils.js'
+import { decToHex, splitHLBytes, stringToHex, sBox, sBoxInv, toIndex, xor, shiftIndex, mixColumns, inverseMixColumns } from './utils.js'
 
 function BlockComponent({b}) {
 
@@ -33,138 +33,12 @@ function BlockComponent({b}) {
 export class Block {
   constructor(inputString) {
     this.hexString = stringToHex(inputString.substring(0, 16))
-    this.decArray = this.hexString.split(" ").map(char => parseInt(char, 16))
-    for (let i = this.decArray.length; i < 16; i++) {
-      this.decArray.push(0)
-    }
     // Array of the incomming data encoded in hey string
     this.hexArray = this.hexString.split(" ")
     for (let i = this.hexArray.length; i < 16; i++) {
       this.hexArray.push('00')
     }
-
-
-    this.createBlock()
-    this.fillBlock()
-    
-    this.xtime = new Array(256)
-    for (let i = 0; i < 128; i++) {
-      this.xtime[i] = i << 1
-      this.xtime[128 + i] = (i << 1) ^ 0x1b
-    }
   }
-
-  getColumn(col) {
-    const column = [
-      this.hexArray[toIndex(col, 0)],
-      this.hexArray[toIndex(col, 1)],
-      this.hexArray[toIndex(col, 2)],
-      this.hexArray[toIndex(col, 3)],
-    ]
-    return column
-  }
-
-  setColumn(col, newCol) {
-    for (let i = 0; i < newCol.length; i++) {
-      this.hexArray[toIndex(col, i)] = newCol[i]
-    }
-  }
-
-  toBlock() {
-    const block = []
-    for (let i = 0; i < 4; i++) {
-      block.push(new Array(4).fill(0))
-    }
-    for (let i = 0; i < 4; i++) {
-      for (let j = 0; j < 4; j++) {
-        block[j][i] = this.hexArray[i * 4 + j]
-      }
-    }
-    return block
-  }
-
-  printBlock() {
-    const block = []
-    for (let i = 0; i < 4; i++) {
-      for (let j = 0; j < 4; j++) {
-        block.push(this.hexArray[toIndex(i, j)])
-      }
-    }
-    return block
-  }
-
-  createBlock() {
-    this.block = []
-    for (let i = 0; i < 4; i++) {
-      this.block.push(new Array(4).fill(0))
-    }
-  }
-
-  fillBlock() {
-    for (let i = 0; i < 4; i++) {
-      for (let j = 0; j < 4; j++) {
-        this.block[j][i] = this.hexArray[i * 4 + j]
-      }
-    }
-  }
-
-  shiftRows() {
-    const copy = [...this.hexArray]
-    for (let i = 0; i < this.hexArray.length; i++) {
-      const targetIndex = shiftIndex(i)
-      this.hexArray[i] = copy[targetIndex]
-    }
-  }
-
-  gmul(a, b) {
-    if (b === 1) {
-      return a
-    }
-    const tmp = (a << 1) & 0xff
-    if (b === 2) {
-      if (a < 0x80) {
-        return tmp
-      } else {
-        return tmp ^ 0x1b
-      }
-    }
-    if (b === 3) {
-      if (a < 0x80) {
-        return tmp ^ a
-      } else {
-        return tmp ^ 0x1b ^ a
-      }
-    }
-  }
-
-  mixColumns() {
-    const res = mixColumns(this.hexArray)
-  }
-
-  inverseMixColumns() {
-    inverseMixColumns(this.hexArray)
-  }
-
-  xor(otherBlock) {
-    for (let i = 0; i < this.hexArray.length; i++) {
-      this.hexArray[i] = xor(this.hexArray[i], otherBlock.hexArray[i])
-    }
-  }
-
-  addKey(key) {
-    for (let i = 0; i < this.hexArray.length; i++) {
-      this.hexArray[i] = xor(this.hexArray[i], key[i])
-    }
-  }
-
-  subBytes(options = {backward: false}) {
-    const lookup = options.backward ? sBoxInv : sBox
-    for (let i = 0; i < this.hexArray.length; i++) {
-      const [h, l] = splitHLBytes(this.hexArray[i])
-      this.hexArray[i] = decToHex(lookup[h][l])
-    }
-  }
-
 }
 
 function AES() {

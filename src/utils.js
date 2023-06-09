@@ -219,6 +219,14 @@ export function toIndex(row, col) {
   return 4 * col + row
 }
 
+export function xor_list(a, b) {
+  const res = []
+  for (let i = 0; i < a.length; i++) {
+    res.push(xor(a[i], b[i]))
+  }
+  return res
+}
+
 export function xor(a, b) {
   return decToHex(hexToDec(a) ^ hexToDec(b))
 }
@@ -333,13 +341,13 @@ export function inverseMixColumns(block_) {
     return decToHex(sBox[h][l])
   }
 
-  function addKey(block, key) {
+  export function addKey(block, key) {
     for (let i = 0; i < block.length; i++) {
       block[i] = xor(block[i], key[i])
     }
   }
 
-  function subBytes(state, options = {backward: false}) {
+  export function subBytes(state, options = {backward: false}) {
     const lookup = options.backward ? sBoxInv : sBox
     for (let i = 0; i < state.length; i++) {
       const [h, l] = splitHLBytes(state[i])
@@ -348,7 +356,7 @@ export function inverseMixColumns(block_) {
   }
 
 
-  function shiftRows(state) {
+  export function shiftRows(state) {
     const copy = [...state]
     for (let i = 0; i < state.length; i++) {
       const targetIndex = shiftIndex(i)
@@ -356,7 +364,7 @@ export function inverseMixColumns(block_) {
     }
   }
 
-  function shiftRowsInverse(state) {
+  export function shiftRowsInverse(state) {
     const copy = [...state]
     for (let i = 0; i < state.length; i++) {
       const targetIndex = shiftIndex(i, {backward: true})

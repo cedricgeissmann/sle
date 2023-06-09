@@ -1,33 +1,17 @@
 import { describe, it, expect } from "vitest";
 import { decToHex, stringToHex, splitHLBytes } from "/src/utils.js";
 import { Block } from "/src/AES.jsx";
-import { expandKey, inverseMixColumns, mixColumns, aes, aes_reverse } from "../src/utils";
+import { expandKey, inverseMixColumns, mixColumns, subBytes, aes, aes_reverse, xor_list, shiftRows, addKey } from "../src/utils";
 
 describe("Utility functions for AES", () => {
   it("should convert dec to hex", () => {
     expect(decToHex(15)).toBe('0F');
   });
 
-  it("should keep same reference", () => {
-    const b = new Block("secret")
-    const ref1 = b.block
-    const copy = [...b.block]
-    expect(b.block).toEqual(copy)
-    b.shiftRows()
-    expect(b.block).toBe(ref1)
-    // expect(b.block).not.toEqual(copy)
-  })
-
   it("should have a hex array", () => {
     const b = new Block("secret")
     expect(b.hexArray).toBeInstanceOf(Array)
     expect(b.hexArray).toHaveLength(16)
-  })
-
-  it("should have a dec array", () => {
-    const b = new Block("secret")
-    expect(b.decArray).toBeInstanceOf(Array)
-    expect(b.decArray).toHaveLength(16)
   })
 
   it("should trim to fit the block", () => {
@@ -44,17 +28,17 @@ describe("Utility functions for AES", () => {
       '00', '00', '00', '00',
       '00', '00', '00', '00'
     ]
-    b.xor(key)
-    expect(b.hexArray).toEqual(res)
+    const result = xor_list(b.hexArray, key.hexArray)
+    expect(result).toEqual(res)
   })
 
   it("should reverse itself", () => {
     const a = new Block("a very long stri")
     const b = new Block("a very long stri")
     const key = new Block("just some random key")
-    b.xor(key)
-    b.xor(key)
-    expect(b.hexArray).toEqual(a.hexArray)
+    const res = xor_list(b.hexArray, key.hexArray)
+    const orig = xor_list(res, key.hexArray)
+    expect(b.hexArray).toEqual(orig)
   })
 
   it("should substitute in the sbox", () => {
@@ -65,16 +49,16 @@ describe("Utility functions for AES", () => {
       '63', '63', '63', '63',
       '63', '63', '63', '63'
     ]
-    b.subBytes()
+    subBytes(b.hexArray)
     expect(b.hexArray).toEqual(res)
   })
 
   it("should reverse substitution in the sbox", () => {
     const a = new Block("just some random strings")
     const b = new Block("just some random strings")
-    b.subBytes()
+    subBytes(b.hexArray)
     expect(b.hexArray).not.toEqual(a.hexArray)
-    b.subBytes({backward: true})
+    subBytes(b.hexArray, {backward: true})
     expect(b.hexArray).toEqual(a.hexArray)
   })
 
@@ -95,13 +79,10 @@ describe("Utility functions for AES", () => {
   it("should shift rows", () => {
     const b = new Block("secret")
     const res = [
-      [ '73', '65', '00', '00' ],
-      [ '74', '00', '00', '65' ],
-      [ '00', '00', '63', '00' ],
-      [ '00', '72', '00', '00' ]
+      '73', '74', '00', '00', '65', '00', '00', '72', '00', '00', '63', '00', '00', '65', '00', '00'
     ]
-    b.shiftRows()
-    expect(b.toBlock()).toEqual(res)
+    shiftRows(b.hexArray)
+    expect(b.hexArray).toEqual(res)
   })
 
   it("should reverse the column mix", () => {
@@ -127,10 +108,10 @@ describe("Utility functions for AES", () => {
     ]
 
     expect(b.hexArray).toEqual(a.hexArray)
-    b.mixColumns()
+    mixColumns(b.hexArray)
     expect(b.hexArray).not.toEqual(a.hexArray)
     expect(b.hexArray).toEqual(res)
-    b.inverseMixColumns()
+    inverseMixColumns(b.hexArray)
     expect(b.hexArray).toEqual(a.hexArray)
   })
 
@@ -154,21 +135,21 @@ describe("Utility functions for AES", () => {
     const res = ["01", "4B", "AF", "22", "78", "A6", "9D", "33", "1D", "51", "80", "10", "36", "43", "E9", "9A", ]
 
     const backupB = [...b.hexArray]
-    b.addKey(newKey.slice(0, 16))
+    addKey(b.hexArray, newKey.slice(0, 16))
     expect(b.hexArray).not.toEqual(backupB)
 
     // Rounds
     for (let i = 1; i < 10; i++) {
-      b.subBytes();
-      b.shiftRows();
-      b.mixColumns(b);
-      b.addKey(newKey.slice(i * 16, (i + 1) * 16));
+      subBytes(b.hexArray);
+      shiftRows(b.hexArray);
+      mixColumns(b.hexArray);
+      addKey(b.hexArray, newKey.slice(i * 16, (i + 1) * 16));
     }
 
     // Final Round
-    b.subBytes();
-    b.shiftRows();
-    b.addKey(newKey.slice(160, 176));
+    subBytes(b.hexArray);
+    shiftRows(b.hexArray);
+    addKey(b.hexArray, newKey.slice(160, 176));
 
     expect(b.hexArray).toEqual(res)
   })
