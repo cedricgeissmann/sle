@@ -16,3 +16,19 @@ h2 > span {
   justify-content: space-between;
   align-items: baseline;
 }
+
+.fade-out {
+  animation: fadeout-anim 0.5s ease-in-out 1 both;
+}
+.fade-in {
+  animation: fadein-anim 0.5s ease-in-out 1 both;
+}
+
+@keyframes fadeout-anim {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes fadein-anim {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}

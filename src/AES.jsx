@@ -3,6 +3,26 @@ import { ErrorBoundary } from 'react-error-boundary'
 import { hexStringToString, stringToHex, stringToHexArray, subBytes, mixColumns, inverseMixColumns, xor_list, shiftRows, shiftRowsInverse, aes, aes_reverse, expandKey } from './utils.js'
 import './AES.css'
 
+
+function FadeComponent({children, fadeState, setFadeState}) {
+
+  const [fade, setFade] = useState('fade-show')
+
+  useEffect(() => {
+    console.log(fadeState)
+    if (fadeState === 'fade-toggle') {
+      setFade('fade-out')
+      setTimeout(() => {setFade('fade-in'); setFadeState('fade-show')}, 500)
+    }
+  }, [fadeState])
+
+  return (
+    <div className={fade}>
+      {children}
+    </div>
+  )
+}
+
 /*
  * This Component should just display the state of the hexArray in a grid.
  */
@@ -119,12 +139,19 @@ function AES() {
   const [b, setB] = useState(null)
   const [k, setK] = useState('')
 
+  const [showBlock, setShowBlock] = useState('fade-show')
+
+  function updateB(newEntry) {
+    setShowBlock('fade-toggle')
+    setTimeout(() => setB(newEntry), 500)
+  }
+
   useEffect(() => {
     b && setOutput(hexStringToString(b.getHex()));
   }, [b])
 
   useEffect(() => {
-    setB(new Block(input))
+    updateB(new Block(input))
   }, [input])
 
   useEffect(() => {
@@ -138,47 +165,47 @@ function AES() {
 
   const shift = () => {
     shiftRows(b.getHex())
-    setB((current) => new Block(current.getString()))
+    updateB((current) => new Block(current.getString()))
   }
 
   const reverseShift = () => {
     shiftRowsInverse(b.getHex())
-    setB((current) => new Block(current.getString()))
+    updateB((current) => new Block(current.getString()))
   }
   const xor = () => {
     xor_list(b.getHex(), expanded.slice(round * 16, (round+1) * 16))
-    setB((current) => new Block(current.getString()))
+    updateB((current) => new Block(current.getString()))
   }
 
   const mix = () => {
     mixColumns(b.getHex())
-    setB((current) => new Block(current.getString()))
+    updateB((current) => new Block(current.getString()))
   }
 
   const reverseMix = () => {
     inverseMixColumns(b.getHex())
-    setB((current) => new Block(current.getString()))
+    updateB((current) => new Block(current.getString()))
   }
 
   const subByte = () => {
     subBytes(b.getHex())
-    setB((current) => new Block(current.getString()))
+    updateB((current) => new Block(current.getString()))
   }
 
   const subByteInverse = () => {
     subBytes(b.getHex(), {backward: true})
-    setB((current) => new Block(current.getString()))
+    updateB((current) => new Block(current.getString()))
   }
 
   function encrypt() {
     const out = aes(b.getHex(), k.getHex())
-    setB(new Block(hexStringToString(out)))
+    updateB(new Block(hexStringToString(out)))
     setOutput(hexStringToString(out))
   }
 
   function decrypt() {
     const out = aes_reverse(b.getHex(), k.getHex())
-    setB(new Block(hexStringToString(out)))
+    updateB(new Block(hexStringToString(out)))
     setOutput(hexStringToString(out))
   }
 
@@ -248,9 +275,11 @@ function AES() {
         <button onClick={() => decrypt()}>Full Decryption</button>
       </div>
 
+      <FadeComponent fadeState={showBlock} setFadeState={setShowBlock}>
       <ErrorBoundary fallback={<div>Upps...</div>}>
         <BlockComponent b={b} />
       </ErrorBoundary>
+      </FadeComponent>
       <ErrorBoundary fallback={<div>Key error...</div>}>
         <KeyComponent expanded={expanded} round={round} />
       </ErrorBoundary>
