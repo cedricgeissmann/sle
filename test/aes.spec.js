@@ -29,16 +29,16 @@ describe("Utility functions for AES", () => {
       '00', '00', '00', '00'
     ]
     const result = xor_list(b.hexArray, key.hexArray)
-    expect(result).toEqual(res)
+    expect(b.getHex()).toEqual(res)
   })
 
   it("should reverse itself", () => {
     const a = new Block("a very long stri")
     const b = new Block("a very long stri")
     const key = new Block("just some random key")
-    const res = xor_list(b.hexArray, key.hexArray)
-    const orig = xor_list(res, key.hexArray)
-    expect(b.hexArray).toEqual(orig)
+    xor_list(b.hexArray, key.hexArray)
+    xor_list(b.getHex(), key.hexArray)
+    expect(b.hexArray).toEqual(a.getHex())
   })
 
   it("should substitute in the sbox", () => {

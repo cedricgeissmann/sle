@@ -1,11 +1,21 @@
 import React, { useState, useEffect } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { hexStringToString, stringToHex, stringToHexArray, subBytes } from './utils.js'
+import { hexStringToString, stringToHex, stringToHexArray, subBytes, mixColumns, inverseMixColumns, xor_list, shiftRows, shiftRowsInverse, aes, aes_reverse, expandKey } from './utils.js'
 
 /*
  * This Component should just display the state of the hexArray in a grid.
  */
 function BlockComponent({b}) {
+
+  const [block, setBlock] = useState([])
+
+  useEffect(() => {
+    if (b === null) return
+    const newBlock = new Array(16).fill('00')
+    const lookup = [0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15]
+    b.getHex().forEach((e, i) => newBlock[lookup[i]] = e)
+    setBlock(newBlock)
+  }, [b])
 
   const blockStyle = {
     display: 'grid',
@@ -26,7 +36,7 @@ function BlockComponent({b}) {
 
   return (
     <div style={blockStyle}>
-      {b && b.hexArray.map((column, i) => (
+      {block.map((column, i) => (
         <span style={entryStyle} key={i}>
           {column}
         </span>
@@ -34,6 +44,41 @@ function BlockComponent({b}) {
       )}
     </div>
   )
+}
+
+function KeyComponent({k}) {
+  const [expanded, setExpanded] = useState(new Array(176).fill('00'))
+  const blockStyle = {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(16, auto)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '.1rem'
+  }
+  const entryStyle = {
+    height: '2rem',
+    width: '2rem',
+    border: '1px solid black',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
+
+  useEffect(() => {
+    k && setExpanded(expandKey(k.getHex()))
+  }, [k])
+
+  return (
+    <div style={blockStyle}>
+      {expanded.map((column, i) => (
+        <span style={entryStyle} key={i}>
+          {column}
+        </span>
+      )
+      )}
+    </div>
+  )
+
 }
 
 /* 
@@ -47,6 +92,14 @@ export class Block {
     for (let i = this.hexArray.length; i < 16; i++) {
       this.hexArray.push('00')
     }
+  }
+
+  getHex() {
+    return this.hexArray
+  }
+
+  getString() {
+    return hexStringToString(this.hexArray)
   }
 }
 
@@ -71,46 +124,53 @@ function AES() {
     setK(new Block(key));
   }, [key])
 
-  const show = () => {
-    console.log(b.block)
-  }
   const shift = () => {
-    b.shiftRows()
-    console.log(b.block)
+    shiftRows(b.getHex())
+    setB((current) => new Block(current.getString()))
+  }
+
+  const reverseShift = () => {
+    shiftRowsInverse(b.getHex())
+    setB((current) => new Block(current.getString()))
   }
   const xor = () => {
-    b.xor(k)
-    console.log(b)
+    xor_list(b.getHex(), k.getHex())
+    setB((current) => new Block(current.getString()))
   }
 
   const mix = () => {
-    b.mixColumns()
+    mixColumns(b.getHex())
+    setB((current) => new Block(current.getString()))
   }
 
   const reverseMix = () => {
-    b.inverseMixColumns()
+    inverseMixColumns(b.getHex())
+    setB((current) => new Block(current.getString()))
   }
 
   const subByte = () => {
-    subBytes(b.hexArray)
-    setB((current) => new Block(hexStringToString(current.hexArray)))
+    subBytes(b.getHex())
+    setB((current) => new Block(current.getString()))
   }
 
   const subByteInverse = () => {
-    subBytes(b.hexArray, {backward: true})
-    setB((current) => new Block(hexStringToString(current.hexArray)))
+    subBytes(b.getHex(), {backward: true})
+    setB((current) => new Block(current.getString()))
   }
-
-
-
 
   function round() {
-    console.log("Schlüssel erweitern")
-    const newKey = expandKey(key)
-    console.log("newKey:", newKey)
-
+    const out = aes(b.getHex(), k.getHex())
+    setB((current) => new Block(hexStringToString(out)))
   }
 
+  function roundReverse() {
+    const out = aes_reverse(b.getHex(), k.getHex())
+    setB((current) => new Block(hexStringToString(out)))
+  }
+
+  function expandKey_() {
+    expandKey(k.getHex())
+  }
 
 
   return (
@@ -134,19 +194,24 @@ function AES() {
       </div>
       <div>
         <button onClick={() => shift()}>Shift</button>
+        <button onClick={() => reverseShift()}>Shift Reverse</button>
         <button onClick={() => mix()}>Mix Columns</button>
         <button onClick={() => reverseMix()}>Reverse</button>
         <button onClick={() => xor()}>XOR</button>
         <button onClick={() => subByte()}>SubByte</button>
         <button onClick={() => subByteInverse()}>SubByte Inverse</button>
-        <button onClick={() => expandKey(key)}>Expand Key</button>
+        <button onClick={() => expandKey_()}>Expand Key</button>
       </div>
       <div>
         <button onClick={() => round()}>Round</button>
+        <button onClick={() => roundReverse()}>Round Reverse</button>
       </div>
 
       <ErrorBoundary fallback={<div>Upps...</div>}>
-      <BlockComponent b={b} />
+        <BlockComponent b={b} />
+      </ErrorBoundary>
+      <ErrorBoundary fallback={<div>Key error...</div>}>
+        <KeyComponent k={k} />
       </ErrorBoundary>
     </>
   )

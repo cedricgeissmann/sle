@@ -237,11 +237,9 @@ export function toIndex(row, col) {
 }
 
 export function xor_list(a, b) {
-  const res = []
   for (let i = 0; i < a.length; i++) {
-    res.push(xor(a[i], b[i]))
+    a[i] = xor(a[i], b[i])
   }
-  return res
 }
 
 export function xor(a, b) {
