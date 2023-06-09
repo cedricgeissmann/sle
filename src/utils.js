@@ -338,7 +338,6 @@ export function inverseMixColumns(block_) {
 
     // First key is original key
     for (let i = 0; i < keySize; i++) expandedKey[i] = key_[i];
-    console.log("expandedKey", expandedKey);
 
     let rconIndex = 0;
 
@@ -377,6 +376,48 @@ export function inverseMixColumns(block_) {
   function sLookup(hex) {
     if (typeof hex !== 'string') throw new Error('Invalid hex');
     const [h, l] = splitHLBytes(hex);
-    console.log(h, l);
     return decToHex(sBox[h][l])
+  }
+
+  function addKey(block, key) {
+    for (let i = 0; i < block.length; i++) {
+      block[i] = xor(block[i], key[i])
+    }
+  }
+
+  function subBytes(state, options = {backward: false}) {
+    const lookup = options.backward ? sBoxInv : sBox
+    for (let i = 0; i < state.length; i++) {
+      const [h, l] = splitHLBytes(state[i])
+      state[i] = decToHex(lookup[h][l])
+    }
+  }
+
+
+  function shiftRows(state) {
+    const copy = [...state]
+    for (let i = 0; i < state.length; i++) {
+      const targetIndex = shiftIndex(i)
+      state[i] = copy[targetIndex]
+    }
+  }
+
+  export function aes(block, key) {
+    const state = [...block]
+    const newKey = expandKey(key)
+    addKey(state, newKey.slice(0, 16))
+
+    // Rounds
+    for (let i = 1; i < 10; i++) {
+      subBytes(state);
+      shiftRows(state);
+      mixColumns(state);
+      addKey(state, newKey.slice(i * 16, (i + 1) * 16));
+    }
+
+    // Final Round
+    subBytes(state);
+    shiftRows(state);
+    addKey(state, newKey.slice(160, 176));
+    return state
   }

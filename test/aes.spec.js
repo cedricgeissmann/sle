@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { decToHex, stringToHex, splitHLBytes } from "/src/utils.js";
 import { Block } from "/src/AES.jsx";
-import { expandKey, inverseMixColumns, mixColumns } from "../src/utils";
+import { expandKey, inverseMixColumns, mixColumns, aes } from "../src/utils";
 
 describe("Utility functions for AES", () => {
   it("should convert dec to hex", () => {
@@ -154,6 +154,50 @@ describe("Utility functions for AES", () => {
     const key = new Block("yellow submarine")
     const newKey = expandKey(key.hexArray)
     expect(newKey).toHaveLength(16 * 11)
+  })
+
+  it("should end to end test", () => {
+    const key = new Block("yellow submarine")
+    key.hexArray = [
+      "E8", "E9", "EA", "EB", "ED", "EE", "EF", "F0", "F2", "F3", "F4", "F5", "F7", "F8", "F9", "FA", 
+    ]
+    // plain: 398015413e7de1a8878bdba8176468c4
+    // cypher: 014baf2278a69d331d5180103643e99a
+    const newKey = expandKey(key.hexArray)
+    expect(newKey).toHaveLength(16 * 11)
+    const b = new Block("I want to encode this thing")
+    b.hexArray = ["39", "80", "15", "41", "3E", "7D", "E1", "A8", "87", "8B", "DB", "A8", "17", "64", "68", "C4", ]
+    const res = ["01", "4B", "AF", "22", "78", "A6", "9D", "33", "1D", "51", "80", "10", "36", "43", "E9", "9A", ]
+
+    const backupB = [...b.hexArray]
+    b.addKey(newKey.slice(0, 16))
+    expect(b.hexArray).not.toEqual(backupB)
+
+    // Rounds
+    for (let i = 1; i < 10; i++) {
+      b.subBytes();
+      b.shiftRows();
+      b.mixColumns(b);
+      b.addKey(newKey.slice(i * 16, (i + 1) * 16));
+    }
+
+    // Final Round
+    b.subBytes();
+    b.shiftRows();
+    b.addKey(newKey.slice(160, 176));
+
+    expect(b.hexArray).toEqual(res)
+  })
+
+  it("should directly end to end test", () => {
+    const key = [
+      "E8", "E9", "EA", "EB", "ED", "EE", "EF", "F0", "F2", "F3", "F4", "F5", "F7", "F8", "F9", "FA", 
+    ]
+    const clearText = ["39", "80", "15", "41", "3E", "7D", "E1", "A8", "87", "8B", "DB", "A8", "17", "64", "68", "C4", ]
+    const cipherText = ["01", "4B", "AF", "22", "78", "A6", "9D", "33", "1D", "51", "80", "10", "36", "43", "E9", "9A", ]
+
+    const res = aes(clearText, key)
+    expect(res).toEqual(cipherText)
   })
 
 })

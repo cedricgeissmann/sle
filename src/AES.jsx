@@ -138,29 +138,22 @@ export class Block {
   }
 
   mixColumns() {
-    console.log(this.hexArray)
     const res = mixColumns(this.hexArray)
-    //const res2 = inverseMixColumns(res)
-    // for (let i=0; i < 4; i++) {
-    //   const column = this.getColumn(i)
-    //   const mix = mixColumns(column)
-    //   this.setColumn(i, mix)
-    // }
   }
 
   inverseMixColumns() {
-    console.log(this.hexArray)
     inverseMixColumns(this.hexArray)
-    // for (let i=0; i < 4; i++) {
-    //   const column = this.getColumn(i)
-    //   const mix = inverseMixColumns(column)
-    //   this.setColumn(i, mix)
-    // }
   }
 
   xor(otherBlock) {
     for (let i = 0; i < this.hexArray.length; i++) {
       this.hexArray[i] = xor(this.hexArray[i], otherBlock.hexArray[i])
+    }
+  }
+
+  addKey(key) {
+    for (let i = 0; i < this.hexArray.length; i++) {
+      this.hexArray[i] = xor(this.hexArray[i], key[i])
     }
   }
 
