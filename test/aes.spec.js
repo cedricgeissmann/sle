@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { decToHex, stringToHex, splitHLBytes } from "/src/utils.js";
 import { Block } from "/src/AES.jsx";
-import { expandKey, inverseMixColumns, mixColumns, subBytes, aes, aes_reverse, xor_list, shiftRows, addKey } from "../src/utils";
+import { expandKey, inverseMixColumns, mixColumns, subBytes, aes, aes_reverse, xor_list, shiftRows, addKey, stringToHexArray, hexStringToString } from "../src/utils";
 
 describe("Utility functions for AES", () => {
   it("should convert dec to hex", () => {
@@ -176,6 +176,23 @@ describe("Utility functions for AES", () => {
     expect(res).toEqual(cipherText)
     const orig = aes_reverse(res, key)
     expect(orig).toEqual(clearText)
+  })
+
+  it("should convert a string to hex array", () => {
+    const str = "Hello"
+    const hex = stringToHexArray(str)
+    expect(hex).toBeInstanceOf(Array)
+    expect(hex).toHaveLength(5)
+  })
+
+  it("should convert to hex and back again", () => {
+    const str = "Hello"
+    const hex = stringToHexArray(str)
+    expect(hex).toBeInstanceOf(Array)
+    expect(hex).toHaveLength(5)
+    const orig = hexStringToString(hex)
+    expect(orig).toBeTypeOf('string')
+    expect(orig).toEqual(str)
   })
 
 })

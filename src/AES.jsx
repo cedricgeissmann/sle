@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { stringToHex } from './utils.js'
+import { hexStringToString, stringToHex, stringToHexArray, subBytes } from './utils.js'
 
+/*
+ * This Component should just display the state of the hexArray in a grid.
+ */
 function BlockComponent({b}) {
 
   const blockStyle = {
@@ -39,9 +42,8 @@ function BlockComponent({b}) {
  */
 export class Block {
   constructor(inputString) {
-    this.hexString = stringToHex(inputString.substring(0, 16))
+    this.hexArray = stringToHexArray(inputString.substring(0, 16))
     // Array of the incomming data encoded in hey string
-    this.hexArray = this.hexString.split(" ")
     for (let i = this.hexArray.length; i < 16; i++) {
       this.hexArray.push('00')
     }
@@ -90,51 +92,17 @@ function AES() {
   }
 
   const subByte = () => {
-    b.subBytesForward()
+    subBytes(b.hexArray)
+    setB((current) => new Block(hexStringToString(current.hexArray)))
   }
 
   const subByteInverse = () => {
-    b.subBytesBackward()
+    subBytes(b.hexArray, {backward: true})
+    setB((current) => new Block(hexStringToString(current.hexArray)))
   }
 
 
 
-  const expandKey_ = key_ => {
-    console.log("key:", key_)
-    let utf8Encode = new TextEncoder();
-    key_ = utf8Encode.encode(key_);
-    let ks = 15 << 5
-    let key = new Uint8Array(ks)
-    for (let i = 0; i < key.length; i++) {
-      key[i] = key_[i]
-    }
-    console.log("key:", key)
-
-    let kl = key.length
-    let Rcon = 1
-    let keyA = key.slice()
-    let temp = new Array(4).fill(0)
-
-    for (let i = kl; i < ks; i += 4) {
-      temp = keyA.slice(i - 4, i)
-      console.log('temp:', temp)
-      if (i % kl == 0) {
-        temp = [Sbox(temp[1]) ^ Rcon, Sbox(temp[2]), Sbox(temp[3]), Sbox(temp[0])]
-        if ((Rcon <<= 1) >= 256) {
-          Rcon ^= 0x11b
-        }
-      } else if (kl > 24 && i % kl == 16) {
-        temp = [Sbox(temp[0]), Sbox(temp[1]), Sbox(temp[2]), Sbox(temp[3])]
-      }
-      console.log('temp after: ',temp)
-      for (let j = 0; j < 4; j++) {
-        keyA[i + j] = keyA[i + j - kl] ^ temp[j]
-      }
-    }
-    console.log("keyA:", keyA)
-
-    return keyA
-  }
 
   function round() {
     console.log("Schlüssel erweitern")
@@ -165,7 +133,6 @@ function AES() {
         Ausgabe: <span>{output}</span>
       </div>
       <div>
-        <button onClick={() => show()}>Show Block</button>
         <button onClick={() => shift()}>Shift</button>
         <button onClick={() => mix()}>Mix Columns</button>
         <button onClick={() => reverseMix()}>Reverse</button>
