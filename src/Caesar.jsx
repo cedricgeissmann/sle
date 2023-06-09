@@ -352,7 +352,7 @@ function Caesar() {
           Zeichen in der Eingabe, und verschiebt es jeweils um den Schlüssel, dann ergibt sich daraus der Kryptotext.
         </p>
 
-        <button onClick={() => setShowIntro((v) => !v)}>Intro</button>
+        {/* <button onClick={() => setShowIntro((v) => !v)}>Intro</button> */}
 
         <Hint hintFile="caesar" />
 
