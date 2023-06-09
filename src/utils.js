@@ -223,8 +223,9 @@ export function xor(a, b) {
   return decToHex(hexToDec(a) ^ hexToDec(b))
 }
 
-export function shiftIndex(index) {
+export function shiftIndex(index, options={ backward: false}) {
   const lookup = [0, 5, 10, 15, 4, 9, 14, 3, 8, 13, 2, 7, 12, 1, 6, 11]
+  if (options.backward) return lookup.indexOf(index)
   return lookup[index]
 }
 
@@ -402,6 +403,14 @@ export function inverseMixColumns(block_) {
     }
   }
 
+  function shiftRowsInverse(state) {
+    const copy = [...state]
+    for (let i = 0; i < state.length; i++) {
+      const targetIndex = shiftIndex(i, {backward: true})
+      state[i] = copy[targetIndex]
+    }
+  }
+
   export function aes(block, key) {
     const state = [...block]
     const newKey = expandKey(key)
@@ -419,5 +428,27 @@ export function inverseMixColumns(block_) {
     subBytes(state);
     shiftRows(state);
     addKey(state, newKey.slice(160, 176));
+    return state
+  }
+
+  export function aes_reverse(block, key) {
+    const state = [...block]
+    const newKey = expandKey(key)
+    
+    addKey(state, newKey.slice(160, 176));
+    shiftRowsInverse(state);
+    subBytes(state, { backward: true });
+
+
+
+    // Rounds
+    for (let i = 9; i > 0; i--) {
+      addKey(state, newKey.slice(i * 16, (i + 1) * 16));
+      inverseMixColumns(state);
+      shiftRowsInverse(state);
+      subBytes(state, { backward: true });
+    }
+
+    addKey(state, newKey.slice(0, 16));
     return state
   }
