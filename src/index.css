@@ -83,6 +83,6 @@ input,
   cursor: pointer;
 }
 
-.chapter-active {
+.video-chapter > ul > li.chapter-active {
   background-color: var(--bg-color-2);
 }

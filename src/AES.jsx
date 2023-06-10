@@ -4,7 +4,7 @@ import { hexStringToString, stringToHex, stringToHexArray, subBytes, mixColumns,
 import './AES.css'
 import useDelayUpdate from './useDelayUpdate.js'
 import AnimationState from './components/AnimationState.jsx'
-import { VideoChapterContainer, VideoChapterLink } from './Video.jsx'
+import { calcVideoDuration, VideoChapterContainer, VideoChapterLink } from './Video.jsx'
 import AESVideo from './AESVideo.jsx'
 import { createContext } from 'react'
 import { useRef } from 'react'
@@ -286,7 +286,7 @@ function AES() {
               ref={playerRef}
               style={{height: "240px"}}
               component={AESVideo}
-              durationInFrames={120}
+              durationInFrames={calcVideoDuration(videoInformation)}
               compositionWidth={1280}
               compositionHeight={720}
               fps={30}
