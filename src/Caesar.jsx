@@ -208,7 +208,7 @@ function inter(frame, frames, values) {
 }
 
 function CaesarVideo() {
-  const {input, setAnimationIndex, setAlphabet, setAlphabetShifted, showIntro} = useContext(CaesarContext)
+  const {input, setAnimationIndex, setAlphabet, setAlphabetShifted, videoInformation} = useContext(CaesarContext)
   const frame = useCurrentFrame()
   useEffect(() => {
     if (frame === 0) {
@@ -227,14 +227,19 @@ function CaesarVideo() {
   }, [frame])
   return (
     <>
-    {showIntro && <IntroSequence /> }
-      <MidSequence from={60} durationInFrames={input.length * 30}/>
+    {videoInformation.intro.show && <IntroSequence /> }
+      <MidSequence from={videoInformation.mid.start} durationInFrames={input.length * 30}/>
       <OutroScene />
     </>
   )
 }
 
 function Caesar() {
+  const [videoInformation, setVideoInformation] = useState({
+    intro: {show: true, duration: 60, start: 0},
+    mid: {show: true, duration: (len) => len * 30, start: 0},
+    end: {show: true, duration: 60, start: 0}
+  })
 
   const [showIntro, setShowIntro] = useState(true)
 
@@ -331,6 +336,22 @@ function Caesar() {
     )
   }
 
+  function calcVideoDuration(info, options) {
+    let sum = 0
+    for (const [k, e] of Object.entries(info)) {
+      e.start = sum
+      if (e.show === true) {
+        if (typeof e.duration === "function") {
+          sum += e.duration(options)
+        } else {
+          sum = sum + e.duration
+        }
+      }
+    }
+    console.log(sum)
+    return sum
+  }
+
   return (
     <>
       <CaesarContext.Provider
@@ -345,6 +366,7 @@ function Caesar() {
           animationIndex,
           setAnimationIndex,
           showIntro,
+          videoInformation,
         }}
       >
         <p>
@@ -352,7 +374,9 @@ function Caesar() {
           Zeichen in der Eingabe, und verschiebt es jeweils um den Schlüssel, dann ergibt sich daraus der Kryptotext.
         </p>
 
-        {/* <button onClick={() => setShowIntro((v) => !v)}>Intro</button> */}
+        <button onClick={() => {
+          videoInformation.intro.show = !videoInformation.intro.show
+        }}>Intro</button>
 
         <Hint hintFile="caesar" />
 
@@ -382,7 +406,7 @@ function Caesar() {
           <Player
             style={{height: "240px"}}
             component={CaesarVideo}
-            durationInFrames={60 + input.length * 30 + 60}
+            durationInFrames={calcVideoDuration(videoInformation, input.length)}
             compositionWidth={1280}
             compositionHeight={720}
             fps={30}
