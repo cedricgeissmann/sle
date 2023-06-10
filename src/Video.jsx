@@ -1,5 +1,6 @@
 import { Sequence, AbsoluteFill, useCurrentFrame, interpolate, useVideoConfig } from 'remotion'
 import { useEffect } from 'react'
+import { useState } from 'react'
 
 export function VideoTransform({from, to}) {
   const frame = useCurrentFrame()
@@ -83,6 +84,18 @@ export function VideoChapterContainer({chapters, video, playbackRate, setPlaybac
 }
 
 export function VideoChapterLink({info, setInfo, playerRef, part, children}) {
+
+  const [activePart, setActivePart] = useState('chapter-inactive')
+
+  useEffect(() => {
+    playerRef.current.addEventListener("frameupdate", e => {
+      if (info[part].start < e.detail.frame && e.detail.frame < info[part].start + info[part].duration) {
+        setActivePart('chapter-active')
+      } else {
+        setActivePart('chapter-inactive')
+      }
+    })
+  }, [])
   function jumpToPart() {
     playerRef.current && playerRef.current.seekTo(info[part].start)
   }
@@ -95,7 +108,7 @@ export function VideoChapterLink({info, setInfo, playerRef, part, children}) {
     })
   }
 
-  return <li onClick={() => jumpToPart()}>
+  return <li className={activePart} onClick={() => jumpToPart()}>
     <span>
       {children}
     </span>

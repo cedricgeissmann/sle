@@ -82,3 +82,7 @@ input,
   background-color: var(--bg-color-2);
   cursor: pointer;
 }
+
+.chapter-active {
+  background-color: var(--bg-color-2);
+}
