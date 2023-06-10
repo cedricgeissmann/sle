@@ -4,7 +4,13 @@ import { hexStringToString, stringToHex, stringToHexArray, subBytes, mixColumns,
 import './AES.css'
 import useDelayUpdate from './useDelayUpdate.js'
 import AnimationState from './components/AnimationState.jsx'
+import { VideoChapterContainer, VideoChapterLink } from './Video.jsx'
+import AESVideo from './AESVideo.jsx'
+import { createContext } from 'react'
+import { useRef } from 'react'
+import { Player } from '@remotion/player'
 
+export const AESContext = createContext(null)
 
 /*
  * This Component should just display the state of the hexArray in a grid.
@@ -50,7 +56,7 @@ function BlockComponent({b}) {
   )
 }
 
-function KeyComponent({expanded, round}) {
+export function KeyComponent({expanded, round}) {
   const blockStyle = {
     display: 'grid',
     gridTemplateColumns: 'repeat(16, auto)',
@@ -76,10 +82,15 @@ function KeyComponent({expanded, round}) {
     return ''
   }
 
+  function getShow(i) {
+    if (i < (round + 1) * 16) return 'show-key'
+    return 'hide-key'
+  }
+
   return (
     <div style={blockStyle}>
       {expanded.map((column, i) => (
-        <span style={entryStyle} key={i} className={getActive(i)}>
+        <span style={entryStyle} key={i} className={getActive(i) + " " + getShow(i)}>
           {column}
         </span>
       )
@@ -112,14 +123,20 @@ export class Block {
 }
 
 function AES() {
+  const [videoInformation, setVideoInformation] = useState({
+    'key-expansion': {show: true, duration: 60, start: 0},
+    'add-initial-key': {show: true, duration: 60, start: 60}
+  })
+  const [playbackRate, setPlaybackRate] = useState(1)
+  const playerRef = useRef(null)
 
   const [input, setInput] = useState('secret');
   const [output, setOutput] = useState('');
-  const [round, setRound] = useDelayUpdate(0, 1000)
+  const [round, setRound] = useState(0)
   const [expanded, setExpanded] = useState(new Array(176).fill('00'))
 
   const [key, setKey] = useState('YELLOW SUBMARINE')
-  const [b, setB] = useDelayUpdate(null, 500)
+  const [b, setB] = useState(null)
   const [k, setK] = useState('')
 
   const [animTrigger, setFadeTrigger] = useState('fade-show')
@@ -221,51 +238,97 @@ function AES() {
 
   return (
     <>
-      <h2>AES <span>Runde: {round}</span></h2>
-      <div>
-      <label htmlFor="input">Eingabe: </label>
-      <input id="input" value={input} onChange={e => setInput(e.target.value)} />
-      </div>
-      <div>
-      <label htmlFor="key">Schlüssel: </label>
-      <input id="key" value={key} onChange={e => setKey(e.target.value)} />
-      </div>
-      <div className="output">
-        Ausgabe: 
-        <span>
-          <span>{output}</span>
-          <span>{b && b.getHex()}</span>
-        </span>
-      </div>
-      <div style={buttonGrid}>
-        <button onClick={() => expandKey_()}>Expand Key</button>
-        <button onClick={() => xor()}>XOR</button>
-      </div>
-      <div style={buttonGrid}>
-        <button onClick={() => subByte()}>SubByte</button>
-        <button onClick={() => subByteInverse()}>SubByte Inverse</button>
-        <button onClick={() => shift()}>Shift</button>
-        <button onClick={() => reverseShift()}>Shift Reverse</button>
-        <button onClick={() => mix()}>Mix Columns</button>
-        <button onClick={() => reverseMix()}>Reverse</button>
-        <button onClick={() => roundForward()}>Runde</button>
-        <button onClick={() => roundBackward()}>Runde Rückwärts</button>
-        <button onClick={() => setRound(r => Math.min(r+1, 10))}>Next Round</button>
-        <button onClick={() => setRound(r => Math.max(r-1, 0))}>Previous Round</button>
-      </div>
-      <div style={buttonGrid}>
-        <button onClick={() => encrypt()}>Full Encryption</button>
-        <button onClick={() => decrypt()}>Full Decryption</button>
-      </div>
+      <AESContext.Provider value={{videoInformation, setVideoInformation, expanded, setExpanded, round, setRound}}>
+        <h2>
+          AES <span>Runde: {round}</span>
+        </h2>
+        <div>
+          <label htmlFor="input">Eingabe: </label>
+          <input id="input" value={input} onChange={e => setInput(e.target.value)} />
+        </div>
+        <div>
+          <label htmlFor="key">Schlüssel: </label>
+          <input id="key" value={key} onChange={e => setKey(e.target.value)} />
+        </div>
+        <div className="output">
+          Ausgabe:
+          <span>
+            <span>{output}</span>
+            <span>{b && b.getHex()}</span>
+          </span>
+        </div>
 
-      <AnimationState timeout={500} trigger={animTrigger}>
-      <ErrorBoundary fallback={<div>Upps...</div>}>
-        <BlockComponent b={b} />
-      </ErrorBoundary>
-      </AnimationState>
-      <ErrorBoundary fallback={<div>Key error...</div>}>
-        <KeyComponent expanded={expanded} round={round} />
-      </ErrorBoundary>
+        <VideoChapterContainer
+          playbackRate={playbackRate}
+          setPlaybackRate={setPlaybackRate}
+          chapters={
+            <>
+              <VideoChapterLink
+                info={videoInformation}
+                setInfo={setVideoInformation}
+                playerRef={playerRef}
+                part={"key-expansion"}
+              >
+                Schlüssel erweitern
+              </VideoChapterLink>
+              <VideoChapterLink
+                info={videoInformation}
+                setInfo={setVideoInformation}
+                playerRef={playerRef}
+                part={"add-initial-key"}
+              >
+                Schlüssel hinzufügen
+              </VideoChapterLink>
+            </>
+          }
+          video={
+            <Player
+              ref={playerRef}
+              style={{height: "240px"}}
+              component={AESVideo}
+              durationInFrames={120}
+              compositionWidth={1280}
+              compositionHeight={720}
+              fps={30}
+              autoPlay={false}
+              controls
+              loop={true}
+              playbackRate={playbackRate}
+              showPlaybackRateControl={true}
+            />
+          }
+        ></VideoChapterContainer>
+
+        <div style={buttonGrid}>
+          <button onClick={() => expandKey_()}>Expand Key</button>
+          <button onClick={() => xor()}>XOR</button>
+        </div>
+        <div style={buttonGrid}>
+          <button onClick={() => subByte()}>SubByte</button>
+          <button onClick={() => subByteInverse()}>SubByte Inverse</button>
+          <button onClick={() => shift()}>Shift</button>
+          <button onClick={() => reverseShift()}>Shift Reverse</button>
+          <button onClick={() => mix()}>Mix Columns</button>
+          <button onClick={() => reverseMix()}>Reverse</button>
+          <button onClick={() => roundForward()}>Runde</button>
+          <button onClick={() => roundBackward()}>Runde Rückwärts</button>
+          <button onClick={() => setRound(r => Math.min(r + 1, 10))}>Next Round</button>
+          <button onClick={() => setRound(r => Math.max(r - 1, 0))}>Previous Round</button>
+        </div>
+        <div style={buttonGrid}>
+          <button onClick={() => encrypt()}>Full Encryption</button>
+          <button onClick={() => decrypt()}>Full Decryption</button>
+        </div>
+
+        <AnimationState timeout={500} trigger={animTrigger}>
+          <ErrorBoundary fallback={<div>Upps...</div>}>
+            <BlockComponent b={b} />
+          </ErrorBoundary>
+        </AnimationState>
+        <ErrorBoundary fallback={<div>Key error...</div>}>
+          <KeyComponent expanded={expanded} round={round} />
+        </ErrorBoundary>
+      </AESContext.Provider>
     </>
   )
 }

@@ -10,6 +10,14 @@ h2 > span {
   color: magenta;
 }
 
+.show-key {
+  opacity: 1;
+}
+
+.hide-key {
+  opacity: 0;
+}
+
 .output > span {
   display: flex;
   flex-direction: row;

@@ -104,3 +104,20 @@ export function VideoChapterLink({info, setInfo, playerRef, part, children}) {
     </label>
     </li>
 }
+
+
+
+export function calcVideoDuration(info, options) {
+  let sum = 0
+  for (const [k, e] of Object.entries(info)) {
+    e.start = sum
+    if (e.show === true) {
+      if (typeof e.duration === "function") {
+        sum += e.duration(options)
+      } else {
+        sum = sum + e.duration
+      }
+    }
+  }
+  return sum
+}

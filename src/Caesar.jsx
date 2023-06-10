@@ -5,7 +5,7 @@ import './Caesar.css'
 import { useCurrentFrame, interpolate, AbsoluteFill, Sequence, useVideoConfig, getInputProps } from 'remotion'
 import { LetterList } from './LetterList'
 import Hint from './Hint'
-import { VideoChapterContainer, VideoChapterLink } from './Video'
+import { VideoChapterContainer, VideoChapterLink, calcVideoDuration } from './Video'
 import { useRef } from 'react'
 
 export const CaesarContext = createContext(null)
@@ -339,22 +339,6 @@ function Caesar() {
       })
     )
   }
-
-  function calcVideoDuration(info, options) {
-    let sum = 0
-    for (const [k, e] of Object.entries(info)) {
-      e.start = sum
-      if (e.show === true) {
-        if (typeof e.duration === "function") {
-          sum += e.duration(options)
-        } else {
-          sum = sum + e.duration
-        }
-      }
-    }
-    return sum
-  }
-
 
   return (
     <>
