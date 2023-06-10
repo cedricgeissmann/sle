@@ -39,10 +39,6 @@ export function VideoElement({children, top, left, right, bottom, transform}) {
 
 
 export function MySequence({children, from, durationInFrames}) {
-
-  useEffect(() => {
-    console.log(from, durationInFrames)
-  }, [])
   return (
     <Sequence from={from} durationInFrames={durationInFrames}>
       <AbsoluteFill style={{

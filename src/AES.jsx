@@ -45,6 +45,8 @@ export function BlockComponent({b}) {
   }
 
   return (
+    <div>
+      <h2 style={{textAlign: 'center'}}>Speicherblock</h2>
     <div style={blockStyle}>
       {block.map((column, i) => (
         <span style={entryStyle} key={i}>
@@ -52,6 +54,7 @@ export function BlockComponent({b}) {
         </span>
       )
       )}
+      </div>
     </div>
   )
 }
@@ -88,6 +91,8 @@ export function KeyComponent({expanded, round}) {
   }
 
   return (
+    <div>
+      <h2 style={{textAlign: 'center'}}>Erweiterter Schlüssel</h2>
     <div style={blockStyle}>
       {expanded.map((column, i) => (
         <span style={entryStyle} key={i} className={getActive(i) + " " + getShow(i)}>
@@ -95,6 +100,7 @@ export function KeyComponent({expanded, round}) {
         </span>
       )
       )}
+    </div>
     </div>
   )
 
