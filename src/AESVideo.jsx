@@ -1,10 +1,10 @@
 import { useEffect } from "react"
 import { useContext } from "react"
 import { ErrorBoundary } from "react-error-boundary"
-import { interpolate, useCurrentFrame } from "remotion"
+import { useCurrentFrame } from "remotion"
 import { AESContext, KeyComponent, BlockComponent, Block } from "./AES.jsx"
 import { mixColumns, shiftRows, subBytes, xor_list } from "./utils.js"
-import {MySequence, VideoElement} from "./Video.jsx"
+import { MySequence, VideoElement, inter } from "./Video.jsx"
 
 function KeyExpansionSequence() {
   const PART = 'key-expansion'
@@ -32,13 +32,6 @@ function KeyExpansionSequence() {
         </VideoElement>
       </MySequence>
   )
-}
-
-function inter(frame, vidInfo, values) {
-  return interpolate(
-    frame,
-    [vidInfo.start, vidInfo.start + vidInfo.duration],
-    values)
 }
 
 function KeyTransitionSequence() {

@@ -10,19 +10,20 @@ export function VideoTransform({from, to}) {
 
   return (
     <>
-      <div style={{position: 'relative', fontSize: '7rem', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-        <div style={{position: 'absolute', opacity: opacityFrom}}>{from}</div>
-        <div style={{position: 'absolute', opacity: opacityTo}}>{to}</div>
+      <div style={{minWidth: '200px', position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+        <div style={{position: 'absolute', color: `rgba(255, 255, 255, ${opacityFrom})`}}>{from}</div>
+        <div style={{position: 'absolute', color: `rgba(255, 255, 255, ${opacityTo})`}}>{to}</div>
       </div>
     </>
   )
 }
 
-export function VideoElement({children, top, left, right, bottom, transform}) {
+export function VideoElement({children, top, left, right, bottom, transform, transparency = 1}) {
+  const transparencyValue = typeof transparency === 'function' ? transparency() : transparency
   return (
       <div style={{
         position: 'absolute',
-        color: 'white',
+        color: `rgba(255, 255, 255, ${transparencyValue})`,
         top: typeof top === 'function' ? top() : top,
         left: typeof left === 'function' ? left() : left,
         right: typeof right === 'function' ? right() : right,
@@ -130,4 +131,14 @@ export function calcVideoDuration(info, options) {
     }
   }
   return sum
+}
+
+export function inter(frame, vidInfo, values) {
+  return interpolate(
+    frame,
+    [vidInfo.start, vidInfo.start + vidInfo.duration],
+    values, {
+      extrapolateLeft: 'clamp',
+      extrapolateRight: 'clamp'
+    })
 }
