@@ -15,7 +15,7 @@ export const AESContext = createContext(null)
 /*
  * This Component should just display the state of the hexArray in a grid.
  */
-function BlockComponent({b}) {
+export function BlockComponent({b}) {
 
   const [block, setBlock] = useState([])
 
@@ -124,8 +124,10 @@ export class Block {
 
 function AES() {
   const [videoInformation, setVideoInformation] = useState({
-    'key-expansion': {show: true, duration: 60, start: 0},
-    'add-initial-key': {show: true, duration: 60, start: 60}
+    'key-expansion': {show: true, duration: 60, start: 0, name: "Schlüssel erweitern"},
+    'transition-key-expansion': {show: true, duration: 30, start: 0, name: ""},
+    'block-creation': {show: true, duration: 60, start: 0, name: "Block erstellen"},
+    'add-initial-key': {show: true, duration: 60, start: 60, name: "Verschlüsseln"}
   })
   const [playbackRate, setPlaybackRate] = useState(1)
   const playerRef = useRef(null)
@@ -238,7 +240,7 @@ function AES() {
 
   return (
     <>
-      <AESContext.Provider value={{videoInformation, setVideoInformation, expanded, setExpanded, round, setRound}}>
+      <AESContext.Provider value={{videoInformation, setVideoInformation, expanded, setExpanded, round, setRound, b, setB}}>
         <h2>
           AES <span>Runde: {round}</span>
         </h2>
@@ -263,22 +265,17 @@ function AES() {
           setPlaybackRate={setPlaybackRate}
           chapters={
             <>
+              {Object.entries(videoInformation).map(([key, val]) => (
               <VideoChapterLink
+                key={key}
                 info={videoInformation}
                 setInfo={setVideoInformation}
                 playerRef={playerRef}
-                part={"key-expansion"}
+                part={key}
               >
-                Schlüssel erweitern
+                {val.name}
               </VideoChapterLink>
-              <VideoChapterLink
-                info={videoInformation}
-                setInfo={setVideoInformation}
-                playerRef={playerRef}
-                part={"add-initial-key"}
-              >
-                Schlüssel hinzufügen
-              </VideoChapterLink>
+              ))}
             </>
           }
           video={

@@ -18,7 +18,7 @@ export function VideoTransform({from, to}) {
   )
 }
 
-export function VideoElement({children, top, left, right, bottom}) {
+export function VideoElement({children, top, left, right, bottom, transform}) {
   return (
       <div style={{
         position: 'absolute',
@@ -30,6 +30,7 @@ export function VideoElement({children, top, left, right, bottom}) {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        transform: typeof transform === 'function' ? transform() : transform,
       }}>
         {children}
       </div>
