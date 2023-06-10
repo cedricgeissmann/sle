@@ -362,14 +362,6 @@ function Caesar() {
           Zeichen in der Eingabe, und verschiebt es jeweils um den Schlüssel, dann ergibt sich daraus der Kryptotext.
         </p>
 
-        <button
-          onClick={() => {
-            videoInformation.intro.show = !videoInformation.intro.show
-          }}
-        >
-          Intro
-        </button>
-
         <Hint hintFile="caesar" />
 
         <div className="box">
@@ -421,7 +413,7 @@ function Caesar() {
           video={
             <Player
               ref={playerRef}
-              style={{height: "240px"}}
+              style={{width: "640px"}}
               component={CaesarVideo}
               durationInFrames={calcVideoDuration(videoInformation, input.length)}
               compositionWidth={1280}

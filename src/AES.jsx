@@ -291,7 +291,7 @@ function AES() {
           video={
             <Player
               ref={playerRef}
-              style={{height: "240px"}}
+              style={{width: "640px"}}
               component={AESVideo}
               durationInFrames={calcVideoDuration(videoInformation)}
               compositionWidth={1280}
@@ -327,14 +327,22 @@ function AES() {
           <button onClick={() => decrypt()}>Full Decryption</button>
         </div>
 
+          <div style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-evenly',
+            alignItems: 'center'
+          }}>
+
+        <ErrorBoundary fallback={<div>Key error...</div>}>
+          <KeyComponent expanded={expanded} round={round} />
+        </ErrorBoundary>
         <AnimationState timeout={500} trigger={animTrigger}>
           <ErrorBoundary fallback={<div>Upps...</div>}>
             <BlockComponent b={b} />
           </ErrorBoundary>
         </AnimationState>
-        <ErrorBoundary fallback={<div>Key error...</div>}>
-          <KeyComponent expanded={expanded} round={round} />
-        </ErrorBoundary>
+          </div>
       </AESContext.Provider>
     </>
   )

@@ -2,7 +2,7 @@ main {
   margin: 10px auto;
   /* border: 1px solid grey; */
   border-radius: 5px;
-  width: clamp(400px, 80vw, 560px);
+  width: clamp(480px, 80vw, 1080px);
   padding-bottom: 60px;
   position: relative;
 }
