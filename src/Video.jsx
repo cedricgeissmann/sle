@@ -82,10 +82,25 @@ export function VideoChapterContainer({chapters, video, playbackRate, setPlaybac
   )
 }
 
-export function VideoChapterLink({info, playerRef, part, children}) {
-  function jumpToPart(part) {
+export function VideoChapterLink({info, setInfo, playerRef, part, children}) {
+  function jumpToPart() {
     playerRef.current && playerRef.current.seekTo(info[part].start)
   }
 
-  return <li onClick={() => jumpToPart(part)}>{children}</li>
+  function togglePart() {
+    setInfo((old) => {
+      const inf = {...old}
+      inf[part].show = !old[part].show
+      return inf
+    })
+  }
+
+  return <li onClick={() => jumpToPart()}>
+    <span>
+      {children}
+    </span>
+    <label htmlFor={`display-${part}`}>
+      <input type="checkbox" id={`display-${part}`} defaultChecked={true} onChange={() => togglePart()} />
+    </label>
+    </li>
 }

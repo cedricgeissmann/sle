@@ -71,9 +71,10 @@ input,
   flex-grow: 1;
   background-color: var(--bg-color-1);
   display: flex;
-  justify-content: left;
+  justify-content: space-between;
   align-items: center;
   padding-left: 1rem;
+  padding-right: 1rem;
   color: var(--fg-color-1)
 }
 

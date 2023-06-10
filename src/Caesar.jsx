@@ -414,13 +414,22 @@ function Caesar() {
           playbackRate={playbackRate} setPlaybackRate={setPlaybackRate}
           chapters={
             <>
-              <VideoChapterLink info={videoInformation} playerRef={playerRef} part={"intro"}>
+              <VideoChapterLink 
+                info={videoInformation}
+                setInfo={setVideoInformation}
+                playerRef={playerRef} part={"intro"}>
                 Intro
               </VideoChapterLink>
-              <VideoChapterLink info={videoInformation} playerRef={playerRef} part={"mid"}>
+              <VideoChapterLink 
+                info={videoInformation}
+                setInfo={setVideoInformation}
+                playerRef={playerRef} part={"mid"}>
                 Mid
               </VideoChapterLink>
-              <VideoChapterLink info={videoInformation} playerRef={playerRef} part={"end"}>
+              <VideoChapterLink
+                info={videoInformation}
+                setInfo={setVideoInformation}
+                playerRef={playerRef} part={"end"}>
                 Outro
               </VideoChapterLink>
             </>
