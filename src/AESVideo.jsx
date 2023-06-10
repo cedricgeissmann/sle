@@ -3,7 +3,7 @@ import { useContext } from "react"
 import { ErrorBoundary } from "react-error-boundary"
 import { interpolate, useCurrentFrame } from "remotion"
 import { AESContext, KeyComponent, BlockComponent, Block } from "./AES.jsx"
-import { xor_list } from "./utils.js"
+import { mixColumns, shiftRows, subBytes, xor_list } from "./utils.js"
 import {MySequence, VideoElement} from "./Video.jsx"
 
 function KeyExpansionSequence() {
@@ -125,6 +125,128 @@ function AddKeySequence() {
   )
 }
 
+function SubBytesSequence() {
+  const PART = 'sub-bytes'
+  const currentFrame = useCurrentFrame()
+  const {videoInformation, expanded, round, setRound, b, setB} = useContext(AESContext)
+
+  useEffect(() => setRound(0), [])
+  useEffect(() => {
+    if ((currentFrame - videoInformation[PART].start) === 15) {
+      subBytes(b.getHex())
+      setB((c) => new Block(c.getString()))
+    }
+  }, [currentFrame])
+
+  return (
+      <MySequence 
+        from={videoInformation[PART].start}
+        durationInFrames={videoInformation[PART].duration}>
+        <VideoElement transform="translateX(-50%) scale(0.7)">
+          <KeyComponent expanded={expanded} round={round}>
+          </KeyComponent>
+        </VideoElement>
+
+        <VideoElement transform='translateX(75%) scale(1.5)'>
+          <BlockComponent b={b}>
+          </BlockComponent>
+        </VideoElement>
+      </MySequence>
+  )
+}
+
+
+function ShiftRowsSequence() {
+  const PART = 'shift-rows'
+  const currentFrame = useCurrentFrame()
+  const {videoInformation, expanded, round, setRound, b, setB} = useContext(AESContext)
+
+  useEffect(() => setRound(0), [])
+  useEffect(() => {
+    if ((currentFrame - videoInformation[PART].start) === 15) {
+      shiftRows(b.getHex())
+      setB((c) => new Block(c.getString()))
+    }
+  }, [currentFrame])
+
+  return (
+      <MySequence 
+        from={videoInformation[PART].start}
+        durationInFrames={videoInformation[PART].duration}>
+        <VideoElement transform="translateX(-50%) scale(0.7)">
+          <KeyComponent expanded={expanded} round={round}>
+          </KeyComponent>
+        </VideoElement>
+
+        <VideoElement transform='translateX(75%) scale(1.5)'>
+          <BlockComponent b={b}>
+          </BlockComponent>
+        </VideoElement>
+      </MySequence>
+  )
+}
+
+function MixColumnsSequence() {
+  const PART = 'mix-columns'
+  const currentFrame = useCurrentFrame()
+  const {videoInformation, expanded, round, setRound, b, setB} = useContext(AESContext)
+
+  useEffect(() => setRound(0), [])
+  useEffect(() => {
+    if ((currentFrame - videoInformation[PART].start) === 15) {
+      mixColumns(b.getHex())
+      setB((c) => new Block(c.getString()))
+    }
+  }, [currentFrame])
+
+  return (
+      <MySequence 
+        from={videoInformation[PART].start}
+        durationInFrames={videoInformation[PART].duration}>
+        <VideoElement transform="translateX(-50%) scale(0.7)">
+          <KeyComponent expanded={expanded} round={round}>
+          </KeyComponent>
+        </VideoElement>
+
+        <VideoElement transform='translateX(75%) scale(1.5)'>
+          <BlockComponent b={b}>
+          </BlockComponent>
+        </VideoElement>
+      </MySequence>
+  )
+}
+
+
+function AddRoundKeySequence() {
+  const PART = 'add-round-key'
+  const currentFrame = useCurrentFrame()
+  const {videoInformation, expanded, round, setRound, b, setB} = useContext(AESContext)
+
+  useEffect(() => setRound((r) => Math.min(r+1, 10)), [])
+  useEffect(() => {
+    if ((currentFrame - videoInformation[PART].start) === 15) {
+      xor_list(b.getHex(), expanded.slice(round * 16, (round + 1) * 16))
+      setB((c) => new Block(c.getString()))
+    }
+  }, [currentFrame])
+
+  return (
+      <MySequence 
+        from={videoInformation[PART].start}
+        durationInFrames={videoInformation[PART].duration}>
+        <VideoElement transform="translateX(-50%) scale(0.7)">
+          <KeyComponent expanded={expanded} round={round}>
+          </KeyComponent>
+        </VideoElement>
+
+        <VideoElement transform='translateX(75%) scale(1.5)'>
+          <BlockComponent b={b}>
+          </BlockComponent>
+        </VideoElement>
+      </MySequence>
+  )
+}
+
 export default function AESVideo() {
   const {videoInformation} = useContext(AESContext)
   return (
@@ -135,6 +257,10 @@ export default function AESVideo() {
       {videoInformation['transition-key-expansion'].show && <KeyTransitionSequence /> }
       {videoInformation['block-creation'].show && <BlockCreationSequence /> }
       {videoInformation['add-initial-key'].show && <AddKeySequence /> }
+      {videoInformation['sub-bytes'].show && <SubBytesSequence /> }
+      {videoInformation['shift-rows'].show && <ShiftRowsSequence /> }
+      {videoInformation['mix-columns'].show && <MixColumnsSequence /> }
+      {videoInformation['add-round-key'].show && <AddRoundKeySequence /> }
     </ErrorBoundary>
     </>
   )

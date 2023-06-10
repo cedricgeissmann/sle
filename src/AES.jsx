@@ -127,7 +127,11 @@ function AES() {
     'key-expansion': {show: true, duration: 60, start: 0, name: "Schlüssel erweitern"},
     'transition-key-expansion': {show: true, duration: 30, start: 0, name: ""},
     'block-creation': {show: true, duration: 60, start: 0, name: "Block erstellen"},
-    'add-initial-key': {show: true, duration: 60, start: 60, name: "Verschlüsseln"}
+    'add-initial-key': {show: true, duration: 60, start: 60, name: "Verschlüsseln"},
+    'sub-bytes': {show: true, duration: 60, start: 60, name: "Bytes austauschen"},
+    'shift-rows': {show: true, duration: 60, start: 60, name: "Zeilen verschieben"},
+    'mix-columns': {show: true, duration: 60, start: 60, name: "Spalten mischen"},
+    'add-round-key': {show: true, duration: 60, start: 60, name: "Rundenschlüssel"},
   })
   const [playbackRate, setPlaybackRate] = useState(1)
   const playerRef = useRef(null)
