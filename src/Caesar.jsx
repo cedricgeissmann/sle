@@ -5,6 +5,8 @@ import './Caesar.css'
 import { useCurrentFrame, interpolate, AbsoluteFill, Sequence, useVideoConfig, getInputProps } from 'remotion'
 import { LetterList } from './LetterList'
 import Hint from './Hint'
+import { VideoChapterContainer, VideoChapterLink } from './Video'
+import { useRef } from 'react'
 
 export const CaesarContext = createContext(null)
 
@@ -235,11 +237,13 @@ function CaesarVideo() {
 }
 
 function Caesar() {
+  const playerRef = useRef(null)
   const [videoInformation, setVideoInformation] = useState({
     intro: {show: true, duration: 60, start: 0},
     mid: {show: true, duration: (len) => len * 30, start: 0},
     end: {show: true, duration: 60, start: 0}
   })
+  const [playbackRate, setPlaybackRate] = useState(1)
 
   const [showIntro, setShowIntro] = useState(true)
 
@@ -348,9 +352,9 @@ function Caesar() {
         }
       }
     }
-    console.log(sum)
     return sum
   }
+
 
   return (
     <>
@@ -374,9 +378,13 @@ function Caesar() {
           Zeichen in der Eingabe, und verschiebt es jeweils um den Schlüssel, dann ergibt sich daraus der Kryptotext.
         </p>
 
-        <button onClick={() => {
-          videoInformation.intro.show = !videoInformation.intro.show
-        }}>Intro</button>
+        <button
+          onClick={() => {
+            videoInformation.intro.show = !videoInformation.intro.show
+          }}
+        >
+          Intro
+        </button>
 
         <Hint hintFile="caesar" />
 
@@ -402,19 +410,39 @@ function Caesar() {
           </div>
         </div>
 
-        <div className="video-container">
-          <Player
-            style={{height: "240px"}}
-            component={CaesarVideo}
-            durationInFrames={calcVideoDuration(videoInformation, input.length)}
-            compositionWidth={1280}
-            compositionHeight={720}
-            fps={30}
-            autoPlay={true}
-            controls
-            loop={true}
-          />
-        </div>
+        <VideoChapterContainer
+          playbackRate={playbackRate} setPlaybackRate={setPlaybackRate}
+          chapters={
+            <>
+              <VideoChapterLink info={videoInformation} playerRef={playerRef} part={"intro"}>
+                Intro
+              </VideoChapterLink>
+              <VideoChapterLink info={videoInformation} playerRef={playerRef} part={"mid"}>
+                Mid
+              </VideoChapterLink>
+              <VideoChapterLink info={videoInformation} playerRef={playerRef} part={"end"}>
+                Outro
+              </VideoChapterLink>
+            </>
+          }
+          video={
+            <Player
+              ref={playerRef}
+              style={{height: "240px"}}
+              component={CaesarVideo}
+              durationInFrames={calcVideoDuration(videoInformation, input.length)}
+              compositionWidth={1280}
+              compositionHeight={720}
+              fps={30}
+              autoPlay={false}
+              controls
+              loop={true}
+              playbackRate={playbackRate}
+              showPlaybackRateControl={true}
+            />
+          }
+        ></VideoChapterContainer>
+
         <div className="box">
           <div className="output-area">
             <span>Ausgabe:</span>

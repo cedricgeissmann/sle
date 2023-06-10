@@ -55,3 +55,37 @@ export function MySequence({children, from, durationInFrames}) {
     </Sequence>
   )
 }
+
+export function VideoChapterContainer({chapters, video, playbackRate, setPlaybackRate}) {
+
+  function faster() {
+    setPlaybackRate((cur) => Math.min(cur * 2, 4))
+  }
+  function slower() {
+    setPlaybackRate((cur) => Math.max(cur / 2, 0.125))
+  }
+
+  return (
+    <div className='vid-container'>
+      <div className='video-controls'>
+        <button onClick={() => slower()}>Slower</button>
+        <span>Speed: {playbackRate}</span>
+        <button onClick={() => faster()}>Faster</button>
+      </div>
+    <div className="video-chapter">
+      <ul>
+        {chapters}
+      </ul>
+      <div>{video}</div>
+    </div>
+    </div>
+  )
+}
+
+export function VideoChapterLink({info, playerRef, part, children}) {
+  function jumpToPart(part) {
+    playerRef.current && playerRef.current.seekTo(info[part].start)
+  }
+
+  return <li onClick={() => jumpToPart(part)}>{children}</li>
+}

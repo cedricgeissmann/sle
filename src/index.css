@@ -44,3 +44,33 @@ input,
   font-weight: bold;
 }
 
+.video-chapter {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: stretch;
+}
+
+.video-chapter > ul {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.video-chapter > ul > li {
+  flex-grow: 1;
+  background-color: var(--bg-color-1);
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  padding-left: 1rem;
+  color: var(--fg-color-1)
+}
+
+.video-chapter > ul > li:hover {
+  background-color: var(--bg-color-2);
+  cursor: pointer;
+}

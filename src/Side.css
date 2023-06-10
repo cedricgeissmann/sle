@@ -1,4 +1,4 @@
-ul {
+.side-nav {
   width: clamp(300px, 25vw, 400px);
   height: 100%;
   display: flex;
@@ -9,11 +9,11 @@ ul {
   margin: 0;
 }
 
-ul li {
+.side-nav li {
   list-style: none;
 }
 
-ul li a {
+.side-nav li a {
   padding: 20px 5px 20px 15px;
   display: block;
   width: 100%;
@@ -23,12 +23,12 @@ ul li a {
   transition: color 0.3s ease-in-out;
 }
 
-ul li a:hover {
+.side-nav li a:hover {
   color: var(--fg-color-2);
 }
-ul li:hover,
-ul li:has(a.active),
-ul li a.active {
+.side-nav li:hover,
+.side-nav li:has(a.active),
+.side-nav li a.active {
   background-color: var(--bg-color-2);
 }
 

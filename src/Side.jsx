@@ -13,7 +13,7 @@ function Side() {
   }, [])
 
   return (
-    <ul>
+    <ul className="side-nav">
       <li><ChapterLink chapter={1} name="Verschlüsselungsverfahren"/></li>
       <li><QuizLink chapter={2} name="Quiz: Verschlüsselungsverfahren" quizType="encryption"/></li>
       <li><ChapterLink chapter={3} name="Caesar: Einführung"/></li>
