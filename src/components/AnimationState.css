@@ -1,26 +1,18 @@
-.fadeout {
-  animation-name: anim-fadeout;
-  animation-duration: 0.5s;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: 1;
-  animation-direction: normal;
-  animation-fill-mode: forwards;
-}
+.fadeout { animation: anim-fadeout 0.5s ease-in-out 0s 1 normal forwards; }
+.fadein { animation: anim-fadein 0.5s ease-in-out 0s 1 normal forwards; }
+.shrink { animation: anim-shrink 0.5s ease-in-out 0s 1 normal forwards; }
 
-.fadein {
-  animation-name: anim-fadein;
-  animation-duration: 0.5s;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: 1;
-  animation-direction: normal;
-  animation-fill-mode: forwards;
-}
-
-@keyframes anim-fadeout {
+@keyframes anim-fadeout{
   0% {opacity: 1;}
   100% {opacity: 0;}
 }
-@keyframes anim-fadein {
-  0% {opacity: 1;}
-  100% {opacity: 0;}
+
+@keyframes anim-fadein{
+  0% {opacity: 0;}
+  100% {opacity: 1;}
+}
+
+@keyframes anim-shrink {
+  0% {transform: scale(1);}
+  100% {transform: scale(0);}
 }

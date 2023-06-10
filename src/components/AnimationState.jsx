@@ -8,7 +8,7 @@ function AnimationState({children, trigger, timeout = 500}) {
   
   useEffect(() => {
     setAnimationClass(trigger)
-    setTimeout(() => setAnimationClass(""), timeout)
+    setTimeout(() => setAnimationClass("fadein"), timeout)
   }, [trigger])
 
   return (

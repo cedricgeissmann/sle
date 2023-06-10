@@ -6,25 +6,6 @@ import useDelayUpdate from './useDelayUpdate.js'
 import AnimationState from './components/AnimationState.jsx'
 
 
-function FadeComponent({children, fadeState, setFadeState}) {
-
-  const [fade, setFade] = useState('fade-show')
-
-  useEffect(() => {
-    console.log(fadeState)
-    if (fadeState === 'fade-toggle') {
-      setFade('fade-out')
-      setTimeout(() => {setFade('fade-in'); setFadeState('fade-show')}, 500)
-    }
-  }, [fadeState])
-
-  return (
-    <div className={fade}>
-      {children}
-    </div>
-  )
-}
-
 /*
  * This Component should just display the state of the hexArray in a grid.
  */
@@ -141,10 +122,10 @@ function AES() {
   const [b, setB] = useDelayUpdate(null, 500)
   const [k, setK] = useState('')
 
-  const [fadeTrigger, setFadeTrigger] = useState('fade-show')
+  const [animTrigger, setFadeTrigger] = useState('fade-show')
 
   function updateB(newEntry) {
-    setFadeTrigger(() => new String('fadeout'))
+    setFadeTrigger(() => new String('fadeout shrink'))
     setB(newEntry)
   }
 
@@ -277,7 +258,7 @@ function AES() {
         <button onClick={() => decrypt()}>Full Decryption</button>
       </div>
 
-      <AnimationState timeout={500} trigger={fadeTrigger}>
+      <AnimationState timeout={500} trigger={animTrigger}>
       <ErrorBoundary fallback={<div>Upps...</div>}>
         <BlockComponent b={b} />
       </ErrorBoundary>
