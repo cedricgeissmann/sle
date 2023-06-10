@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import { hexStringToString, stringToHex, stringToHexArray, subBytes, mixColumns, inverseMixColumns, xor_list, shiftRows, shiftRowsInverse, aes, aes_reverse, expandKey } from './utils.js'
 import './AES.css'
+import useDelayUpdate from './useDelayUpdate.js'
+import AnimationState from './components/AnimationState.jsx'
 
 
 function FadeComponent({children, fadeState, setFadeState}) {
@@ -132,18 +134,18 @@ function AES() {
 
   const [input, setInput] = useState('secret');
   const [output, setOutput] = useState('');
-  const [round, setRound] = useState(0)
+  const [round, setRound] = useDelayUpdate(0, 1000)
   const [expanded, setExpanded] = useState(new Array(176).fill('00'))
 
   const [key, setKey] = useState('YELLOW SUBMARINE')
-  const [b, setB] = useState(null)
+  const [b, setB] = useDelayUpdate(null, 500)
   const [k, setK] = useState('')
 
-  const [showBlock, setShowBlock] = useState('fade-show')
+  const [fadeTrigger, setFadeTrigger] = useState('fade-show')
 
   function updateB(newEntry) {
-    setShowBlock('fade-toggle')
-    setTimeout(() => setB(newEntry), 500)
+    setFadeTrigger(() => new String('fadeout'))
+    setB(newEntry)
   }
 
   useEffect(() => {
@@ -275,11 +277,11 @@ function AES() {
         <button onClick={() => decrypt()}>Full Decryption</button>
       </div>
 
-      <FadeComponent fadeState={showBlock} setFadeState={setShowBlock}>
+      <AnimationState timeout={500} trigger={fadeTrigger}>
       <ErrorBoundary fallback={<div>Upps...</div>}>
         <BlockComponent b={b} />
       </ErrorBoundary>
-      </FadeComponent>
+      </AnimationState>
       <ErrorBoundary fallback={<div>Key error...</div>}>
         <KeyComponent expanded={expanded} round={round} />
       </ErrorBoundary>
