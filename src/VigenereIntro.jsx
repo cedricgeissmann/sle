@@ -35,7 +35,7 @@ function VigenereIntro() {
           Wenn wir <b>abcd</b> als Schlüsselwort verwenden, dann ist unser Schlüssel <b>+0, +1, +2, +3</b>.
         </p>
         <Hint title="Frage" hintText="Was passiert wenn der Text länger wie der Schlüssel ist?" />
-        <h3>Grüsse des Schlüsselraums</h3>
+        <h3>Grösse des Schlüsselraums</h3>
         <p>
           Die Grösse des Schlüsselraums ist dann durch die Länge des Schlüssels vorgegeben. Wenn wir nur Zeichen aus dem
           Alphabet zulassen, haben wir 26 mögliche Verschiebungen pro Stelle, das ergibt einen Schlüsselraum von 26<sup>n</sup>.

@@ -394,19 +394,19 @@ function Caesar() {
                 info={videoInformation}
                 setInfo={setVideoInformation}
                 playerRef={playerRef} part={"intro"}>
-                Intro
+                Klartext
               </VideoChapterLink>
               <VideoChapterLink 
                 info={videoInformation}
                 setInfo={setVideoInformation}
                 playerRef={playerRef} part={"mid"}>
-                Mid
+                Verschlüsselung
               </VideoChapterLink>
               <VideoChapterLink
                 info={videoInformation}
                 setInfo={setVideoInformation}
                 playerRef={playerRef} part={"end"}>
-                Outro
+                Ciphertext
               </VideoChapterLink>
             </>
           }

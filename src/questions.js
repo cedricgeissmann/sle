@@ -85,6 +85,91 @@ export const QUESTIONS = {
         },
       ],
     },
+    {
+      question: "Das Caesarverfahren ist ein modernes kryptographisches Verfahren, das heute noch häufig verwendet wird.",
+      answers: [
+        {
+          text: "Ja",
+          checked: false,
+          correct: false,
+        },
+        {
+          text: "Nein",
+          checked: false,
+          correct: true,
+        },
+      ],
+    },
+    {
+      question: "Eine Caesar-Verschlüsselung mit dem Schlüssel 3 würde den Buchstaben 'A' in den Buchstaben 'D' verschlüsseln.",
+      answers: [
+        {
+          text: "Ja",
+          checked: false,
+          correct: true,
+        },
+        {
+          text: "Nein",
+          checked: false,
+          correct: false,
+        },
+      ],
+    },
+    {
+      question: "Das Caesarverfahren kann auf beliebige Zeichen angewendet werden, nicht nur auf Buchstaben.",
+      answers: [
+        {
+          text: "Ja",
+          checked: false,
+          correct: true,
+        },
+        {
+          text: "Nein",
+          checked: false,
+          correct: false,
+        },
+      ],
+    },
+    {
+      question: "Was passiert beim Caesarverfahren, wenn ein Schlüssel der grösser als 26 ist, verwendet wird.",
+      answers: [
+        {
+          text: "Es wird ein 'Z' geschrieben.",
+          checked: false,
+          correct: false,
+        },
+        {
+          text: "Das Zeichen wird mit einem '.' ersetzt.",
+          checked: false,
+          correct: false,
+        },
+        {
+          text: "Das Alphabet beginnt wieder von vorne.",
+          checked: false,
+          correct: true,
+        },
+        {
+          text: "Der Buchstabe wird nicht verschoben.",
+          checked: false,
+          correct: false,
+        },
+      ],
+    },
+    {
+      question: "Wird das Caesarverfahren 2 mal direkt hintereinander angewendet, so wird die Verschlüsselung sicherer.",
+      answers: [
+        {
+          text: "Ja",
+          checked: false,
+          correct: false,
+        },
+        {
+          text: "Nein",
+          checked: false,
+          correct: true,
+        },
+      ],
+    },
   ],
   encryption: [
     {
@@ -133,6 +218,36 @@ export const QUESTIONS = {
         },
       ],
     },
+    {
+      question: "Das Internet würde auch ohne Verschlüsselung funktionieren.",
+      answers: [
+        {
+          text: "Ja",
+          checked: false,
+          correct: false,
+        },
+        {
+          text: "Nein",
+          checked: false,
+          correct: true,
+        },
+      ],
+    },
+    {
+      question: "Verschlüsselungsverfahren müssen immer umkehrbar sein.",
+      answers: [
+        {
+          text: "Ja",
+          checked: false,
+          correct: true,
+        },
+        {
+          text: "Nein",
+          checked: false,
+          correct: false,
+        },
+      ],
+    },
   ],
   vigenere: [
     {
@@ -147,6 +262,81 @@ export const QUESTIONS = {
           text: "Nein",
           checked: false,
           correct: false,
+        },
+      ],
+    },
+    {
+      question: "Der Schlüsselraum des Vigenère-Verfahrens mit einem Schlüsselwort der Länge 6 ist 26^6.",
+      answers: [
+        {
+          text: "Ja",
+          checked: false,
+          correct: true,
+        },
+        {
+          text: "Nein",
+          checked: false,
+          correct: false,
+        },
+      ],
+    },
+    {
+      question: "Das Vigenère-Verfahren mit dem Schlüsselwort 'AAAAAA', bewirkt keine Verschlüsselung.",
+      answers: [
+        {
+          text: "Ja",
+          checked: false,
+          correct: true,
+        },
+        {
+          text: "Nein",
+          checked: false,
+          correct: false,
+        },
+      ],
+    },
+    {
+      question: "Bei einem Schlüsselwort der Länge 1, sind das Caesar und das Vigenère-Verfahren genau gleich.",
+      answers: [
+        {
+          text: "Ja",
+          checked: false,
+          correct: true,
+        },
+        {
+          text: "Nein",
+          checked: false,
+          correct: false,
+        },
+      ],
+    },
+    {
+      question: "Bei einem Schlüsselwort der Länge 1, sind das Caesar und das Vigenère-Verfahren genau gleich.",
+      answers: [
+        {
+          text: "Ja",
+          checked: false,
+          correct: true,
+        },
+        {
+          text: "Nein",
+          checked: false,
+          correct: false,
+        },
+      ],
+    },
+    {
+      question: "Die Sicherheit des Vigenère-Verfahrens liegt nur in der Länge des Schlüssels, nicht in der Vielfalt der Zeichen.",
+      answers: [
+        {
+          text: "Ja",
+          checked: false,
+          correct: false,
+        },
+        {
+          text: "Nein",
+          checked: false,
+          correct: true,
         },
       ],
     },
