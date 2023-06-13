@@ -110,3 +110,12 @@
   align-items: center;
   flex-direction: row;
 }
+
+.hl-letter {
+  animation: grow 0.5s ease-in-out 0s 1 normal forwards;
+}
+
+@keyframes grow {
+  0% {scale: 1;}
+  100% {scale: 2;}
+}
