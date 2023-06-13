@@ -44,23 +44,27 @@ export function Letter({letter, opacity, myClass, myStyle}) {
     border: `1px solid rgba(255, 255, 255, ${opacity})`,
   })
 
+  const [hl, setHL] = useState("")
+
   useEffect(() => {
     if (letter.active) {
       setStyle({
         color: `rgba(255, 0, 0, 1)`,
         border: `2px solid rgba(255, 0, 0, 1)`,
       })
+      setHL('hl-letter')
     } else {
       setStyle({
         color: `rgba(255, 255, 255, ${opacity}`,
         border: `1px solid rgba(255, 255, 255, ${opacity})`,
       })
+      setHL('')
     }
   }, [letter.active, opacity])
 
   return (
     <div
-      className={`${myClass} video-letter`}
+      className={`${myClass} video-letter ${hl}`}
       style={{...style, ...myStyle}}
     >
       {letter.letter}

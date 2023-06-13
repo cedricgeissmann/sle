@@ -341,4 +341,38 @@ export const QUESTIONS = {
       ],
     },
   ],
+  'diffie-hellman': [
+    {
+      question: "Braucht das Diffie-Hellman-Quiz mehr Fragen?",
+      answers: [
+        {
+          text: "Ja",
+          checked: false,
+          correct: true,
+        },
+        {
+          text: "Nein",
+          checked: false,
+          correct: false,
+        },
+      ],
+    },
+  ],
+  'aes': [
+    {
+      question: "Braucht das AES-Quiz mehr Fragen?",
+      answers: [
+        {
+          text: "Ja",
+          checked: false,
+          correct: true,
+        },
+        {
+          text: "Nein",
+          checked: false,
+          correct: false,
+        },
+      ],
+    },
+  ]
 }
