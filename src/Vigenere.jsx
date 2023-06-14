@@ -74,7 +74,7 @@ function VigenereVideo() {
             </div>
           </VideoElement>
           <VideoElement top={"50%"} right={"20%"}>
-            <VideoTransform from={l.letter} to={shiftChar(l.letter, keyToAlphabet(key[i % key.length].letter))} />
+            <VideoTransform from={l.letter} to={shiftChar(l.letter, keyToAlphabet(key[i % key.length].letter))} style_={{fontSize: "7em"}} />
           </VideoElement>
           <VideoElement bottom={"10%"}>
             <LetterList type="output" letters={output} gap={1} opacity={0} />

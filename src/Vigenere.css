@@ -12,3 +12,8 @@
   border: 0.5px solid gray;
   height: 2em;
 }
+
+.shifting-letter {
+  font-size: 4rem;
+  scale: 3;
+}

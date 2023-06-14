@@ -2,7 +2,7 @@ import { Sequence, AbsoluteFill, useCurrentFrame, interpolate, useVideoConfig } 
 import { useEffect } from 'react'
 import { useState } from 'react'
 
-export function VideoTransform({from, to}) {
+export function VideoTransform({from, to, style_}) {
   const frame = useCurrentFrame()
   const {durationInFrames} = useVideoConfig()
   const opacityFrom = interpolate(frame, [0, durationInFrames], [1, 0], {extrapolateRight: 'clamp', extrapolateLeft: 'clamp'})
@@ -10,7 +10,7 @@ export function VideoTransform({from, to}) {
 
   return (
     <>
-      <div style={{minWidth: '200px', position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+      <div style={{...style_, minWidth: '200px', position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
         <div style={{position: 'absolute', color: `rgba(255, 255, 255, ${opacityFrom})`}}>{from}</div>
         <div style={{position: 'absolute', color: `rgba(255, 255, 255, ${opacityTo})`}}>{to}</div>
       </div>
@@ -18,10 +18,11 @@ export function VideoTransform({from, to}) {
   )
 }
 
-export function VideoElement({children, top, left, right, bottom, transform, transparency = 1}) {
+export function VideoElement({children, top, left, right, bottom, transform, style_, transparency = 1}) {
   const transparencyValue = typeof transparency === 'function' ? transparency() : transparency
   return (
       <div style={{
+        ...style_,
         position: 'absolute',
         color: `rgba(255, 255, 255, ${transparencyValue})`,
         top: typeof top === 'function' ? top() : top,

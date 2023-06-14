@@ -29,7 +29,7 @@ export function ShiftingLetter({letter, opacity, myClass, myStyle, shift}) {
 
   return (
     <div
-      className={`${myClass} video-letter`}
+      className={`${myClass} shifting-letter`}
       style={{...style, ...myStyle}}
     >
       {letter.letter}
