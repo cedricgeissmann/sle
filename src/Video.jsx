@@ -1,6 +1,7 @@
 import { Sequence, AbsoluteFill, useCurrentFrame, interpolate, useVideoConfig } from 'remotion'
 import { useEffect } from 'react'
 import { useState } from 'react'
+import PWComponent from './PWComponent'
 
 export function VideoTransform({from, to, style_}) {
   const frame = useCurrentFrame()
@@ -100,6 +101,7 @@ export function VideoChapterContainer({chapters, video, playbackRate, setPlaybac
   }
 
   return (
+    <PWComponent>
     <div className='vid-container'>
       <div className='video-controls'>
         <button onClick={() => slower()}>Slower</button>
@@ -113,6 +115,7 @@ export function VideoChapterContainer({chapters, video, playbackRate, setPlaybac
       <div>{video}</div>
     </div>
     </div>
+    </PWComponent>
   )
 }
 

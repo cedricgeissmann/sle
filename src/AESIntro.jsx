@@ -1,5 +1,6 @@
-import Hint from './Hint'
+import Hint from './Hint.jsx'
 import { useState } from 'react'
+import PWComponent from './PWComponent.jsx'
 
 function AESIntro() {
 
@@ -9,6 +10,9 @@ function AESIntro() {
     <>
       <section>
         <h3>Das AES-Verfahren</h3>
+        <PWComponent>
+          <h1>WOW!!!!</h1>
+        </PWComponent>
         <p>
           <b>AES</b> steht für Advanced Encryption Standard und ist eines der meist genutzten symmetrischen Verschlüsselungsverfahren. AES gibt es in verschiedenen Varianten, wir schauen hier aber nur AES-128 an. Dieses reicht völlig aus von der Sicherheit. AES wird immer verwendet wenn eine <b>https</b>-Verbindung zu einer Webseite erstellt wird. Es ist somit die Grundlage für sicheren surfen im Internet und muss deshalb auch sehr schnell sein. 
         </p>
