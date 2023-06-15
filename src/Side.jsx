@@ -23,7 +23,7 @@ function Side() {
       <li><ChapterLink chapter={7} name="Vigenère: Anwendung" /></li>
       <li><QuizLink chapter={8} name="Quiz: Vigenère-Verfahren" quizType="vigenere"/></li>
       <li><ChapterLink chapter={9} name="Diffie-Hellman: Einführung" /></li>
-      <li><ChapterLink chapter={10} name="Diffie-Hellman: Einführung" /></li>
+      <li><ChapterLink chapter={10} name="Diffie-Hellman: Anwendung" /></li>
       <li><QuizLink chapter={11} name="Quiz: Diffie-Hellman" quizType="diffie-hellman"/></li>
       <li><ChapterLink chapter={12} name="AES: Einführung" /></li>
       <li><ChapterLink chapter={13} name="AES: Anwendung" /></li>
