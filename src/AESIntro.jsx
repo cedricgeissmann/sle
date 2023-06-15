@@ -8,49 +8,45 @@ function AESIntro() {
   return (
     <>
       <section>
-        <h3>Das Vigenere-Verfahren</h3>
+        <h3>Das AES-Verfahren</h3>
         <p>
-          Das Caesar-Verfahren eignet sich nicht wirklich gut um Nachrichten sicher zu verschlüssel. Auf den ersten
-          Blick mag die Nachricht zwar verschlüsselt aussehen, aber schon nur durch einfaches ausprobieren können wir
-          den Schlüssel ganz schnell erraten.
+          <b>AES</b> steht für Advanced Encryption Standard und ist eines der meist genutzten symmetrischen Verschlüsselungsverfahren. AES gibt es in verschiedenen Varianten, wir schauen hier aber nur AES-128 an. Dieses reicht völlig aus von der Sicherheit. AES wird immer verwendet wenn eine <b>https</b>-Verbindung zu einer Webseite erstellt wird. Es ist somit die Grundlage für sicheren surfen im Internet und muss deshalb auch sehr schnell sein. 
         </p>
-        <Hint title="Frage" hintText="Wie oft müssen Sie raten um eine Nachricht zu entschlüsseln?" />
+        <Hint title='Hinweis!' hintText='Symmetrische Verschlüsselungsverfahren sind in der regel schneller als asymmetrische.' />
         <p>
-          Wir können den Schlüsselraum für das Caesar-Verfahren zwar erweitern, jedoch bleibt der Schlüsselraum sehr
-          klein, und somit einfach zu knacken (jedenfalls für einen Computer).
+          AES ist ein Blockverschlüsselungsverfahren, das bedeutet dass es jeweils auf einem Block im Speicher angewendet wird. Bei AES-128 sind das jeweils 128 Bits oder 16 Bytes. Diese verschlüsselten Blöcke können dann jeweils direkt als Pakete verschickt werden, so wird eine effiziente verschlüsselte Übertragung gewährleistet.
         </p>
-        <h3>Schlüsselraum erweitern</h3>
-        <p>Um ein Verschlüsselungsverfahren sicherer zu machen, müssen wir den Schlüsselraum einfach erweitern.</p>
-        <Hint title="Frage" hintText="Wieso wird das Verfahren dadurch sicherer?" />
+      </section>
+      <section>
+        <h4>Runden</h4>
         <p>
-          Anstatt das Caesar-Verfahren auf einen ganzen Text mit einer Verschiebung anzuwenden, können wir das gleiche
-          Verfahren auch pro Zeichen im Ursprünglichen Text verwenden. Dann müssen wir uns nur merken, welches Zeichen
-          wir um wie viel verschieben. Das können wir mit einem Schlüsselwort machen.
+          AES funktioniert in mehreren Runden und hat in jeder Runde mehrere Schritte. Bei AES-128 sind es insgesamt 10 Runden. In jeder Runde wird der Speicherblock mit einem Rundenschlüssel verschlüsselt, dann werden die Bits in dem Speicherblock nach einem genauen Schema durchmischt. Dadurch wird es extrem aufwendig die Verschlüsselung zu erraten, wenn der Schlüssel nicht bekannt ist. Hat man jedoch den Schlüssel, können die einzelnen Schritte schnell und effizient wieder rückgängig gemacht werden.
         </p>
-        <Hint
-          title="Frage"
-          hintText="Wie können die Buchstaben des Schlüsselworts für die Verschiebung verwendet werden?"
-        />
+        <Hint title='Frage' hintText='Wovor soll das Durchmischen genau schützen?' />
+        <h4>Schlüsselerweiterung</h4>
         <p>
-          Wenn wir <b>abcd</b> als Schlüsselwort verwenden, dann ist unser Schlüssel <b>+0, +1, +2, +3</b>.
+          Da in jeder Runde ein neuer Schlüssel gebraucht wird, wird der Schlüssel zuerst auf die volle Grösse erweitert. Dazu wird für jeden neuen Eintrag in dem Schlüsselblock, der Eintrag aus der Runde davor verwendet, dieser wird dann jeweils mit einer Rundenkonstanten erweitert und verschoben. Damit kann in jeder Runde ein neuer Schlüssel erzeugt werden.
         </p>
-        <Hint title="Frage" hintText="Was passiert wenn der Text länger wie der Schlüssel ist?" />
-        <h3>Grösse des Schlüsselraums</h3>
+        <Hint title='Frage' hintText='Wieso wird nicht immer der gleiche Schlüssel verwendet?' />
         <p>
-          Die Grösse des Schlüsselraums ist dann durch die Länge des Schlüssels vorgegeben. Wenn wir nur Zeichen aus dem
-          Alphabet zulassen, haben wir 26 mögliche Verschiebungen pro Stelle, das ergibt einen Schlüsselraum von 26<sup>n</sup>.
+          In der ersten Runde wird der ursprüngliche Schlüssel verwendet, danach jeweils der Rundenschlüssel.
         </p>
-
-        <div className="box">
-          <div className="inline-container">
-            Wortlänge: <input className="num-input" type="number" min="1" value={wordLength} onChange={e => setWordLength(e.target.value)} />
-          </div>
-          <div className="inline-container">
-            Schlüsselraum: <span>{26 ** wordLength}</span>
-          </div>
-        </div>
-
-        <Hint title="Frage" hintText="Wenn ein Computer 1000 Schlüssel in einer Sekunde testen kann, wie lange muss dass Schlüsselwort dann sein, damit die Verschlüsselung sicher ist?" />
+      </section>
+      <section>
+        <h4>Rundenablauf</h4>
+        <p>
+        <b>Schlüssel hinzufügen:</b> Zu beginn einer Runde wird jeweils der ganze Speicherblock mit dem Rundenschlüssel bitweise <b>XOR</b> gerechnet.
+        </p>
+        <p>
+          <b>Bytes ersetzen:</b> Nachdem der Schlüssel angewendet wurde, wird der Speicherblock durchmischt. Dabei wird jede Zelle mit einem Wert ersetzt, der in einer Tabelle nachgeschaut wird. Dieser Schritt is einfach umkehrbar, denn auch das kann nachgeschaut werden.
+        </p>
+        <p>
+          <b>Zeilen verschieben:</b> Im nächsten Schritt werden die Zeilen in dem Block so verschoben, dass pro Zeile um eine Zelle mehr nach links verschoben wird.
+        </p>
+        <p>
+          <b>Spalten mischen:</b> In diesem Schritt werden die Bytes innerhalb einer Spalte miteinander gemischt. Dieser Schritt wird in der letzten Runde weggelassen, um unnötige Berechnungen einzusparen.
+        </p>
+        <Hint title='Hinweis!' hintText='All diese Schritte braucht es damit die Bits in dem Speicherblock möglichst stark gemischt werden.'></Hint>
       </section>
     </>
   )
