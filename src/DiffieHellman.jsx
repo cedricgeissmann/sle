@@ -265,8 +265,8 @@ function DHVideo() {
 function DiffieHellman() {
   const [a, setA] = useState(5)
   const [b, setB] = useState(11)
-  const [n, setN] = useState(13)
-  const [g, setG] = useState(7)
+  const [n, setN] = useState(29)
+  const [g, setG] = useState(13)
   const [A, setAA] = useState(diffie(g, a, n))
   const [B, setBB] = useState(diffie(g, b, n))
   const [kAlice, setKAlice] = useState(diffie(B, a, n))

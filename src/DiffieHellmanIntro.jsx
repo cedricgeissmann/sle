@@ -4,10 +4,10 @@ import { useEffect } from 'react'
 
 function DiffieHellmanIntro() {
 
-  const [a, setA] = useState(13)
+  const [a, setA] = useState(5)
   const [b, setB] = useState(11)
   const [p, setP] = useState(29)
-  const [g, setG] = useState(17)
+  const [g, setG] = useState(13)
   const [k, setK] = useState(0)
   const [K, setKK] = useState(0)
 
@@ -43,17 +43,17 @@ function DiffieHellmanIntro() {
                 a =
                 <input style={{marginLeft: '0.5rem'}} type="number" className='num-input' value={a} onChange={(e) => setA(e.target.value)} />
               </label>
-              <label htmlFor="p">
-                p =
-                <input style={{marginLeft: '0.5rem'}} type="number" className='num-input' value={p} onChange={(e) => setP(e.target.value)} />
-              </label>
               <label htmlFor="g">
                 g =
                 <input style={{marginLeft: '0.5rem'}} type="number" className='num-input' value={g} onChange={(e) => setG(e.target.value)} />
               </label>
+              <label htmlFor="p">
+                p =
+                <input style={{marginLeft: '0.5rem'}} type="number" className='num-input' value={p} onChange={(e) => setP(e.target.value)} />
+              </label>
               <label htmlFor="b">
                 b =
-                <input style={{marginLeft: '0.5rem'}} type="number" className='num-input' value={a} onChange={(e) => setB(e.target.value)} />
+                <input style={{marginLeft: '0.5rem'}} type="number" className='num-input' value={b} onChange={(e) => setB(e.target.value)} />
               </label>
             </div>
             <div className='inline-container' style={{fontSize: '2rem', gap: '1.5rem'}}>
