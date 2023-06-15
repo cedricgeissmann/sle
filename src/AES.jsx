@@ -175,36 +175,36 @@ function AES() {
   }, [k])
 
 
-  const shift = () => {
+  const shift_ = () => {
     shiftRows(b.getHex())
     updateB((current) => new Block(current.getString()))
   }
 
-  const reverseShift = () => {
+  const reverseShift_ = () => {
     shiftRowsInverse(b.getHex())
     updateB((current) => new Block(current.getString()))
   }
-  const xor = () => {
-    xor_list(b.getHex(), expanded.slice(round * 16, (round+1) * 16))
+  const xor_ = () => {
+    xor_list(b.getHex(), expanded.slice((round - 1) * 16, round * 16))
     updateB((current) => new Block(current.getString()))
   }
 
-  const mix = () => {
+  const mix_ = () => {
     mixColumns(b.getHex())
     updateB((current) => new Block(current.getString()))
   }
 
-  const reverseMix = () => {
+  const reverseMix_ = () => {
     inverseMixColumns(b.getHex())
     updateB((current) => new Block(current.getString()))
   }
 
-  const subByte = () => {
+  const subByte_ = () => {
     subBytes(b.getHex())
     updateB((current) => new Block(current.getString()))
   }
 
-  const subByteInverse = () => {
+  const subByteInverse_ = () => {
     subBytes(b.getHex(), {backward: true})
     updateB((current) => new Block(current.getString()))
   }
@@ -213,12 +213,14 @@ function AES() {
     const out = aes(b.getHex(), k.getHex())
     updateB(new Block(hexStringToString(out)))
     setOutput(hexStringToString(out))
+    setRound(10)
   }
 
   function decrypt() {
     const out = aes_reverse(b.getHex(), k.getHex())
     updateB(new Block(hexStringToString(out)))
     setOutput(hexStringToString(out))
+    setRound(1)
   }
 
   function expandKey_() {
@@ -226,21 +228,34 @@ function AES() {
   }
 
   function roundForward() {
-    setRound((r) => Math.min(r+1, 10))
-    subByte(b.getHex())
-    shiftRows(b.getHex())
-    mixColumns(b.getHex())
-    xor_list(b.getHex(), expanded.slice(round * 16, (round+1) * 16))
+    setRound((r) => {
+      if (r >= 10) return r
+      const round = Math.min(r+1, 10)
+      subBytes(b.getHex())
+      shiftRows(b.getHex())
+      mixColumns(b.getHex())
+      xor_list(b.getHex(), expanded.slice((round - 1) * 16, round * 16))
+      updateB((current) => new Block(current.getString()))
+      return round
+    })
   }
 
   function roundBackward() {
-
+    setRound((r) => {
+      if (r <= 1) return r
+      xor_list(b.getHex(), expanded.slice((r - 1) * 16, r * 16))
+      inverseMixColumns(b.getHex())
+      shiftRowsInverse(b.getHex())
+      subBytes(b.getHex(), {backward: true})
+      updateB((current) => new Block(current.getString()))
+      return Math.max(r-1, 1)
+    })
   }
 
   const buttonGrid = {
     display: 'grid',
-    gridTemplateColumns: 'repeat(2, 40%)',
-    width: 'min(400px, 70vw)',
+    gridTemplateColumns: 'repeat(7, auto)',
+    width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
     gap: '0.5rem',
@@ -308,23 +323,20 @@ function AES() {
 
         <div style={buttonGrid}>
           <button onClick={() => expandKey_()}>Expand Key</button>
-          <button onClick={() => xor()}>XOR</button>
-        </div>
-        <div style={buttonGrid}>
-          <button onClick={() => subByte()}>SubByte</button>
-          <button onClick={() => subByteInverse()}>SubByte Inverse</button>
-          <button onClick={() => shift()}>Shift</button>
-          <button onClick={() => reverseShift()}>Shift Reverse</button>
-          <button onClick={() => mix()}>Mix Columns</button>
-          <button onClick={() => reverseMix()}>Reverse</button>
-          <button onClick={() => roundForward()}>Runde</button>
-          <button onClick={() => roundBackward()}>Runde Rückwärts</button>
-          <button onClick={() => setRound(r => Math.min(r + 1, 10))}>Next Round</button>
-          <button onClick={() => setRound(r => Math.max(r - 1, 0))}>Previous Round</button>
-        </div>
-        <div style={buttonGrid}>
-          <button onClick={() => encrypt()}>Full Encryption</button>
-          <button onClick={() => decrypt()}>Full Decryption</button>
+          <button onClick={() => subByte_()}>Bytes ersetzen</button>
+          <button onClick={() => shift_()}>Zeilen verschieben</button>
+          <button onClick={() => mix_()}>Spalten mischen</button>
+          <button onClick={() => roundForward()}>Runde weiter</button>
+          <button onClick={() => setRound(r => Math.min(r + 1, 10))}>+1</button>
+          <button onClick={() => decrypt()}>Volle Verschlüsselung</button>
+          {/* --- */}
+          <button onClick={() => xor_()}>XOR</button>
+          <button onClick={() => subByteInverse_()}>Rückwärts ersetzen</button>
+          <button onClick={() => reverseShift_()}>Zurück verschieben</button>
+          <button onClick={() => reverseMix_()}>Mischen umkehren</button>
+          <button onClick={() => roundBackward()}>Runde zurück</button>
+          <button onClick={() => setRound(r => Math.max(r - 1, 0))}>-1</button>
+          <button onClick={() => encrypt()}>Volle Entschlüsselung</button>
         </div>
 
           <div style={{
