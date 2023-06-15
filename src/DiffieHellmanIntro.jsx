@@ -1,9 +1,20 @@
 import Hint from './Hint'
 import { useState } from 'react'
+import { useEffect } from 'react'
 
 function DiffieHellmanIntro() {
 
-  const [wordLength, setWordLength] = useState(1)
+  const [a, setA] = useState(13)
+  const [b, setB] = useState(11)
+  const [p, setP] = useState(29)
+  const [g, setG] = useState(17)
+  const [k, setK] = useState(0)
+  const [K, setKK] = useState(0)
+
+  useEffect(() => {
+    setK((g**a) % p)
+    setKK((k**b) % p)
+  }, [a, b, g, p, k])
 
   return (
     <>
@@ -26,8 +37,28 @@ function DiffieHellmanIntro() {
         </p>
         <p>
           Nun werden die Zahlen <b>A</b> und <b>B</b> jeweils wie folgt berechnet:
-          <div className="inline-container">
-
+          <div className="box">
+            <div className='inline-container' style={{gap: '2rem'}}>
+              <label htmlFor="a">
+                a =
+                <input style={{marginLeft: '0.5rem'}} type="number" className='num-input' value={a} onChange={(e) => setA(e.target.value)} />
+              </label>
+              <label htmlFor="p">
+                p =
+                <input style={{marginLeft: '0.5rem'}} type="number" className='num-input' value={p} onChange={(e) => setP(e.target.value)} />
+              </label>
+              <label htmlFor="g">
+                g =
+                <input style={{marginLeft: '0.5rem'}} type="number" className='num-input' value={g} onChange={(e) => setG(e.target.value)} />
+              </label>
+              <label htmlFor="b">
+                b =
+                <input style={{marginLeft: '0.5rem'}} type="number" className='num-input' value={a} onChange={(e) => setB(e.target.value)} />
+              </label>
+            </div>
+            <div className='inline-container' style={{fontSize: '2rem', gap: '1.5rem'}}>
+              <span>A =</span><span>g^a % p = </span><span>{g}^{a} % {p} =</span><span>{k}</span>
+            </div>
           </div>
         </p>
         <p>
@@ -38,8 +69,17 @@ function DiffieHellmanIntro() {
           Diese Zahlen werden dann ausgetauscht.
         </p>
         <p>
-          <b>Phase 2:</b>
+          <b>Phase 2:</b> Hier wird der Schlüssel mit den ausgetauschten Zahlen berechnet.
+          <div className="box">
+            <div className='inline-container' style={{fontSize: '2rem', gap: '1.5rem'}}>
+              <span>K =</span><span>A^b % p = </span><span>{k}^{b} % {p} =</span><span>{K}</span>
+            </div>
+          </div>
         </p>
+        <p>
+          Der gemeinsame Schlüssel den beide berechnet haben, ist dann {K}.
+        </p>
+        <Hint title='Frage' hintText='Was passiert wenn a und b vertauscht werden?' />
       </section>
     </>
   )

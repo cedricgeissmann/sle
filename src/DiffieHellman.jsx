@@ -297,26 +297,25 @@ function DiffieHellman() {
   return (
     <>
       <DHContext.Provider value={{a, b, n, g, A, B, kAlice, kBob, videoInformation}}>
+        <b>Alice</b> und <b>Bob</b> möchten verschlüsselt kommunizieren. Sie
+        können sich jedoch nicht vorab treffen um einen geheimen Schlüssel zu
+        vereinbaren. Also führen Sie das Diffie-Hellman-Verfahren durch.
         <div className="box">
-          <div className="input-area inline-container">
+          <div className="inline-container" style={{gap: '2rem'}}>
             <label htmlFor="a">
               Alice:
               <input className="num-input" id="a" type="number" value={a} onChange={e => setA(parseInt(e.target.value))} />
             </label>
-          </div>
-          <div className="inline-container">
             <label htmlFor="b">
               Bob:
               <input className="num-input" id="b" type="number" value={b} onChange={e => setB(parseInt(e.target.value))} />
             </label>
           </div>
-          <div className="inline-container">
+          <div className="inline-container" style={{gap: '2rem'}}>
             <label htmlFor="g">
               Generator:
               <input className="num-input" id="g" type="number" value={g} onChange={e => setG(parseInt(e.target.value))} />
             </label>
-          </div>
-          <div className="inline-container">
             <label htmlFor="n">
               Modulo:
               <input className="num-input" id="n" type="number" value={n} onChange={e => setN(parseInt(e.target.value))} />
@@ -359,6 +358,16 @@ function DiffieHellman() {
             />
           }
         ></VideoChapterContainer>
+        <div className="box">
+          <div className="inline-container" style={{gap: '5rem'}}>
+          <span>
+            Schlüssel Alice: <span style={{fontSize: '2.5rem', fontWeight: 'bold'}}>{kAlice}</span>
+          </span>
+          <span>
+            Schlüssel Bob: <span style={{fontSize: '2.5rem', fontWeight: 'bold'}}>{kBob}</span>
+          </span>
+          </div>
+        </div>
       </DHContext.Provider>
     </>
   )
