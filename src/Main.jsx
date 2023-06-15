@@ -65,7 +65,7 @@ function Main() {
           <DiffieHellman />
         }
         {chapter === 11 &&
-          <Quiz quitType={'diffie-hellman'} />
+          <Quiz quizType={'diffie-hellman'} />
         }
         {chapter === 12 &&
           <AESIntro />
