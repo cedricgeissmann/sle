@@ -18,6 +18,40 @@ export function VideoTransform({from, to, style_}) {
   )
 }
 
+export function VideoTransformF({states, style_}) {
+  const frame = useCurrentFrame()
+  const {durationInFrames} = useVideoConfig()
+  const [index, setIndex] = useState(0)
+  const [indexAnim, setIndexAnim] = useState(0)
+  const numTicks = Math.floor(durationInFrames / (3 * states.length - 1))
+  const [anim, setAnim] = useState('')
+
+  useEffect(() => {
+    if (frame !== 0 && index < (numTicks-1) * 3 && frame % numTicks === 0) {
+      if (indexAnim === 0) {
+        setAnim('anim-flip')
+        setIndexAnim(i => i+1)
+      } else if (indexAnim === 1) {
+        setAnim('')
+        setIndexAnim(i => i+1)
+        setIndex(i => Math.min(i+1, states.length - 1))
+      } else {
+        setIndexAnim(0)
+      }
+    }
+  }, [frame])
+
+
+  return (
+    <>
+      <div style={{...style_, minWidth: '200px', position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+        <div className={anim}>{states[index]}</div>
+      </div>
+    </>
+  )
+}
+
+
 export function VideoElement({children, top, left, right, bottom, transform, style_, transparency = 1}) {
   const transparencyValue = typeof transparency === 'function' ? transparency() : transparency
   return (
