@@ -33,7 +33,7 @@ function AESIntro() {
         </p>
       </section>
       <section>
-        <h4>Rundenablauf</h4>
+        <h3>Rundenablauf</h3>
         <p>
         <b>Schlüssel hinzufügen:</b> Zu beginn einer Runde wird jeweils der ganze Speicherblock mit dem Rundenschlüssel bitweise <b>XOR</b> gerechnet.
         </p>

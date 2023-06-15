@@ -9,6 +9,7 @@ import AESVideo from './AESVideo.jsx'
 import { createContext } from 'react'
 import { useRef } from 'react'
 import { Player } from '@remotion/player'
+import Hint from './Hint.jsx'
 
 export const AESContext = createContext(null)
 
@@ -269,7 +270,15 @@ function AES() {
         <h2>
           AES <span>Runde: {round}</span>
         </h2>
-        <div>
+        <p>
+        Hier wird eine Runde von AES durchgeführt. Zuerst wird der Schlüssel erweitert und dann läuft eine einzige Runde von AES durch.
+        </p>
+<p>
+  <b>Aufgabe:</b> Schaffen Sie es die Verschlüsselung rückgängig zu machen?
+</p>
+<Hint title='Frage' hintText='Schaffen Sie es jeden Schritt im Video direkt umzukehren?'></Hint>
+        <div className='box'>
+          <div>
           <label htmlFor="input">Eingabe: </label>
           <input id="input" value={input} onChange={e => setInput(e.target.value)} />
         </div>
@@ -277,12 +286,39 @@ function AES() {
           <label htmlFor="key">Schlüssel: </label>
           <input id="key" value={key} onChange={e => setKey(e.target.value)} />
         </div>
-        <div className="output">
-          Ausgabe:
-          <span>
-            <span>{output}</span>
-            <span>{b && b.getHex()}</span>
-          </span>
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'left',
+          justifyContent: 'left',
+          gap: '0.5rem'
+        }}>
+          <div style={{
+            fontFamily: 'monospace',
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            gap: '2rem',
+            alignItems: 'center'
+          }}>
+          <span>Ausgabe (Text):</span><span style={{
+            fontFamily: 'monospace',
+            fontSize: '1.6rem'
+          }}>{output}</span>
+          </div>
+          <div style={{            
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            gap: '2rem',
+            alignItems: 'center'
+          }}>
+          <span>Ausgabe (Hex):</span><span style={{
+            fontFamily: 'monospace',
+            fontSize: '1.6rem'
+          }}>{b && b.getHex()}</span>
+          </div>
+          </div>            
         </div>
 
         <VideoChapterContainer
