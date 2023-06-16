@@ -1,8 +1,9 @@
 import { Sequence, AbsoluteFill, useCurrentFrame, interpolate, useVideoConfig } from 'remotion'
 import { useEffect } from 'react'
 import { useState } from 'react'
+import PWComponent from './PWComponent'
 
-export function VideoTransform({from, to}) {
+export function VideoTransform({from, to, style_}) {
   const frame = useCurrentFrame()
   const {durationInFrames} = useVideoConfig()
   const opacityFrom = interpolate(frame, [0, durationInFrames], [1, 0], {extrapolateRight: 'clamp', extrapolateLeft: 'clamp'})
@@ -10,7 +11,7 @@ export function VideoTransform({from, to}) {
 
   return (
     <>
-      <div style={{minWidth: '200px', position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+      <div style={{...style_, minWidth: '200px', position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
         <div style={{position: 'absolute', color: `rgba(255, 255, 255, ${opacityFrom})`}}>{from}</div>
         <div style={{position: 'absolute', color: `rgba(255, 255, 255, ${opacityTo})`}}>{to}</div>
       </div>
@@ -18,10 +19,45 @@ export function VideoTransform({from, to}) {
   )
 }
 
-export function VideoElement({children, top, left, right, bottom, transform, transparency = 1}) {
+export function VideoTransformF({states, style_}) {
+  const frame = useCurrentFrame()
+  const {durationInFrames} = useVideoConfig()
+  const [index, setIndex] = useState(0)
+  const [indexAnim, setIndexAnim] = useState(0)
+  const numTicks = Math.floor(durationInFrames / (3 * states.length - 1))
+  const [anim, setAnim] = useState('')
+
+  useEffect(() => {
+    if (frame !== 0 && index < (numTicks-1) * 3 && frame % numTicks === 0) {
+      if (indexAnim === 0) {
+        setAnim('anim-flip')
+        setIndexAnim(i => i+1)
+      } else if (indexAnim === 1) {
+        setAnim('')
+        setIndexAnim(i => i+1)
+        setIndex(i => Math.min(i+1, states.length - 1))
+      } else {
+        setIndexAnim(0)
+      }
+    }
+  }, [frame])
+
+
+  return (
+    <>
+      <div style={{...style_, minWidth: '200px', position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+        <div className={anim}>{states[index]}</div>
+      </div>
+    </>
+  )
+}
+
+
+export function VideoElement({children, top, left, right, bottom, transform, style_, transparency = 1}) {
   const transparencyValue = typeof transparency === 'function' ? transparency() : transparency
   return (
       <div style={{
+        ...style_,
         position: 'absolute',
         color: `rgba(255, 255, 255, ${transparencyValue})`,
         top: typeof top === 'function' ? top() : top,
@@ -65,6 +101,7 @@ export function VideoChapterContainer({chapters, video, playbackRate, setPlaybac
   }
 
   return (
+    <PWComponent>
     <div className='vid-container'>
       <div className='video-controls'>
         <button onClick={() => slower()}>Slower</button>
@@ -78,6 +115,7 @@ export function VideoChapterContainer({chapters, video, playbackRate, setPlaybac
       <div>{video}</div>
     </div>
     </div>
+    </PWComponent>
   )
 }
 

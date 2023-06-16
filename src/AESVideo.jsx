@@ -20,6 +20,7 @@ function KeyExpansionSequence() {
       && currentFrame < videoInformation[PART].start + videoInformation[PART].duration ) {
       setRound(r => Math.min(r+1, 10))
     }
+    if (currentFrame === videoInformation[PART].duration - 1) setRound(0)
   }, [currentFrame])
 
   return (
@@ -215,11 +216,13 @@ function AddRoundKeySequence() {
   const currentFrame = useCurrentFrame()
   const {videoInformation, expanded, round, setRound, b, setB} = useContext(AESContext)
 
-  useEffect(() => setRound((r) => Math.min(r+1, 10)), [])
   useEffect(() => {
     if ((currentFrame - videoInformation[PART].start) === 15) {
       xor_list(b.getHex(), expanded.slice(round * 16, (round + 1) * 16))
       setB((c) => new Block(c.getString()))
+    }
+    if ((currentFrame - videoInformation[PART].start) === 0) {
+      setRound((r) => Math.min(r+1, 10))
     }
   }, [currentFrame])
 

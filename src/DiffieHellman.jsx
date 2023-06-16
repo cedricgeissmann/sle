@@ -1,10 +1,8 @@
 import { useEffect, useState, createContext, useContext } from 'react'
 import { Player } from '@remotion/player'
 import './Vigenere.css'
-import { useCurrentFrame, interpolate, AbsoluteFill, Sequence, useVideoConfig, getInputProps, Video } from 'remotion'
-import { LetterList, Letter, ShiftingLetter } from './LetterList'
-import { keyToAlphabet, shiftChar} from './utils'
-import { VideoElement, VideoTransform, MySequence, VideoChapterContainer, VideoChapterLink, calcVideoDuration, inter } from './Video'
+import { useCurrentFrame } from 'remotion'
+import { VideoElement, MySequence, VideoChapterContainer, VideoChapterLink, calcVideoDuration, inter, VideoTransformF } from './Video'
 import { useRef } from 'react'
 
 const DHContext = createContext(null)
@@ -58,7 +56,7 @@ function PublicInitSequence() {
       </VideoElement>
       <VideoElement top="10%">
         <h2>Public</h2>
-        <VideoElement top="100px" transparency={opacity}>
+        <VideoElement top="150px" transparency={opacity}>
           <div style={{
             display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: "1rem"
           }}>
@@ -85,19 +83,19 @@ function PrivateInitSequence() {
     <MySequence from={videoInformation[PART].start} durationInFrames={videoInformation[PART].duration}>
       <VideoElement left='20%' top="10%" transform={"scale(2)"}>
         <h2>Alice</h2>
-        <VideoElement top="100px" transform={opacity}>
+        <VideoElement top="180px" transform={opacity}>
           a={a}
         </VideoElement>
       </VideoElement>
       <VideoElement right='20%' top="10%" transform={"scale(2)"}>
         <h2>Bob</h2>
-        <VideoElement top="100px" transform={opacity}>
+        <VideoElement top="180px" transform={opacity}>
           b={b}
         </VideoElement>
       </VideoElement>
       <VideoElement top="10%">
         <h2>Public</h2>
-        <VideoElement top="100px" opacity={1}>
+        <VideoElement top="150px" opacity={1}>
           <div style={{
             display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: "1rem"
           }}>
@@ -112,31 +110,25 @@ function PrivateInitSequence() {
 
 function CalcExchangeKeySequence() {
   const PART = 'calc-exchange-key'
-  const frame = useCurrentFrame()
-  const {g, n, a, b, videoInformation} = useContext(DHContext)
-
-  function opacity() {
-    const opacity = inter(frame, videoInformation[PART], [0, 1])
-    return `scale(${opacity})`
-  }
+  const {g, n, a, b, A, B, videoInformation} = useContext(DHContext)
 
   return (
     <MySequence from={videoInformation[PART].start} durationInFrames={videoInformation[PART].duration}>
       <VideoElement left='20%' top="10%" transform={"scale(2)"}>
         <h2>Alice</h2>
-        <VideoElement top="100px">
-          <VideoTransform from={"g^a % n"} to={`${g}^${a} % ${n}`} />
+        <VideoElement top="180px">
+          <VideoTransformF states={["g^a % n", `${g}^${a} % ${n}`, `${A}`]} />
         </VideoElement>
       </VideoElement>
       <VideoElement right='20%' top="10%" transform={"scale(2)"}>
         <h2>Bob</h2>
-        <VideoElement top="100px">
-          <VideoTransform from={"g^a % n"} to={`${g}^${b} % ${n}`} />
+        <VideoElement top="180px">
+          <VideoTransformF states={["g^b % n", `${g}^${b} % ${n}`, `${B}`]} />
         </VideoElement>
       </VideoElement>
       <VideoElement top="10%">
         <h2>Public</h2>
-        <VideoElement top="100px" opacity={1}>
+        <VideoElement top="150px" opacity={1}>
           <div style={{
             display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: "1rem"
           }}>
@@ -149,102 +141,106 @@ function CalcExchangeKeySequence() {
   )
 }
 
-function RestSequence() {
+function ExchangeKeySequence() {
   const PART = 'key-exchange'
   const frame = useCurrentFrame()
-  const {a, b, n, g, A, B, kAlice, kBob, videoInformation} = useContext(DHContext)
+  const {g, n, A, B, videoInformation} = useContext(DHContext)
 
   return (
     <MySequence from={videoInformation[PART].start} durationInFrames={videoInformation[PART].duration}>
-      <VideoElement top={120} left="200px">
+      <VideoElement left='20%' top="10%" transform={"scale(2)"}>
         <h2>Alice</h2>
-        <VideoElement top={100}>
-          <span>a={a}</span>
-        </VideoElement>
-        <VideoElement top={180}>
-          <span>
-            <VideoElement
-              left={() => interpolate(frame, [30, 60], [0, 800], {extrapolateRight: "clamp", extrapolateLeft: "clamp"})}
-              top={() => interpolate(frame, [30, 60], [0, 100], {extrapolateRight: "clamp", extrapolateLeft: "clamp"})}
-            >
-              <VideoTransform
-                style={{
-                  opacity: interpolate(frame, [0, 60], [0, 1], {extrapolateRight: "clamp", extrapolateLeft: "clamp"}),
-                }}
-                from="A"
-                to={A}
-              />
-            </VideoElement>
-          </span>
-          <span>=g^a mod n</span>
-        </VideoElement>
-        <VideoElement
-          top={interpolate(frame, [60, 120], [260, 460], {extrapolateRight: "clamp", extrapolateLeft: "clamp"})}
-          left={() => interpolate(frame, [60, 120], [0, 350], {extrapolateRight: "clamp", extrapolateLeft: "clamp"})}
-        >
-          <span>
-            <VideoTransform from="K" to={kAlice} />
-          </span>
-          <span
-            style={{
-              opacity: interpolate(frame, [60, 90], [1, 0], {extrapolateRight: "clamp", extrapolateLeft: "clamp"}),
-            }}
-          >
-            B^a mod n
-          </span>
+        <VideoElement top="180px" left={() => inter(frame, videoInformation[PART], [0, 380])}>
+          {A}
         </VideoElement>
       </VideoElement>
-      <VideoElement top={120}>
+      <VideoElement right='20%' top="10%" transform={"scale(2)"}>
+        <h2>Bob</h2>
+        <VideoElement top="180px" right={() => inter(frame, videoInformation[PART], [0, 380])}>
+          {B}
+        </VideoElement>
+      </VideoElement>
+      <VideoElement top="10%">
         <h2>Public</h2>
-        <VideoElement top={100}>
-          <div
-            style={{
-              gap: "1rem",
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: "center",
-              minWidth: "100%",
-              borderBottom: "1px solid white",
-            }}
-          >
-            <span>g={g}</span>
-            <span>n={n}</span>
+        <VideoElement top="150px" opacity={1}>
+          <div style={{
+            display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: "1rem"
+          }}>
+            <span> g={g}; </span>
+            <span> n={n} </span>
           </div>
         </VideoElement>
       </VideoElement>
-      <VideoElement top={120} right="200px">
+    </MySequence>
+  )
+}
+
+function CalcFinalKeySequence() {
+  const PART = 'calc-final-key'
+  const {g, n, a, b, A, B, kAlice, kBob, videoInformation} = useContext(DHContext)
+
+  return (
+    <MySequence from={videoInformation[PART].start} durationInFrames={videoInformation[PART].duration}>
+      <VideoElement left='20%' top="10%" transform={"scale(2)"}>
+        <h2>Alice</h2>
+        <VideoElement top="180px">
+          <VideoTransformF states={["B^a % n", `${B}^${a} % ${n}`, `${kAlice}`]} />
+        </VideoElement>
+      </VideoElement>
+      <VideoElement right='20%' top="10%" transform={"scale(2)"}>
         <h2>Bob</h2>
-        <VideoElement top={100}>
-          <span>b={b}</span>
+        <VideoElement top="180px">
+          <VideoTransformF states={["A^b % n", `${A}^${b} % ${n}`, `${kBob}`]} />
         </VideoElement>
-        <VideoElement top={180}>
-          <span>
-            <VideoElement
-              right={() =>
-                interpolate(frame, [30, 60], [0, 800], {extrapolateRight: "clamp", extrapolateLeft: "clamp"})
-              }
-              top={() => interpolate(frame, [30, 60], [0, 100], {extrapolateRight: "clamp", extrapolateLeft: "clamp"})}
-            >
-              <VideoTransform from="B" to={B} />
-            </VideoElement>
-          </span>
-          <span>=g^b mod n</span>
+      </VideoElement>
+      <VideoElement top="10%">
+        <h2>Public</h2>
+        <VideoElement top="150px" opacity={1}>
+          <div style={{
+            display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: "1rem"
+          }}>
+            <span> g={g}; </span>
+            <span> n={n} </span>
+          </div>
         </VideoElement>
-        <VideoElement
-          top={interpolate(frame, [60, 120], [260, 460], {extrapolateRight: "clamp", extrapolateLeft: "clamp"})}
-          right={interpolate(frame, [60, 120], [0, 350], {extrapolateRight: "clamp", extrapolateLeft: "clamp"})}
-        >
-          <span>
-            <VideoTransform from="K" to={kBob} />
-          </span>
-          <span
-            style={{
-              opacity: interpolate(frame, [60, 90], [1, 0], {extrapolateRight: "clamp", extrapolateLeft: "clamp"}),
-            }}
-          >
-            =A^b mod n
-          </span>
+      </VideoElement>
+    </MySequence>
+  )
+}
+
+function ShowKeySequence() {
+  const PART = 'show-key'
+  const frame = useCurrentFrame()
+  const {g, n, kAlice, kBob, videoInformation} = useContext(DHContext)
+
+  function transform() {
+    const grow = inter(frame, videoInformation[PART], [1, 3])
+    return `scale(${grow})`
+  }
+
+  return (
+    <MySequence from={videoInformation[PART].start} durationInFrames={videoInformation[PART].duration}>
+      <VideoElement left='20%' top="10%" transform={"scale(2)"}>
+        <h2>Alice</h2>
+        <VideoElement top="180px" transform={transform}>
+          {kAlice}
+        </VideoElement>
+      </VideoElement>
+      <VideoElement right='20%' top="10%" transform={"scale(2)"}>
+        <h2>Bob</h2>
+        <VideoElement top="180px" transform={transform}>
+          {kBob}
+        </VideoElement>
+      </VideoElement>
+      <VideoElement top="10%">
+        <h2>Public</h2>
+        <VideoElement top="150px" opacity={1}>
+          <div style={{
+            display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: "1rem"
+          }}>
+            <span> g={g}; </span>
+            <span> n={n} </span>
+          </div>
         </VideoElement>
       </VideoElement>
     </MySequence>
@@ -260,15 +256,17 @@ function DHVideo() {
     {videoInformation["init-public"].show && <PublicInitSequence />}
     {videoInformation["init-private"].show && <PrivateInitSequence />}
     {videoInformation["calc-exchange-key"].show && <CalcExchangeKeySequence />}
-    {videoInformation["key-exchange"].show && <RestSequence />}
+    {videoInformation["key-exchange"].show && <ExchangeKeySequence />}
+    {videoInformation["calc-final-key"].show && <CalcFinalKeySequence />}
+    {videoInformation["show-key"].show && <ShowKeySequence />}
     </>
 }
 
 function DiffieHellman() {
   const [a, setA] = useState(5)
   const [b, setB] = useState(11)
-  const [n, setN] = useState(13)
-  const [g, setG] = useState(7)
+  const [n, setN] = useState(29)
+  const [g, setG] = useState(13)
   const [A, setAA] = useState(diffie(g, a, n))
   const [B, setBB] = useState(diffie(g, b, n))
   const [kAlice, setKAlice] = useState(diffie(B, a, n))
@@ -280,8 +278,10 @@ function DiffieHellman() {
     'intro': {show: true, duration: 60, name: "Alice und Bob", start: 0},
     'init-public': {show: true, duration: 60, name: "Öffentliche Parameter", start: 0},
     'init-private': {show: true, duration: 60, name: "Private Parameter", start: 0},
-    'calc-exchange-key': {show: true, duration: 60, name: "Schlüssel berechnen", start: 0},
-    'key-exchange': {show: true, duration: 60, name: "Alice und Bob", start: 0},
+    'calc-exchange-key': {show: true, duration: 240, name: "Schlüssel berechnen", start: 0},
+    'key-exchange': {show: true, duration: 60, name: "Schlüssel austauschen", start: 0},
+    'calc-final-key': {show: true, duration: 240, name: "Schlüssel berechnen", start: 0},
+    'show-key': {show: true, duration: 60, name: "Schlüssel anzeigen", start: 0},
   })
 
   useEffect(() => {
@@ -297,29 +297,28 @@ function DiffieHellman() {
   return (
     <>
       <DHContext.Provider value={{a, b, n, g, A, B, kAlice, kBob, videoInformation}}>
+        <b>Alice</b> und <b>Bob</b> möchten verschlüsselt kommunizieren. Sie
+        können sich jedoch nicht vorab treffen um einen geheimen Schlüssel zu
+        vereinbaren. Also führen Sie das Diffie-Hellman-Verfahren durch.
         <div className="box">
-          <div className="inline-container">
+          <div className="inline-container" style={{gap: '2rem'}}>
             <label htmlFor="a">
               Alice:
-              <input id="a" type="number" value={a} onChange={e => setA(parseInt(e.target.value))} />
+              <input className="num-input" id="a" type="number" value={a} onChange={e => setA(parseInt(e.target.value))} />
             </label>
-          </div>
-          <div className="inline-container">
             <label htmlFor="b">
               Bob:
-              <input id="b" type="number" value={b} onChange={e => setB(parseInt(e.target.value))} />
+              <input className="num-input" id="b" type="number" value={b} onChange={e => setB(parseInt(e.target.value))} />
             </label>
           </div>
-          <div className="inline-container">
+          <div className="inline-container" style={{gap: '2rem'}}>
             <label htmlFor="g">
               Generator:
-              <input id="g" type="number" value={g} onChange={e => setG(parseInt(e.target.value))} />
+              <input className="num-input" id="g" type="number" value={g} onChange={e => setG(parseInt(e.target.value))} />
             </label>
-          </div>
-          <div className="inline-container">
             <label htmlFor="n">
               Modulo:
-              <input id="n" type="number" value={n} onChange={e => setN(parseInt(e.target.value))} />
+              <input className="num-input" id="n" type="number" value={n} onChange={e => setN(parseInt(e.target.value))} />
             </label>
           </div>
         </div>
@@ -345,7 +344,7 @@ function DiffieHellman() {
           video={
             <Player
               ref={playerRef}
-              style={{width: "640px"}}
+              style={{width: "640px", fontSize: '2rem'}}
               component={DHVideo}
               durationInFrames={calcVideoDuration(videoInformation)}
               compositionWidth={1280}
@@ -359,6 +358,16 @@ function DiffieHellman() {
             />
           }
         ></VideoChapterContainer>
+        <div className="box">
+          <div className="inline-container" style={{gap: '5rem'}}>
+          <span>
+            Schlüssel Alice: <span style={{fontSize: '2.5rem', fontWeight: 'bold'}}>{kAlice}</span>
+          </span>
+          <span>
+            Schlüssel Bob: <span style={{fontSize: '2.5rem', fontWeight: 'bold'}}>{kBob}</span>
+          </span>
+          </div>
+        </div>
       </DHContext.Provider>
     </>
   )

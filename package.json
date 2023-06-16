@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@remotion/player": "^3.3.94",
+    "bcrypt": "^5.1.0",
+    "bcryptjs-react": "^2.4.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-xarrows": "^2.0.2",

@@ -9,6 +9,8 @@ import Verschluesselung from './Verschluesselung'
 import DiffieHellman from './DiffieHellman'
 import AES from './AES'
 import CaesarIntro from './CaesarIntro'
+import DiffieHellmanIntro from './DiffieHellmanIntro'
+import AESIntro from './AESIntro'
 
 function Main() {
 
@@ -57,10 +59,22 @@ function Main() {
           <Quiz quizType={'vigenere'}/>
         }
         {chapter === 9 &&
-          <DiffieHellman />
+          <DiffieHellmanIntro />
         }
         {chapter === 10 &&
+          <DiffieHellman />
+        }
+        {chapter === 11 &&
+          <Quiz quizType={'diffie-hellman'} />
+        }
+        {chapter === 12 &&
+          <AESIntro />
+        }
+        {chapter === 13 &&
           <AES />
+        }
+        {chapter === 14 &&
+          <Quiz quizType={'aes'}/>
         }
       </section>
       </div>
