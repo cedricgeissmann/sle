@@ -343,7 +343,67 @@ export const QUESTIONS = {
   ],
   'diffie-hellman': [
     {
-      question: "Braucht das Diffie-Hellman-Quiz mehr Fragen?",
+      question: "Das Diffie-Hellman-Verfahren erzeugt den gleichen Schlüssel bei zwei Kommunikationspartnern.",
+      answers: [
+        {
+          text: "Ja",
+          checked: false,
+          correct: true,
+        },
+        {
+          text: "Nein",
+          checked: false,
+          correct: false,
+        },
+      ],
+    },
+    {
+      question: "Für das erzeugen der Schlüssel wird kein Datenaustausch benötigt.",
+      answers: [
+        {
+          text: "Ja",
+          checked: false,
+          correct: false,
+        },
+        {
+          text: "Nein",
+          checked: false,
+          correct: true,
+        },
+      ],
+    },
+    {
+      question: "Wir die Kommunikation mitgehört, können alle auf den gleichen Schlüssel kommen.",
+      answers: [
+        {
+          text: "Ja",
+          checked: false,
+          correct: false,
+        },
+        {
+          text: "Nein",
+          checked: false,
+          correct: true,
+        },
+      ],
+    },
+    {
+      question: "Eine möglichst kleine Primzahl (z.B. 2) führt zu einem sicheren Schlüssel.",
+      answers: [
+        {
+          text: "Ja",
+          checked: false,
+          correct: false,
+        },
+        {
+          text: "Nein",
+          checked: false,
+          correct: true,
+        },
+      ],
+    },
+    {
+      question: "Vor der Kommunikation müssen sich die Parteien auf die gemeinsamen Parameter einigen.",
       answers: [
         {
           text: "Ja",
